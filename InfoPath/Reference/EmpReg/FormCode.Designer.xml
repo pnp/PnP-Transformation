@@ -1,0 +1,27 @@
+<hostitem2:hostItem
+  hostitem2:generateCode="false"
+  hostitem:baseType="Microsoft.Office.InfoPath.XmlFormHostItem"
+  hostitem:namespace="EmpReg"
+  hostitem:className="FormCode"
+  hostitem:identifier="FormCode"
+  hostitem:primaryCookie="XmlForm"
+  hostitem2:generateCacheMethods="false"
+  hostitem:master="false"
+  xmlns:hostitem2="http://schemas.microsoft.com/2005/VisualStudio/Tools/Applications/HostItem.xsd"
+  xmlns:hostitem="http://schemas.microsoft.com/2004/VisualStudio/Tools/Applications/HostItem.xsd">
+
+	<hostitem:hostObject
+	  hostitem:name="Application"
+	  hostitem:identifier="Application"
+	  hostitem:type="Microsoft.Office.InfoPath.Application"
+	  hostitem:cookie="Application"
+	  hostitem:modifier="Internal"/>
+
+	<hostitem:hostObject
+	  hostitem:name="EventManager"
+	  hostitem:identifier="EventManager"
+	  hostitem:type="Microsoft.Office.InfoPath.EventManager"
+	  hostitem:cookie="EventManager"
+	  hostitem:modifier="Internal"/>
+
+</hostitem2:hostItem>

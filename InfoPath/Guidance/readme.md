@@ -1,0 +1,1 @@
+This folder contains documentation on InfoPath limitations in Office 365 and describes remediation models and approaches

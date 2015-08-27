@@ -1,0 +1,6 @@
+# InfoPath transformation guidance #
+In this section of the PnP Transformation repository you'll find IP that will help you transform InfoPath forms to SharePoint Add-In model based equivalents. This section is organized as follows:
+- **Guidance** - contains documentation on InfoPath limitations in Office 365 and describes remediation models and approaches
+- **Reference** - contains a sample employee registration InfoPath form that shows common InfoPath customizations. In the samples section we'll show how the common InfoPath customizations can be realized using alternative SharePoint Add-In developments
+- **Samples** - here we collect the various SharePoint Add-In samples. These samples mimic the capabilities of the InfoPath employee registration form which you can find in the Reference section
+- **Migration** - once you transform an InfoPath form to a SharePoint Add-In you also need to migrate the data from InfoPath XML to a new model. This section provides you more input on how to that
