@@ -179,6 +179,7 @@ namespace KnockOut.SinglePageApp
                 for (int i = 0; i < limitedWebPartManager.WebParts.Count; i++)
                 {
                     limitedWebPartManager.WebParts[i].CloseWebPart();
+                    limitedWebPartManager.WebParts[i].SaveWebPartChanges();
                 }
                 ctx.ExecuteQuery();
             }
