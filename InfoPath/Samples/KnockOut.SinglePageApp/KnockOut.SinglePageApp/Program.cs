@@ -76,7 +76,9 @@ namespace KnockOut.SinglePageApp
             if (!String.IsNullOrEmpty(empFormPage))
             {
                 Console.WriteLine("Provisioning EmpForm.aspx...");
-                ProvisionWebPart(ctx, string.Format("{0}/{1}", web.ServerRelativeUrl, empFormPage), "Emp-Registration-Form-Template.js");
+                string empRegPage = String.Format("{0}/{1}", web.ServerRelativeUrl, empFormPage);
+                ctx.Web.AddLayoutToWikiPage(OfficeDevPnP.Core.WikiPageLayout.OneColumn, empRegPage);
+                ProvisionWebPart(ctx, empRegPage, "Emp-Registration-Form-Template.js", isWikiPage:true);
             }
             else
             {
@@ -106,7 +108,7 @@ namespace KnockOut.SinglePageApp
             }
         }
 
-        private static void ProvisionWebPart(ClientContext ctx, string relativePageUrl, string scriptFile)
+        private static void ProvisionWebPart(ClientContext ctx, string relativePageUrl, string scriptFile, bool isWikiPage = false)
         {
             Console.WriteLine("Provisioning web part...");
 
@@ -125,7 +127,14 @@ namespace KnockOut.SinglePageApp
             };
 
             Console.WriteLine("Adding employee registration web part to " + relativePageUrl);
-            ctx.Web.AddWebPartToWebPartPage(relativePageUrl, webPart);
+            if (isWikiPage)
+            {
+                ctx.Web.AddWebPartToWikiPage(relativePageUrl, webPart, 1, 1, false);
+            }
+            else
+            {
+                ctx.Web.AddWebPartToWebPartPage(relativePageUrl, webPart);
+            }
             Console.WriteLine("");
         }
 

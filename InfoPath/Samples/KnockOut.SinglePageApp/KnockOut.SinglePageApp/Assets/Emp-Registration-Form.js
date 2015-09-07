@@ -9,6 +9,8 @@ var isStatesLoaded;
 var isCitiesLoaded;
 var isDesignationsLoaded;
 
+var currentUser;
+
 function getListItemType(name) {
     return "SP.Data." + name[0].toUpperCase() + name.substring(1) + "ListItem";
 }
@@ -222,7 +224,8 @@ function EmpViewModel() {
             type: "GET",
             headers: { "accept": "application/json;odata=verbose" },
             success: function (data) {
-                self.UserID(data.d.LoginName.replace('i:0#.w|', ''));
+                currentUser = data.d.LoginName;
+                self.UserID(data.d.LoginName.replace('i:0#.f|membership|', ''));
             },
             error: function (error) {
                 alert(JSON.stringify(error));
@@ -231,7 +234,7 @@ function EmpViewModel() {
     };
 
     self.getNameAndManagerFromProfile = function () {
-        var userID = self.UserID();
+        var userID = encodeURIComponent(currentUser);
         var currentUserURL = _spPageContextInfo.webAbsoluteUrl + "/_api/SP.UserProfiles.PeopleManager/getpropertiesfor(@v)?@v='" + userID + "'&$select=UserProfileProperties";
         
         $.ajax({
@@ -252,7 +255,11 @@ function EmpViewModel() {
                     }
 
                     if (property.Key == "Manager") {
-                        self.EmpManager(property.Value);
+
+                        var managerValue = property.Value;
+                        managerValue = managerValue.replace('i:0#.f|membership|', '');
+
+                        self.EmpManager(managerValue);
                     }
                 });
 

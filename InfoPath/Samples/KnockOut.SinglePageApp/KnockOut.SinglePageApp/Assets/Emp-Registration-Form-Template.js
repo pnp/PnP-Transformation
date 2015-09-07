@@ -16,7 +16,7 @@
             <p>Loading form...</p>
         <!-- /ko -->
         <!-- ko if:isFormLoaded -->
-            <table border="0" cellspacing="2" cellpadding="2">
+            <table border="0" cellspacing="2" cellpadding="2" class="ms-listviewtable">
                 <tr>
                     <th style="text-align: right;">Emp Number</th>
                     <td><input data-bind="value: EmpNumber"/></td>
