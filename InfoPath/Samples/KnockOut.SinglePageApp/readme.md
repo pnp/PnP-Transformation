@@ -25,7 +25,7 @@ Version  | Date | Comments
 ----------
 
 # Introduction #
-The core of this application are the JavaScript based model and view. This files are depending on [knockoutjs](http://knockoutjs.com/) to implement a Model-View-View Model (MVVM) pattern. The UI is defined using views and declarative bindings, its data and behavior using viewmodels and observables, and everything stays in sync automatically thanks to Knockout's dependency tracking.
+The core of this application are the JavaScript based view-model and view. This files are depending on [knockoutjs](http://knockoutjs.com/) to implement a Model-View-View Model (MVVM) pattern. The UI is defined using views and declarative bindings, its data and behavior using view-models and observables, and everything stays in sync automatically thanks to Knockout's dependency tracking. The model (=data) itself is stored in SharePoint lists.
 
 To learn more about the Knockout JavaScript library check these resources:
 - [Tutorials](http://learn.knockoutjs.com/)
@@ -143,8 +143,8 @@ The template that's being loaded is listed below. A template is implemented usin
 </script>
 ```
 
-## Knockout model ##
-Just like the view the model is also implemented using JavaScript. In this sample the model is named `Emp-Registration-Form.js`. When this script is loaded it will load the `initEmpForm` function:
+## Knockout view-model ##
+Just like the view the view-model is also implemented using JavaScript. In this sample the model is named `Emp-Registration-Form.js`. When this script is loaded it will load the `initEmpForm` function:
 
 ```JavaScript
 $(document).ready(function () {
@@ -178,7 +178,7 @@ function initEmpForm() {
 }
 ```
 
-In `EmpViewModel` you'll see observable properties + methods of the model. Observable properties are defined like this:
+In `EmpViewModel` you'll see methods and observable properties which allow Knockout to track changes and update the UI accordingly. The Observable properties are defined like this:
 
 ```JavaScript
 // generic view properties
@@ -205,7 +205,7 @@ self.EmpManager = ko.observable();
 self.CountryID = ko.observable();
 ```
 
-There are multiple methods in the model, below code is only showing the `update` method:
+There are multiple methods in the view-model, below code is only showing the `update` method:
 
 ```JavaScript
 // Update an existing item
