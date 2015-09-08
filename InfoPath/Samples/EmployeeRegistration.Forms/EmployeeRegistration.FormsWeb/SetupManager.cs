@@ -4,8 +4,19 @@ using System;
 
 namespace EmployeeRegistration.FormsWeb
 {
-    public class SetupManager
+    public static class SetupManager
     {
+
+        static SetupManager()
+        {
+            Initialized = false;
+        }
+
+        public static bool Initialized
+        {
+            get; set;
+        }
+
         public static void ProvisionLists(ClientContext ctx)
         {
             //Create country list

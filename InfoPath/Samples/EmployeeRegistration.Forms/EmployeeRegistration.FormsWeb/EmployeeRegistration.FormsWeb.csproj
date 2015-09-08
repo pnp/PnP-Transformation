@@ -137,6 +137,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\EmployeeRegistration.dwp" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -149,6 +150,9 @@
     <None Include="Scripts\jquery-1.9.1.intellisense.js" />
     <Content Include="Pages\Default.aspx" />
     <Content Include="Pages\Thanks.aspx" />
+    <Content Include="Assets\AppLauncher.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Scripts\jquery-1.9.1.js" />
     <Content Include="Scripts\jquery-1.9.1.min.js" />
     <Content Include="Scripts\jquery-1.9.1.min.map" />
@@ -180,6 +184,7 @@
     <Compile Include="SetupManager.cs" />
     <Compile Include="SharePointContext.cs" />
     <Compile Include="TokenHelper.cs" />
+    <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

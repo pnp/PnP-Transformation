@@ -9,6 +9,8 @@ using System.Web.UI;
 using Microsoft.SharePoint.Client.UserProfiles;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
+using System.Configuration;
+using System.Web.Hosting;
 
 namespace EmployeeRegistration.FormsWeb
 {
@@ -38,11 +40,105 @@ namespace EmployeeRegistration.FormsWeb
                 // Provision supporting artefacts in case that's still needed
                 using (var clientContext = GetClientContext())
                 {
-                    SetupManager.ProvisionLists(clientContext);
+                    if (!SetupManager.Initialized)
+                    {
+                        // Provision lists
+                        SetupManager.ProvisionLists(clientContext);
+
+                        // upload assets and provision the application
+                        ProvisionEmployeeRegistrationApplication(clientContext);
+
+                        SetupManager.Initialized = true;
+                    }
                 }
 
                 LoadListItems();
             }            
+        }
+
+        private void ProvisionEmployeeRegistrationApplication(ClientContext ctx)
+        {
+            // upload files to the style library
+            List styleLibrary = ctx.Web.Lists.GetByTitle("Style Library");
+            ctx.Load(styleLibrary, l => l.RootFolder);
+            Folder pnpFolder = styleLibrary.RootFolder.EnsureFolder("OfficeDevPnP");
+
+            string fileName = "AppLauncher.js";
+            File assetFile = pnpFolder.GetFile(fileName);
+            if (assetFile != null)
+            {
+                assetFile.CheckOut();
+            }
+
+            string clientId = ConfigurationManager.AppSettings["ClientId"];
+            Uri redirectUri = new Uri(HttpContext.Current.Request.Url.AbsoluteUri);
+            string redirectUrl = String.Format("{0}://{1}{2}", redirectUri.Scheme, redirectUri.Authority, redirectUri.LocalPath);
+
+            string localFilePath = "Assets/" + fileName;
+            string newLocalFilePath = Utilities.ReplaceTokensInAssetFile(ctx, localFilePath, clientId, redirectUrl);
+
+            assetFile = pnpFolder.UploadFile(fileName, newLocalFilePath, true);
+            assetFile.CheckIn("Uploaded by provisioning engine.", CheckinType.MajorCheckIn);
+            ctx.ExecuteQuery();
+            System.IO.File.Delete(newLocalFilePath);
+
+            Web web = ctx.Web;
+            ctx.Load(web, w => w.ServerRelativeUrl);
+            ctx.ExecuteQuery();
+            Console.WriteLine("");
+
+            // Inject the content editor web parts on the new and edit form pages
+            if (!SetupManager.IsWebPartOnPage(ctx, String.Format("{0}/Lists/Employees/newform.aspx", web.ServerRelativeUrl), "Employee Registration"))
+            {
+                string newFormUrl = string.Format("{0}/{1}", web.ServerRelativeUrl, "Lists/Employees/newform.aspx");
+                SetupManager.CloseAllWebParts(ctx, newFormUrl);
+                ProvisionWebPart(ctx, newFormUrl, "AppLauncher.js");
+            }
+            else
+            {
+                Console.WriteLine("The New form page was already customized");
+            }
+
+            if (!SetupManager.IsWebPartOnPage(ctx, String.Format("{0}/Lists/Employees/editform.aspx", web.ServerRelativeUrl), "Employee Registration"))
+            {
+                string editFormUrl = string.Format("{0}/{1}", web.ServerRelativeUrl, "Lists/Employees/editform.aspx");
+                SetupManager.CloseAllWebParts(ctx, editFormUrl);
+                ProvisionWebPart(ctx, editFormUrl, "AppLauncher.js");
+            }
+            else
+            {
+                Console.WriteLine("The New form page was already customized");
+            }
+        }
+
+        private void ProvisionWebPart(ClientContext ctx, string relativePageUrl, string scriptFile, bool isWikiPage = false)
+        {
+            Console.WriteLine("Provisioning web part...");
+
+            string webPartXml = System.IO.File.ReadAllText(HostingEnvironment.MapPath(String.Format("~/{0}", @"Assets\EmployeeRegistration.dwp")));
+            //replace tokens
+            string scriptUrl = String.Format("~sitecollection/Style Library/OfficeDevPnP/{0}", scriptFile);
+            scriptUrl = Utilities.ReplaceTokens(ctx, scriptUrl);
+            webPartXml = webPartXml.Replace("%ContentLink%", scriptUrl);
+
+            OfficeDevPnP.Core.Entities.WebPartEntity webPart = new OfficeDevPnP.Core.Entities.WebPartEntity()
+            {
+                WebPartZone = "Main",
+                WebPartIndex = 20,
+                WebPartTitle = "Employee Registration",
+                WebPartXml = webPartXml
+            };
+
+            Console.WriteLine("Adding employee registration web part to " + relativePageUrl);
+            if (isWikiPage)
+            {
+                ctx.Web.AddWebPartToWikiPage(relativePageUrl, webPart, 1, 1, false);
+            }
+            else
+            {
+                ctx.Web.AddWebPartToWebPartPage(relativePageUrl, webPart);
+            }
+            Console.WriteLine("");
         }
 
         private void LoadListItems()
