@@ -11,7 +11,7 @@ This sample shows an application that's leveraging JavaScript and HTML to offer 
 ### Solution ###
 Solution | Author(s)
 ---------|----------
-KnockOut.SinglePageApp | Raja Shekar Bhumireddy, Bert Jansen (**Microsoft**)
+EmployeeRegistration.KnockOut.SinglePageApp | Raja Shekar Bhumireddy, Bert Jansen (**Microsoft**)
 
 ### Version history ###
 Version  | Date | Comments
