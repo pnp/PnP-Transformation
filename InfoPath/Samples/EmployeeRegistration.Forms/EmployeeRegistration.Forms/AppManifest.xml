@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Created:cb85b80c-f585-40ff-8bfc-12ff4d0e34a9-->
+<App xmlns="http://schemas.microsoft.com/sharepoint/2012/app/manifest"
+     Name="EmpRegistration"
+     ProductID="{35ff9c69-818f-407e-b4e3-941a10dad264}"
+     Version="1.0.0.0"
+     SharePointMinVersion="15.0.0.0"
+>
+  <Properties>
+    <Title>Employee Registration</Title>
+    <StartPage>~remoteAppUrl/Pages/Default.aspx?{StandardTokens}</StartPage>
+  </Properties>
+
+  <AppPrincipal>
+    <RemoteWebApplication ClientId="beaf1fdc-a253-4eb5-959d-8a1cf87db5fc" />
+  </AppPrincipal>
+  <AppPermissionRequests>
+    <AppPermissionRequest Scope="http://sharepoint/social/tenant" Right="FullControl" />
+    <AppPermissionRequest Scope="http://sharepoint/content/sitecollection" Right="FullControl" />
+  </AppPermissionRequests>
+</App>
