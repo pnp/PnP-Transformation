@@ -42,8 +42,7 @@ namespace EmployeeRegistration.FormsWeb
                 }
 
                 LoadListItems();
-            }
-            
+            }            
         }
 
         private void LoadListItems()

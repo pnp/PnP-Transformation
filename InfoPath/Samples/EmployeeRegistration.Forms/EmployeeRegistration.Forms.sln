@@ -8,6 +8,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeRegistration.FormsWeb", "EmployeeRegistration.FormsWeb\EmployeeRegistration.FormsWeb.csproj", "{A48A84D0-777D-4CDA-9061-C5DC8A5F7C43}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{E6730E6A-1FA8-4BBB-A565-3CDD5C09A20C}"
+	ProjectSection(SolutionItems) = preProject
+		readme.md = readme.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

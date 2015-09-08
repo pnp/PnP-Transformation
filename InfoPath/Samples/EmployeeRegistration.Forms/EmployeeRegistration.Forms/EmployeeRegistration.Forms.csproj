@@ -7,10 +7,10 @@
     <ProjectGuid>{D9E810F8-2EBB-4129-A2F7-7778CC6B7AEA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EmpRegistration</RootNamespace>
-    <AssemblyName>EmpRegistration</AssemblyName>
+    <RootNamespace>EmployeeRegistration.Forms</RootNamespace>
+    <AssemblyName>EmployeeRegistration.Forms</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetOfficeVersion>15.0</TargetOfficeVersion>
+    <TargetOfficeVersion>16.1</TargetOfficeVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{C1CDDADD-2546-481F-9697-4EA41081F2FC};{14822709-B5A1-4724-98CA-57A101D1B079};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <IncludeAssemblyInPackage>False</IncludeAssemblyInPackage>
@@ -21,6 +21,8 @@
     <CspkgPartId>{4ed610b3-1a7d-406d-a798-4b1d533e5adf}</CspkgPartId>
     <SqlPackagePartId>{ae761b7e-b300-4cea-901f-465ad816c1a5}</SqlPackagePartId>
     <ActivePublishProfile>EmpRegistration3</ActivePublishProfile>
+    <MinimumOfficeToolsVersion>12.2</MinimumOfficeToolsVersion>
+    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
