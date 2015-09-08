@@ -5,12 +5,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title></title>
+    <script type="text/javascript" src="../Scripts/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="../Scripts/app.js"></script>
 </head>
-<body>
+<body style="display: none; overflow: auto;">
     
     <form id="form1" runat="server">
-        <asp:ScriptManager ID="scriptManager" runat="server"></asp:ScriptManager>
-        <div>
+        <asp:ScriptManager ID="scriptManager" runat="server" EnableCdn="True"></asp:ScriptManager>
+        <div id="divSPChrome"></div>
+        <div style="left: 40px;">
             <table>
                 <tr>
                     <td colspan="2">
