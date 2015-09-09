@@ -47,9 +47,6 @@
     <Content Include="AppIcon.png">
       <OpcRelationship>manifest-icon</OpcRelationship>
     </Content>
-    <Content Include="EmployeesListAction\Elements.xml">
-      <OpcRelationship>feature-elementmanifest</OpcRelationship>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <AppManifestFile Include="AppManifest.xml">
@@ -68,10 +65,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="EmployeesListAction\SharePointProjectItem.spdata">
-      <SharePointProjectItemId>{4752b09c-385e-4d27-b3e8-fae0992db5a3}</SharePointProjectItemId>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
