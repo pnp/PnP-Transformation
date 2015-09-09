@@ -59,7 +59,7 @@
   <ItemGroup>
     <ProjectReference Include="..\EmployeeRegistration.MVCWeb\EmployeeRegistration.MVCWeb.csproj">
       <Project>{F8B12BC4-FAB2-4A5B-8063-126FF05C16AE}</Project>
-      <Name>MvcEmpRegWeb</Name>
+      <Name>EmployeeRegistration.MVCWeb</Name>
       <Private>True</Private>
       <RoleType>Web</RoleType>
       <OutputItemType>SharePointWebProjectOutput</OutputItemType>
@@ -68,6 +68,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="EmployeesListAction\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{4752b09c-385e-4d27-b3e8-fae0992db5a3}</SharePointProjectItemId>
     </None>

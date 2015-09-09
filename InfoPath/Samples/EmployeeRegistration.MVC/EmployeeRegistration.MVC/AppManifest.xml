@@ -2,7 +2,7 @@
 <!--Created:cb85b80c-f585-40ff-8bfc-12ff4d0e34a9-->
 <App xmlns="http://schemas.microsoft.com/sharepoint/2012/app/manifest"
      Name="EmployeeRegistration"
-     ProductID="{1bb423cd-d599-4aa9-bf4a-8a4f7b593e65}"
+     ProductID="{13BBACDF-3562-46E3-9617-72A38E06DBC2}"
      Version="1.0.0.0"
      SharePointMinVersion="16.0.0.0"
 >

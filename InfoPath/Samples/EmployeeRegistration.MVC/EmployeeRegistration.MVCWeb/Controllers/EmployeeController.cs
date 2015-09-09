@@ -35,6 +35,10 @@ namespace EmployeeRegistration.MVCWeb.Controllers
             {
                 if (clientContext != null)
                 {
+
+                    SetupManager.Provision(clientContext);
+
+
                     var web = clientContext.Web;
 
                     List desgList = web.Lists.GetByTitle("EmpDesignation");
