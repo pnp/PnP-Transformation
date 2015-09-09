@@ -105,6 +105,7 @@
                     </td>
 
                 </tr>
+                <!-- ToDo: Add user to site group --> 
                 <tr>
                     <td>
 
