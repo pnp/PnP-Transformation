@@ -27,3 +27,12 @@ Version  | Date | Comments
 
 # Introduction #
 
+Common (code) patterns used in this form are:
+- Populating the form fields via code on form load
+- Submit of the form via code
+- Reading/updating lists
+- Retrieving user data
+- Updating fields in via event handlers
+
+![](http://i.imgur.com/H5i8fhV.png)
+
