@@ -131,29 +131,10 @@ public ActionResult EmployeeForm()
         if (clientContext != null)
         {
 
-            // code removed for clarity
-
-            string itemID = Request.QueryString["itemId"];
-            ListItem emplistItem = null;
-
-            if (itemID != null)
-            {
-                List lstEmployee = web.Lists.GetByTitle("Employees");
-                emplistItem = lstEmployee.GetItemById(itemID);
-                clientContext.Load(emplistItem);
-                emp.Id = itemID;
-            }
+            SetupManager.Provision(clientContext);
 
             // code removed for clarity
 
-            if (emplistItem != null)
-            {
-                // code removed for clarity
-            }
-            else
-            {
-                // code removed for clarity
-            }
         } //  if (clientContext != null)
     } // using (var clientContext
 
