@@ -1,1 +1,1 @@
-This section contains a sample employee registration InfoPath form that shows common InfoPath customizations. In the samples section we'll show how the common InfoPath customizations can be realized using alternative SharePoint Add-In developments
+This section contains sample InfoPath forms that shows common InfoPath customizations and code patterns. In the samples section we'll show how these common InfoPath customizations and patterns can be realized using alternative development approaches.
