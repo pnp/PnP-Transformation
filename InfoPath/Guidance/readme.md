@@ -15,7 +15,7 @@ Common pattern | SPA using Knockout | ASP.Net MVC | ASP.Net MVC
 Populating fields on form load - set user information | x | x | x 
 Populating fields on form load - read list information | x | x | x 
 Populating fields on form load - read list data | x | x | x 
-Submit the form via code | x | x | x 
+[Submit the form via code](https://github.com/OfficeDev/PnP-Transformation/blob/dev/InfoPath/Guidance/Patterns/Submit%20the%20form%20via%20code.md) | x | x | x 
 Switching view after form submission | x | x | x 
 Retrieving user data | x | x | x 
 Read data collection and set multiple controls | x | x | x 
