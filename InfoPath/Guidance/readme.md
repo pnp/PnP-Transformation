@@ -10,7 +10,7 @@ The approach we've taken is to create a reference InfoPath form that implements 
 
 The table below lists all the common patterns, the InfoPath implementation and the equivalent implementation for the alternative approaches (if there's an `X` in the table). Click on the listed pattern to learn more.
 
-Common pattern | SPA using Knockout | ASP.Net MVC | ASP.Net MVC
+Common pattern | SPA using Knockout | ASP.Net MVC | ASP.Net Forms
 ---------------|:------------------:|:-----------:|:-----------:
 Populating fields on form load - set user information | x | x | x 
 Populating fields on form load - read list information | x | x | x 
