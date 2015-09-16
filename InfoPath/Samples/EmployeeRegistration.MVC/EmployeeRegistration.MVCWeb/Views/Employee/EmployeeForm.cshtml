@@ -22,7 +22,7 @@
         <div class="form-horizontal">
             @Html.ValidationSummary(true)
             @Html.HiddenFor(model => model.Id)
-
+            @ViewBag.Error
             <div class="form-group">
                 @Html.LabelFor(model => model.EmpNumber, new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
@@ -101,8 +101,40 @@
             </div>
 
             <div class="form-group">
+                @Html.LabelFor(model => model.Attachments, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <table id="tbAttachments">
+                        <tbody id="tbodyAttachments">
+                            @for (int i = 0; i < Model.AttachmentsCount; i++)
+                            {
+                                <tr>
+                                    <td>
+                                        <a target="_blank" href="@Model.Attachments[i].FileRelativeUrl" title="@Model.Attachments[i].FileName">@Model.Attachments[i].FileName</a>
+                                    </td>
+                                    <td>
+                                        <a style="cursor: pointer" title="Delete Attachment" onclick="deleteAttachment(this, '@Model.Attachments[i].FileRelativeUrl')">Delete</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <table>
+                        <tr>
+                            <td>
+                                @Html.HiddenFor(model => model.AttachmentID)
+                                <input type="file" id="empAttachment" />
+                            </td>
+                            <td>
+                                <input type="button" id="btnUpload" onclick="uploadAttachment();" value="Upload" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="@Model.SubmitButtonName" class="btn btn-default" />
+                    <input id="btnSubmit" type="submit" value="@Model.SubmitButtonName" class="btn btn-default" />
                 </div>
             </div>
         </div>

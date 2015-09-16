@@ -20,7 +20,7 @@
     <WorkflowPartId>{c6440bdc-367f-4ad2-8151-c0b9674938b1}</WorkflowPartId>
     <CspkgPartId>{5f75e8aa-3da8-460f-b79d-9c5a3a7d55ef}</CspkgPartId>
     <SqlPackagePartId>{9a5a016a-c7ee-4652-999c-cb707e667d4b}</SqlPackagePartId>
-    <ActivePublishProfile>deploy</ActivePublishProfile>
+    <ActivePublishProfile>IIS Deploy</ActivePublishProfile>
     <MinimumOfficeToolsVersion>12.2</MinimumOfficeToolsVersion>
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
   </PropertyGroup>

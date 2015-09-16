@@ -75,13 +75,84 @@ function loadDropDownListData()
     });
 }
 
-
 function getProfileData() {
     var url = '/Employee/GetNameAndManagerFromProfile/?SPHostUrl=' + jsSPHostUrl;
    
     $.getJSON(url, { userID: $('#UserID').val() }, function (data) {
         $('#EmpManager').val(data.Manager);
         $('#Name').val(data.Name);
+    });
+}
+
+function bindUploadedAttachmentsToForm(data) {
+    var attachmentURL = jsSPHostUrl + "/Lists/EmpAttachments/" + data.NewFileName;
+    var inputAttachment = "<a target='_blank' href=" + attachmentURL + " title=" + data.FileName + ">" + data.FileName + "</a>";
+    var removeAttachment = '<a style="cursor: pointer" title="Delete Attachment" onclick="deleteAttachment(this, \'' + attachmentURL + '\')">Delete</a>';
+
+    var attachmentRow = "<tr><td>" + inputAttachment + " </td><td>" + removeAttachment + "</td></tr>";
+    $('#tbodyAttachments').append(attachmentRow);
+}
+
+function uploadAttachment() {
+    // Disable submit submit button until file gets uploaded to SharePoint library
+    var btnSubmit = document.getElementById('btnSubmit');
+    btnSubmit.disabled = true;
+
+    var url = '/Employee/UploadAttachment/?SPHostUrl=' + jsSPHostUrl;
+    var fileInput = document.getElementById('empAttachment');
+    var attachmentID = document.getElementById('AttachmentID').value;
+
+    var formdata = new FormData(); // Send form data to controller
+    formdata.append('file', fileInput.files[0]);
+    formdata.append('attachmentID', attachmentID);
+   
+    $.ajax({
+        type: "POST",
+        url: url,
+        dataType: "json",
+        data: formdata,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function (d) {
+            bindUploadedAttachmentsToForm(d);
+            var file = $("#empAttachment");
+            file.replaceWith(file.val('').clone(true));
+            btnSubmit.disabled = false; // Enable submit button after file upload
+        },
+        error: function (xhr, textStatus, errorThrown) {
+            alert(textStatus + ":" + errorThrown);
+            btnSubmit.disabled = false; // Enable submit button after file upload
+        }
+    });
+}
+
+function deleteAttachment(elem, fileRelativeUrl) {
+    var url = '/Employee/DeleteAttachment/?SPHostUrl=' + jsSPHostUrl;
+    var formdata = new FormData(); // Send form data to controller
+    formdata.append('fileRelativeUrl', fileRelativeUrl);
+
+    // Disable submit submit button until file gets removed from SharePoint library
+    var btnSubmit = document.getElementById('btnSubmit');
+    btnSubmit.disabled = true;
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        dataType: "json",
+        data: formdata,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function (d) {
+            var rowIndex = elem.parentNode.parentNode.rowIndex;
+            document.getElementById("tbAttachments").deleteRow(rowIndex);
+            btnSubmit.disabled = false; // Enable submit button after file deletion
+        },
+        error: function (xhr, textStatus, errorThrown) {
+            alert(xhr + ":" + textStatus + ":" + errorThrown);
+            btnSubmit.disabled = false; // Enable submit button after file deletion
+        }
     });
 }
 

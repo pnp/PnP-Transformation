@@ -19,6 +19,13 @@ namespace EmployeeRegistration.MVCWeb.Models
         public string Experience { get; set; }
     }
 
+    public class EmpAttachment
+    {
+        public string FileRelativeUrl { get; set; }
+
+        public string FileName { get; set; }
+    }
+
     public class Employee
     {
         public Employee()
@@ -51,5 +58,12 @@ namespace EmployeeRegistration.MVCWeb.Models
         public string ActionName { get; set; }
 
         public string SubmitButtonName { get; set; }
+
+        [DisplayName("Attachments")]
+        public List<EmpAttachment> Attachments { get; set; }
+
+        public int AttachmentsCount { get; set; }
+
+        public string AttachmentID { get; set; }
     }
 }
