@@ -7,6 +7,12 @@ using System.Web.Mvc;
 
 namespace EmployeeRegistration.MVCWeb.Models
 {
+    public enum UserOpType
+    {
+        AddUser = 1,
+        RemoveUser = 2
+    }
+
     public class Skill
     {
         public Skill()
@@ -22,8 +28,15 @@ namespace EmployeeRegistration.MVCWeb.Models
     public class EmpAttachment
     {
         public string FileRelativeUrl { get; set; }
-
+        public string FileUrl { get; set; }
         public string FileName { get; set; }
+    }
+
+    public class SiteGroup
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public bool Checked { get; set; }
     }
 
     public class Employee
@@ -61,9 +74,14 @@ namespace EmployeeRegistration.MVCWeb.Models
 
         [DisplayName("Attachments")]
         public List<EmpAttachment> Attachments { get; set; }
-
         public int AttachmentsCount { get; set; }
-
         public string AttachmentID { get; set; }
+        public bool isFileUploaded { get; set; }
+
+        public int[] PreviouslySelectedSiteGroups { get; set; }
+        public int PreviouslySelectedSiteGroupsCount { get; set; }
+        [DisplayName("Add User To Site Groups")]
+        public List<SiteGroup> SiteGroups { get; set; }
+        public int SiteGroupsCount { get; set; }
     }
 }

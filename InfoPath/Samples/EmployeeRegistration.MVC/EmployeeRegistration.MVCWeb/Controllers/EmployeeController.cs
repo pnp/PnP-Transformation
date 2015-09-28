@@ -26,6 +26,65 @@ namespace EmployeeRegistration.MVCWeb.Controllers
             return "";
         }
 
+        private string ConvertToEmptyString(string input)
+        {
+            if (input != null)
+            {
+                return input;
+            }
+
+            return string.Empty;
+        }
+
+        private string ConvertObjectToString(object input)
+        {
+            if (input != null)
+            {
+                return input.ToString();
+            }
+
+            return string.Empty;
+        }
+
+        private void LoadUserSiteGroups(ref Employee emp, ClientContext clientContext)
+        {
+            try
+            {
+                User user = clientContext.Web.EnsureUser(emp.UserID);
+                GroupCollection userGroups = user.Groups;
+                GroupCollection siteGroups = clientContext.Web.SiteGroups;
+                clientContext.Load(siteGroups, groups => groups.Include(group => group.Title, group => group.Id));
+                clientContext.Load(user);
+                clientContext.Load(userGroups);
+                clientContext.ExecuteQuery();
+
+                List<int> memberOf = new List<int>();
+                foreach (Group group in userGroups)
+                {
+                    memberOf.Add(group.Id);
+                }
+
+                List<SiteGroup> siteGropuList = new List<SiteGroup>();
+                foreach (var siteGroup in siteGroups)
+                {
+                    siteGropuList.Add(new SiteGroup
+                    {
+                        Name = siteGroup.Title,
+                        Id = siteGroup.Id,
+                        Checked = memberOf.Contains(siteGroup.Id)
+                    });
+                }
+                emp.SiteGroups = siteGropuList;
+                emp.SiteGroupsCount = siteGropuList.Count;
+                emp.PreviouslySelectedSiteGroups = memberOf.ToArray();
+                emp.PreviouslySelectedSiteGroupsCount = memberOf.Count;
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = ex.Message + "\n" + ex.StackTrace;
+            }
+        }
+
         [SharePointContextFilter]
         public ActionResult EmployeeForm()
         {
@@ -50,9 +109,6 @@ namespace EmployeeRegistration.MVCWeb.Controllers
                         List countryList = web.Lists.GetByTitle("EmpCountry");
                         ListItemCollection countryItems = countryList.GetItems(CamlQuery.CreateAllItemsQuery());
 
-                        PeopleManager peopleManager = new PeopleManager(clientContext);
-                        PersonProperties personProperties = peopleManager.GetMyProperties();
-
                         string itemID = Request.QueryString["itemId"];
                         ListItem emplistItem = null;
 
@@ -66,7 +122,6 @@ namespace EmployeeRegistration.MVCWeb.Controllers
 
                         clientContext.Load(desgItems);
                         clientContext.Load(countryItems);
-                        clientContext.Load(personProperties, p => p.AccountName);
                         clientContext.ExecuteQuery();
 
                         List<SelectListItem> empDesgList = new List<SelectListItem>();
@@ -84,62 +139,49 @@ namespace EmployeeRegistration.MVCWeb.Controllers
                         emp.Countries = new SelectList(cList, "Value", "Text");
 
                         string empDesignation = string.Empty;
-                        string cityVal = string.Empty;
                         int stateID = 0;
                         int countryId = 0;
 
                         if (emplistItem != null)
                         {
-                            if (emplistItem["EmpNumber"] != null)
-                            {
-                                emp.EmpNumber = emplistItem["EmpNumber"].ToString();
-                            }
-                            if (emplistItem["Title"] != null)
-                            {
-                                emp.Name = emplistItem["Title"].ToString();
-                            }
-                            if (emplistItem["UserID"] != null)
-                            {
-                                emp.UserID = emplistItem["UserID"].ToString();
-                            }
-                            if (emplistItem["EmpManager"] != null)
-                            {
-                                emp.EmpManager = emplistItem["EmpManager"].ToString();
-                            }
-                            if (emplistItem["Designation"] != null)
-                            {
-                                emp.Designation = emplistItem["Designation"].ToString();
-                            }
-                            if (emplistItem["Location"] != null)
-                            {
-                                cityVal = emplistItem["Location"].ToString();
-                            }
-                            
-                            ViewBag.JsCity = cityVal;
-                            List lstCity = web.Lists.GetByTitle("EmpCity");
-                            CamlQuery query = new CamlQuery();
-                            query.ViewXml = string.Format("<View><Query><Where><Eq><FieldRef Name='Title' /><Value Type='Text'>{0}</Value></Eq></Where></Query></View>", cityVal);
-                            ListItemCollection cityItems = lstCity.GetItems(query);
-                            clientContext.Load(cityItems);
-                            clientContext.ExecuteQuery();
-                            if (cityItems.Count > 0)
-                            {
-                                stateID = (cityItems[0]["State"] as FieldLookupValue).LookupId;
-                            }
-                            ViewBag.JsStateID = stateID;
+                            emp.EmpNumber = ConvertObjectToString(emplistItem["EmpNumber"]);
+                            emp.Name = ConvertObjectToString(emplistItem["Title"]);
+                            emp.UserID = ConvertObjectToString(emplistItem["UserID"]);
+                            emp.EmpManager = ConvertObjectToString(emplistItem["EmpManager"]);
+                            emp.Designation = ConvertObjectToString(emplistItem["Designation"]);
 
-                            List lstSate = web.Lists.GetByTitle("EmpState");
-                            query.ViewXml = string.Format("<View><Query><Where><Eq><FieldRef Name='ID' /><Value Type='Number'>{0}</Value></Eq></Where></Query></View>", stateID);
-                            ListItemCollection stateItems = lstSate.GetItems(query);
-                            clientContext.Load(stateItems);
-                            clientContext.ExecuteQuery();
-                            if (stateItems.Count > 0)
-                            {
-                                countryId = (stateItems[0]["Country"] as FieldLookupValue).LookupId;
-                            }
-                            emp.CountryID = countryId.ToString();
+                            string cityVal = ConvertObjectToString(emplistItem["Location"]);
+                            ViewBag.JsCity = "";
+                            ViewBag.JsStateID = "";
 
-                            string skillsData = emplistItem["Skills"].ToString();
+                            if (cityVal != "")
+                            {
+                                ViewBag.JsCity = cityVal;
+                                List lstCity = web.Lists.GetByTitle("EmpCity");
+                                CamlQuery query = new CamlQuery();
+                                query.ViewXml = string.Format("<View><Query><Where><Eq><FieldRef Name='Title' /><Value Type='Text'>{0}</Value></Eq></Where></Query></View>", cityVal);
+                                ListItemCollection cityItems = lstCity.GetItems(query);
+                                clientContext.Load(cityItems);
+                                clientContext.ExecuteQuery();
+                                if (cityItems.Count > 0)
+                                {
+                                    stateID = (cityItems[0]["State"] as FieldLookupValue).LookupId;
+                                }
+                                ViewBag.JsStateID = stateID;
+
+                                List lstSate = web.Lists.GetByTitle("EmpState");
+                                query.ViewXml = string.Format("<View><Query><Where><Eq><FieldRef Name='ID' /><Value Type='Number'>{0}</Value></Eq></Where></Query></View>", stateID);
+                                ListItemCollection stateItems = lstSate.GetItems(query);
+                                clientContext.Load(stateItems);
+                                clientContext.ExecuteQuery();
+                                if (stateItems.Count > 0)
+                                {
+                                    countryId = (stateItems[0]["Country"] as FieldLookupValue).LookupId;
+                                }
+                                emp.CountryID = countryId.ToString();
+                            }
+
+                            string skillsData = ConvertObjectToString(emplistItem["Skills"]);
                             string[] skills = skillsData.Split(';');
                             List<Skill> lsSkills = new List<Skill>();
                             foreach (string skillData in skills)
@@ -154,14 +196,14 @@ namespace EmployeeRegistration.MVCWeb.Controllers
                             emp.Skills = lsSkills;
                             emp.SkillsCount = lsSkills.Count;
 
-                            string attachementID = emplistItem["AttachmentID"].ToString();
+                            string attachementID = ConvertObjectToString(emplistItem["AttachmentID"]);
                             if (attachementID != "")
                             {
                                 List lstAttachments = web.Lists.GetByTitle("EmpAttachments");
                                 CamlQuery queryAttachments = new CamlQuery();
-                                query.ViewXml = string.Format("<View><Query><Where><Eq><FieldRef Name='AttachmentID' /><Value Type='Text'>{0}</Value></Eq></Where></Query></View>", attachementID);
+                                queryAttachments.ViewXml = string.Format("<View><Query><Where><Eq><FieldRef Name='AttachmentID' /><Value Type='Text'>{0}</Value></Eq></Where></Query></View>", attachementID);
 
-                                ListItemCollection attachmentItems = lstAttachments.GetItems(query);
+                                ListItemCollection attachmentItems = lstAttachments.GetItems(queryAttachments);
                                 clientContext.Load(attachmentItems);
                                 clientContext.ExecuteQuery();
 
@@ -173,7 +215,8 @@ namespace EmployeeRegistration.MVCWeb.Controllers
                                         lsAttachments.Add(new EmpAttachment
                                         {
                                             FileName = item["Title"].ToString(),
-                                            FileRelativeUrl = Request.QueryString["SPHostUrl"] + "\\Lists\\EmpAttachments\\" + item["FileLeafRef"].ToString()
+                                            FileUrl = Request.QueryString["SPHostUrl"] + "/Lists/EmpAttachments/" + item["FileLeafRef"].ToString(),
+                                            FileRelativeUrl = item["FileRef"].ToString()
                                         });
                                     }
                                 }
@@ -181,28 +224,39 @@ namespace EmployeeRegistration.MVCWeb.Controllers
                                 emp.Attachments = lsAttachments;
                                 emp.AttachmentsCount = lsAttachments.Count;
                             }
+                            else
+                            {
+                                emp.AttachmentID = Guid.NewGuid().ToString();
+                            }
 
                             emp.ActionName = "UpdateEmployeeToSPList";
                             emp.SubmitButtonName = "Update Employee";
                         }
                         else
                         {
+                            PeopleManager peopleManager = new PeopleManager(clientContext);
+                            PersonProperties personProperties = peopleManager.GetMyProperties();
+                            clientContext.Load(personProperties, p => p.AccountName);
+                            clientContext.ExecuteQuery();
+
                             if (personProperties != null && personProperties.AccountName != null)
                             {
-                                //ViewBag.UserID = personProperties.AccountName;
                                 emp.UserID = personProperties.AccountName;
                             }
+
                             List<Skill> lsSkills = new List<Skill>();
                             lsSkills.Add(new Skill { Technology = "", Experience = "" });
                             emp.Skills = lsSkills;
                             emp.SkillsCount = lsSkills.Count;
+
                             emp.AttachmentID = Guid.NewGuid().ToString();
+                            emp.isFileUploaded = false;
+
                             emp.ActionName = "AddEmployeeToSPList";
                             emp.SubmitButtonName = "Add Employee";
                         }
 
-
-
+                        LoadUserSiteGroups(ref emp, clientContext);
                     } //  if (clientContext != null)
                 } // using (var clientContext
 
@@ -216,17 +270,82 @@ namespace EmployeeRegistration.MVCWeb.Controllers
             return View(emp);
         }
 
+        private void AddOrRemoveUserToGroup(IEnumerable<int> groupIDs, UserOpType operationType, ClientContext clientContext, string userID)
+        {
+            if (groupIDs.Count() > 0)
+            {
+                GroupCollection collGroup = clientContext.Web.SiteGroups;
+
+                UserCreationInformation userCreationInfo = new UserCreationInformation();
+                userCreationInfo.LoginName = userID;
+
+                foreach (int groupID in groupIDs)
+                {
+                    Group oGroup = collGroup.GetById(groupID);
+                    if (operationType.Equals(UserOpType.AddUser))
+                    {
+                        oGroup.Users.Add(userCreationInfo);
+                        clientContext.ExecuteQuery();
+                    }
+                    else
+                    {
+                        User user = oGroup.Users.GetByLoginName(userID);
+                        oGroup.Users.Remove(user);
+                        clientContext.ExecuteQuery();
+                    }
+                } //  foreach (string group
+            } // if (groups.Count() > 0)            
+        }
+
+        private void AddUserToSelectedSiteGroups(Employee model, ClientContext clientContext, string userID)
+        {
+            List<int> selectedGroups = new List<int>();
+            int[] newGroups = new int[] { };
+            int[] prevGroups = model.PreviouslySelectedSiteGroups;
+
+            foreach (SiteGroup grp in model.SiteGroups)
+            {
+                if (grp.Checked)
+                {
+                    selectedGroups.Add(grp.Id);
+                }
+            }
+
+            if (selectedGroups.Count > 0)
+            {
+                if (prevGroups != null && prevGroups.Length > 0)
+                {
+                    newGroups = selectedGroups.ToArray();
+
+                    IEnumerable<int> deleteUserFromGroups = prevGroups.Except(newGroups);
+                    IEnumerable<int> addUserToGroups = newGroups.Except(prevGroups);
+
+                    AddOrRemoveUserToGroup(deleteUserFromGroups, UserOpType.RemoveUser, clientContext, userID);
+                    AddOrRemoveUserToGroup(addUserToGroups, UserOpType.AddUser, clientContext, userID);
+                }
+                else // Add user to site groups if there is no previously selected groups
+                {
+                    AddOrRemoveUserToGroup(selectedGroups, UserOpType.AddUser, clientContext, userID);
+                }
+            } // if (groups.Count > 0)
+            else if (prevGroups != null && prevGroups.Length > 0) // if enduser unselect all options, remove user from site group 
+            {
+                AddOrRemoveUserToGroup(prevGroups, UserOpType.RemoveUser, clientContext, userID);
+            }
+        }
 
         [HttpPost]
-
         public ActionResult AddEmployeeToSPList(EmployeeRegistration.MVCWeb.Models.Employee model)
         {
-            string number = model.EmpNumber;
-            string name = model.Name;
-            string designation = model.Designation;
             string SPHostUrl = Request.QueryString["SPHostUrl"];
-            string userName = string.Empty;
+
             StringBuilder sbSkills = new StringBuilder();
+            StringBuilder sbAttachments = new StringBuilder();
+
+            if (!model.isFileUploaded)
+            {
+                model.AttachmentID = "";
+            }
 
             foreach (var skill in model.Skills)
             {
@@ -242,17 +361,19 @@ namespace EmployeeRegistration.MVCWeb.Controllers
                     var itemCreateInfo = new ListItemCreationInformation();
                     var listItem = lstEmployee.AddItem(itemCreateInfo);
 
-                    listItem["EmpNumber"] = model.EmpNumber;
-                    listItem["Title"] = model.Name;
-                    listItem["UserID"] = model.UserID;
-                    listItem["EmpManager"] = model.EmpManager;
-                    listItem["Designation"] = model.Designation;
-                    listItem["Location"] = model.Location;
-                    listItem["Skills"] = sbSkills.ToString();
+                    listItem["EmpNumber"] = ConvertToEmptyString(model.EmpNumber);
+                    listItem["Title"] = ConvertToEmptyString(model.Name);
+                    listItem["UserID"] = ConvertToEmptyString(model.UserID);
+                    listItem["EmpManager"] = ConvertToEmptyString(model.EmpManager);
+                    listItem["Designation"] = ConvertToEmptyString(model.Designation);
+                    listItem["Location"] = ConvertToEmptyString(model.Location);
+                    listItem["Skills"] = ConvertToEmptyString(sbSkills.ToString());
                     listItem["AttachmentID"] = model.AttachmentID;
 
                     listItem.Update();
                     clientContext.ExecuteQuery();
+
+                    AddUserToSelectedSiteGroups(model, clientContext, model.UserID);
                 }
             } // using (var clientContext 
 
@@ -287,8 +408,15 @@ namespace EmployeeRegistration.MVCWeb.Controllers
                     listItem["Location"] = model.Location;
                     listItem["Skills"] = sbSkills.ToString();
 
+                    if (model.isFileUploaded)
+                    {
+                        listItem["AttachmentID"] = model.AttachmentID;
+                    }
+
                     listItem.Update();
                     clientContext.ExecuteQuery();
+
+                    AddUserToSelectedSiteGroups(model, clientContext, model.UserID);
                 }
             } // using (var clientContext 
 
@@ -310,7 +438,6 @@ namespace EmployeeRegistration.MVCWeb.Controllers
             try
             {
                 SharePointContext spContext = Session["Context"] as SharePointContext;
-
                 if (spContext == null)
                 {
                     spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
@@ -318,17 +445,14 @@ namespace EmployeeRegistration.MVCWeb.Controllers
 
                 using (var clientContext = spContext.CreateUserClientContextForSPHost())
                 {
-
                     if (clientContext != null)
                     {
-
                         var lstState = clientContext.Web.Lists.GetByTitle("EmpState");
                         CamlQuery query = new CamlQuery();
                         query.ViewXml = string.Format("<View><Query><Where><Eq><FieldRef Name='Country' /><Value Type='String'>{0}</Value></Eq></Where></Query></View>", selectedID);
+
                         ListItemCollection stateItems = lstState.GetItems(query);
-
                         clientContext.Load(stateItems);
-
                         clientContext.ExecuteQuery();
 
                         foreach (var item in stateItems)
@@ -341,7 +465,6 @@ namespace EmployeeRegistration.MVCWeb.Controllers
             catch (Exception ex)
             {
                 stateList.Add(new SelectListItem { Text = "Error: " + ex.Message, Value = "-1" });
-
             }
 
             return Json(new SelectList(stateList, "Value", "Text"), JsonRequestBehavior.AllowGet);
@@ -355,7 +478,6 @@ namespace EmployeeRegistration.MVCWeb.Controllers
             try
             {
                 SharePointContext spContext = Session["Context"] as SharePointContext;
-
                 if (spContext == null)
                 {
                     spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
@@ -363,17 +485,14 @@ namespace EmployeeRegistration.MVCWeb.Controllers
 
                 using (var clientContext = spContext.CreateUserClientContextForSPHost())
                 {
-
                     if (clientContext != null)
                     {
-
                         var lstCity = clientContext.Web.Lists.GetByTitle("EmpCity");
                         CamlQuery query = new CamlQuery();
                         query.ViewXml = string.Format("<View><Query><Where><Eq><FieldRef Name='State' /><Value Type='String'>{0}</Value></Eq></Where></Query></View>", selectedID);
+
                         ListItemCollection cityItems = lstCity.GetItems(query);
-
                         clientContext.Load(cityItems);
-
                         clientContext.ExecuteQuery();
 
                         foreach (var item in cityItems)
@@ -386,7 +505,6 @@ namespace EmployeeRegistration.MVCWeb.Controllers
             catch (Exception ex)
             {
                 cityList.Add(new SelectListItem { Text = "Error: " + ex.Message, Value = "-1" });
-
             }
 
             return Json(new SelectList(cityList, "Text", "Text"), JsonRequestBehavior.AllowGet);
@@ -402,7 +520,6 @@ namespace EmployeeRegistration.MVCWeb.Controllers
             try
             {
                 SharePointContext spContext = Session["Context"] as SharePointContext;
-
                 if (spContext == null)
                 {
                     spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
@@ -477,27 +594,34 @@ namespace EmployeeRegistration.MVCWeb.Controllers
                 }
             }
 
-            return Json(new { FileName = fileName, NewFileName = newFileName });
+            return Json(new { FileName = fileName, NewFileName = newFileName, FileRelativeURl = fileRelativeUrl });
         }
 
         [SharePointContextFilter]
         public JsonResult DeleteAttachment(string fileRelativeUrl)
         {
-            SharePointContext spContext = Session["Context"] as SharePointContext;
-            if (spContext == null)
+            try
             {
-                spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
-            }
-
-            using (var clientContext = spContext.CreateUserClientContextForSPHost())
-            {
-                if (clientContext != null)
+                SharePointContext spContext = Session["Context"] as SharePointContext;
+                if (spContext == null)
                 {
-                    Microsoft.SharePoint.Client.File fileToDelete = clientContext.Web.GetFileByServerRelativeUrl(fileRelativeUrl);
-                    clientContext.Load(fileToDelete);
-                    fileToDelete.DeleteObject();
-                    clientContext.ExecuteQuery();
+                    spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
                 }
+
+                using (var clientContext = spContext.CreateUserClientContextForSPHost())
+                {
+                    if (clientContext != null)
+                    {
+                        Microsoft.SharePoint.Client.File fileToDelete = clientContext.Web.GetFileByServerRelativeUrl(fileRelativeUrl);
+                        clientContext.Load(fileToDelete);
+                        fileToDelete.DeleteObject();
+                        clientContext.ExecuteQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message + "\n" + ex.StackTrace);
             }
 
             return Json("Attachment Deleted");

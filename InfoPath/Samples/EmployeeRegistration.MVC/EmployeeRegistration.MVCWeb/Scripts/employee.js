@@ -87,10 +87,11 @@ function getProfileData() {
 function bindUploadedAttachmentsToForm(data) {
     var attachmentURL = jsSPHostUrl + "/Lists/EmpAttachments/" + data.NewFileName;
     var inputAttachment = "<a target='_blank' href=" + attachmentURL + " title=" + data.FileName + ">" + data.FileName + "</a>";
-    var removeAttachment = '<a style="cursor: pointer" title="Delete Attachment" onclick="deleteAttachment(this, \'' + attachmentURL + '\')">Delete</a>';
+    var removeAttachment = '<a style="cursor: pointer" title="Delete Attachment" onclick="deleteAttachment(this, \'' + data.fileRelativeUrl + '\')">Delete</a>';
 
     var attachmentRow = "<tr><td>" + inputAttachment + " </td><td>" + removeAttachment + "</td></tr>";
     $('#tbodyAttachments').append(attachmentRow);
+    $("#isFileUploaded").val(true);
 }
 
 function uploadAttachment() {
@@ -128,13 +129,13 @@ function uploadAttachment() {
 }
 
 function deleteAttachment(elem, fileRelativeUrl) {
-    var url = '/Employee/DeleteAttachment/?SPHostUrl=' + jsSPHostUrl;
-    var formdata = new FormData(); // Send form data to controller
-    formdata.append('fileRelativeUrl', fileRelativeUrl);
-
     // Disable submit submit button until file gets removed from SharePoint library
     var btnSubmit = document.getElementById('btnSubmit');
     btnSubmit.disabled = true;
+
+    var url = '/Employee/DeleteAttachment/?SPHostUrl=' + jsSPHostUrl;
+    var formdata = new FormData(); // Send form data to controller
+    formdata.append('fileRelativeUrl', fileRelativeUrl);
 
     $.ajax({
         type: "POST",
@@ -150,7 +151,7 @@ function deleteAttachment(elem, fileRelativeUrl) {
             btnSubmit.disabled = false; // Enable submit button after file deletion
         },
         error: function (xhr, textStatus, errorThrown) {
-            alert(xhr + ":" + textStatus + ":" + errorThrown);
+            alert(textStatus + ":" + errorThrown + response.responseText);
             btnSubmit.disabled = false; // Enable submit button after file deletion
         }
     });
