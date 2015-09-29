@@ -25,7 +25,7 @@
         $("a")
             .filter(function () {
                 var authority = getAuthorityFromUrl(this.href);
-                if (!authority && /^#|:/.test(this.href)) {
+                if ((!authority && /^#|:/.test(this.href)) || (authority == null)) {
                     // Filters out anchors and urls with other unsupported protocols.
                     return false;
                 }
