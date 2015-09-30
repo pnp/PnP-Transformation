@@ -20,7 +20,7 @@
     <WorkflowPartId>{845e3717-8433-4cf8-9877-d586ae691188}</WorkflowPartId>
     <CspkgPartId>{4ed610b3-1a7d-406d-a798-4b1d533e5adf}</CspkgPartId>
     <SqlPackagePartId>{ae761b7e-b300-4cea-901f-465ad816c1a5}</SqlPackagePartId>
-    <ActivePublishProfile>EmpRegistration3</ActivePublishProfile>
+    <ActivePublishProfile>IIS Deploy</ActivePublishProfile>
     <MinimumOfficeToolsVersion>12.2</MinimumOfficeToolsVersion>
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
   </PropertyGroup>

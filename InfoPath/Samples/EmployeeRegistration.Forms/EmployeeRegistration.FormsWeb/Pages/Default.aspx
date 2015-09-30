@@ -94,16 +94,54 @@
                                     <tr>
                                         <td colspan="2">
                                             <asp:LinkButton ID="lnkAddSkills" OnClick="lnkAddSkills_Click" Text="Add New Skill" runat="server"></asp:LinkButton>
-
                                         </td>
                                     </tr>
                                 </table>
-
                             </ContentTemplate>
                         </asp:UpdatePanel>
-
                     </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top">Attachments</td>
+                    <td>
+                        <input id="hdnAttachmentID" type="hidden" runat="server" />
 
+                        <table>
+                            <asp:UpdatePanel ID="upAttachments" runat="server">
+                                <ContentTemplate>
+                                    <asp:Repeater ID="rptUploadedFiles" runat="server">
+                                        <ItemTemplate>
+                                            <tr>
+                                                <td>
+                                                    <asp:HyperLink Target="_blank" ID="rptAttachment" runat="server"
+                                                        Width="150px" MaxLength="50" Text='<%#Eval("FileName") %>' NavigateUrl='<%#Eval("FileUrl") %>'>
+                                                    </asp:HyperLink>
+                                                </td>
+                                                <td>
+                                                    <asp:LinkButton ID="rptDelete" Text="Delete" CommandArgument='<%#Eval("FileRelativeUrl") %>' OnClick="rptDelete_Click" runat="server">
+                                                    </asp:LinkButton>
+                                                </td>
+                                            </tr>
+                                        </ItemTemplate>
+                                    </asp:Repeater>
+                                </ContentTemplate>
+                            </asp:UpdatePanel>
+                            <tr>
+                                <td>
+                                    <asp:FileUpload ID="empAttachment" runat="server" />
+                                </td>
+                                <td>
+                                    <asp:Button ID="btnUpload" runat="server" Text="Upload" OnClick="btnUpload_Click" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <asp:Label ID="lblFileUrl" runat="server"></asp:Label>
+
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
                 </tr>
                 <!-- ToDo: Add user to site group --> 
                 <tr>

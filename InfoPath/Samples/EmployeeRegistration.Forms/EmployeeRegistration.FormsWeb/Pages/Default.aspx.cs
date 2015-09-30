@@ -204,13 +204,13 @@ namespace EmployeeRegistration.FormsWeb
 
                     if (emplistItem != null)
                     {
-                        txtEmpNumber.Text = emplistItem["EmpNumber"].ToString();
-                        txtName.Text = emplistItem["Title"].ToString();
-                        txtUserID.Text = emplistItem["UserID"].ToString();
-                        txtManager.Text = emplistItem["EmpManager"].ToString();
-                        ddlDesignation.SelectedValue = emplistItem["Designation"].ToString();
-                        
-                        string cityVal = emplistItem["Location"].ToString();
+                        txtEmpNumber.Text = ConvertObjectToString(emplistItem["EmpNumber"]);
+                        txtName.Text = ConvertObjectToString(emplistItem["Title"]);
+                        txtUserID.Text = ConvertObjectToString(emplistItem["UserID"]);
+                        txtManager.Text = ConvertObjectToString(emplistItem["EmpManager"]);
+                        ddlDesignation.SelectedValue = ConvertObjectToString(emplistItem["Designation"]);
+
+                        string cityVal = ConvertObjectToString(emplistItem["Location"]);
                         string stateVal = GetStateValFromCity(clientContext, web, cityVal);
                         string countryVal = GetCountryValFromState(clientContext, web, stateVal);
 
@@ -224,6 +224,18 @@ namespace EmployeeRegistration.FormsWeb
                         }
 
                         LoadSkills(emplistItem["Skills"].ToString());
+
+                        string attachementID = ConvertObjectToString(emplistItem["AttachmentID"]);
+                        if (attachementID != "")
+                        {
+                            hdnAttachmentID.Value = attachementID;
+                            LoadAttachmentsFromSPList(attachementID, clientContext);
+                        }
+                        else
+                        {
+                            hdnAttachmentID.Value = Guid.NewGuid().ToString();
+                        }
+
                         btnUpdate.Visible = true;
                     } // if (emplistItem != null)
                 }
@@ -240,6 +252,7 @@ namespace EmployeeRegistration.FormsWeb
                     }
 
                     AddEmptySkill();
+                    hdnAttachmentID.Value = Guid.NewGuid().ToString();
 
                     btnSave.Visible = true;
                 }
@@ -439,9 +452,13 @@ namespace EmployeeRegistration.FormsWeb
                         TextBox tbTech = (TextBox)skill.FindControl("rptTxtTechnology");
                         TextBox tbSkill = (TextBox)skill.FindControl("rptTxtExperience");
                         sbSkills.Append(tbTech.Text).Append(",").Append(tbSkill.Text).Append(";");
-                    }
-                    
+                    }                    
                     listItem["Skills"] = sbSkills.ToString();
+
+                    if (rptUploadedFiles.Items.Count > 0)
+                    {
+                        listItem["AttachmentID"] = hdnAttachmentID.Value;
+                    }
 
                     listItem.Update();
                     clientContext.ExecuteQuery();
@@ -527,6 +544,11 @@ namespace EmployeeRegistration.FormsWeb
 
                         listItem["Skills"] = sbSkills.ToString();
 
+                        if (rptUploadedFiles.Items.Count > 0)
+                        {
+                            listItem["AttachmentID"] = hdnAttachmentID.Value;
+                        }
+
                         listItem.Update();
                         clientContext.ExecuteQuery();
                     }
@@ -546,6 +568,134 @@ namespace EmployeeRegistration.FormsWeb
                 }
             }
         }
-       
+
+        private string ConvertObjectToString(object input)
+        {
+            if (input != null)
+            {
+                return input.ToString();
+            }
+
+            return string.Empty;
+        }
+        private DataTable GetAttachmentsTable()
+        {
+            DataTable table = new DataTable();
+            table.Columns.Add("FileName", typeof(string));
+            table.Columns.Add("FileUrl", typeof(string));
+            table.Columns.Add("FileRelativeUrl", typeof(string));
+
+            return table;
+        }
+
+        private DataTable GetAttachmentsFromRepeaterControl()
+        {
+            DataTable table = GetAttachmentsTable();
+
+            RepeaterItemCollection attachments = rptUploadedFiles.Items;
+            foreach (RepeaterItem attachment in attachments)
+            {
+                HyperLink hlAttachment = (HyperLink)attachment.FindControl("rptAttachment");
+                LinkButton lbDelete = (LinkButton)attachment.FindControl("rptDelete");
+                table.Rows.Add(hlAttachment.Text, hlAttachment.NavigateUrl, lbDelete.CommandArgument);
+            }
+
+            return table;
+        }
+
+        private void LoadAttachmentsFromSPList(string attachementID, ClientContext clientContext)
+        {
+            DataTable tblAttachments = GetAttachmentsTable();
+
+            List lstAttachments = clientContext.Web.Lists.GetByTitle("EmpAttachments");
+            CamlQuery queryAttachments = new CamlQuery();
+            queryAttachments.ViewXml = string.Format("<View><Query><Where><Eq><FieldRef Name='AttachmentID' /><Value Type='Text'>{0}</Value></Eq></Where></Query></View>", attachementID);
+
+            var attachmentItems = lstAttachments.GetItems(queryAttachments);
+            clientContext.Load(attachmentItems);
+            clientContext.ExecuteQuery();
+
+            if (attachmentItems.Count > 0)
+            {
+                foreach (var item in attachmentItems)
+                {
+                    tblAttachments.Rows.Add(item["Title"].ToString(),
+                                    string.Format("{0}/Lists/EmpAttachments/{1}", Request.QueryString["SPHostUrl"], item["FileLeafRef"].ToString()),
+                                    item["FileRef"].ToString());
+                }
+            }
+
+            rptUploadedFiles.DataSource = tblAttachments;
+            rptUploadedFiles.DataBind();
+        }
+
+        protected void btnUpload_Click(object sender, EventArgs e)
+        {
+            string fileName = empAttachment.FileName;
+            string newFileName = string.Empty;
+            string fileRelativeUrl = string.Empty;
+
+            using (var clientContext = GetClientContext())
+            {
+                if (clientContext != null)
+                {
+                    using (var fs = empAttachment.FileContent)
+                    {
+                        System.IO.FileInfo fileInfo = new System.IO.FileInfo(fileName);
+                        newFileName = string.Format("{0}{1}", Guid.NewGuid(), fileInfo.Extension);
+
+                        List attachmentLib = clientContext.Web.Lists.GetByTitle("EmpAttachments");
+                        Folder attachmentLibFolder = attachmentLib.RootFolder;
+                        clientContext.Load(attachmentLibFolder);
+                        clientContext.ExecuteQuery();
+                        fileRelativeUrl = String.Format("{0}/{1}", attachmentLibFolder.ServerRelativeUrl, newFileName);
+
+                        var fileCreationInformation = new FileCreationInformation();
+                        fileCreationInformation.ContentStream = fs;
+                        fileCreationInformation.Url = fileRelativeUrl;
+
+                        Microsoft.SharePoint.Client.File uploadFile = attachmentLibFolder.Files.Add(fileCreationInformation);
+                        uploadFile.ListItemAllFields["Title"] = fileName;
+                        uploadFile.ListItemAllFields["AttachmentID"] = hdnAttachmentID.Value;
+                        uploadFile.ListItemAllFields.Update();
+                        clientContext.ExecuteQuery();
+
+                        string fileURl = string.Format("{0}/Lists/EmpAttachments/{1}", Request.QueryString["SPHostUrl"], newFileName);
+                        DataTable tblAattachments = GetAttachmentsFromRepeaterControl();
+                        tblAattachments.Rows.Add(fileName, fileURl, fileRelativeUrl);
+                        rptUploadedFiles.DataSource = tblAattachments;
+                        rptUploadedFiles.DataBind();
+                    }
+                } // if (clientContext != null)
+            }
+
+        }
+
+        protected void rptDelete_Click(object sender, EventArgs e)
+        {
+            LinkButton lnkDelete = (LinkButton)sender;
+            if (lnkDelete != null)
+            {
+                int deleteAttachmentIndex = ((RepeaterItem)lnkDelete.NamingContainer).ItemIndex;
+                string fileRelativeUrl = lnkDelete.CommandArgument.ToString();
+
+                using (var clientContext = GetClientContext())
+                {
+                    if (clientContext != null)
+                    {
+                        Microsoft.SharePoint.Client.File fileToDelete = clientContext.Web.GetFileByServerRelativeUrl(fileRelativeUrl);
+                        clientContext.Load(fileToDelete);
+                        fileToDelete.DeleteObject();
+                        clientContext.ExecuteQuery();
+
+                        DataTable tblAattachments = GetAttachmentsFromRepeaterControl();
+                        tblAattachments.Rows[deleteAttachmentIndex].Delete();
+                        rptUploadedFiles.DataSource = tblAattachments;
+                        rptUploadedFiles.DataBind();
+                    } // if (clientContext != null)
+                } // using (var clientContext = GetClientContext())
+            } // if (lnkDelete != null)
+        } // protected void rptDelete_Click
+
     }
 }
