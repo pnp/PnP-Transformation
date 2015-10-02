@@ -134,16 +134,24 @@
                                     <asp:Button ID="btnUpload" runat="server" Text="Upload" OnClick="btnUpload_Click" />
                                 </td>
                             </tr>
-                            <tr>
-                                <td>
-                                    <asp:Label ID="lblFileUrl" runat="server"></asp:Label>
-
-                                </td>
-                            </tr>
                         </table>
                     </td>
                 </tr>
-                <!-- ToDo: Add user to site group --> 
+                <tr>
+                    <td style="vertical-align: top">Add user to site groups</td>
+                    <td style="margin-left: 40px">
+                        <input type="hidden" id="hdnPreviouslySelectedSiteGroups" runat="server" />
+                        <asp:CheckBoxList ID="cblSiteGroups" runat="server" Width="500px"></asp:CheckBoxList>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+
+                        <asp:Button ID="Button1" Text="Save" Visible="false" OnClick="btnSave_Click" runat="server" />
+                        <asp:Button ID="Button2" Text="Update" Visible="false" OnClick="btnUpdate_Click" runat="server" />
+                    </td>
+                </tr>
                 <tr>
                     <td>
 

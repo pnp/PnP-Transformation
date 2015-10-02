@@ -16,6 +16,12 @@ namespace EmployeeRegistration.FormsWeb
 {
     public partial class Default : System.Web.UI.Page
     {
+        private enum UserOpType
+        {
+            AddUser = 1,
+            RemoveUser = 2
+        }
+
         protected void Page_PreInit(object sender, EventArgs e)
         {
             Uri redirectUrl;
@@ -257,6 +263,7 @@ namespace EmployeeRegistration.FormsWeb
                     btnSave.Visible = true;
                 }
 
+                LoadUserSiteGroups(clientContext);
             } // using (var clientContext 
         }
 
@@ -462,6 +469,8 @@ namespace EmployeeRegistration.FormsWeb
 
                     listItem.Update();
                     clientContext.ExecuteQuery();
+
+                    AddUserToSelectedSiteGroups(clientContext);
                 }
             }
             catch (Exception ex)
@@ -551,6 +560,8 @@ namespace EmployeeRegistration.FormsWeb
 
                         listItem.Update();
                         clientContext.ExecuteQuery();
+
+                        AddUserToSelectedSiteGroups(clientContext);
                     }
                 }
                 catch (Exception ex)
@@ -697,5 +708,96 @@ namespace EmployeeRegistration.FormsWeb
             } // if (lnkDelete != null)
         } // protected void rptDelete_Click
 
+        private void LoadUserSiteGroups(ClientContext clientContext)
+        {
+            User user = clientContext.Web.EnsureUser(txtUserID.Text);
+            GroupCollection userGroups = user.Groups;
+            GroupCollection siteGroups = clientContext.Web.SiteGroups;
+            clientContext.Load(siteGroups, groups => groups.Include(group => group.Title, group => group.Id));
+            clientContext.Load(user);
+            clientContext.Load(userGroups);
+            clientContext.ExecuteQuery();
+
+            List<int> memberOf = new List<int>();
+            foreach (Group group in userGroups)
+            {
+                memberOf.Add(group.Id);
+            }
+
+            foreach (var siteGroup in siteGroups)
+            {
+                var ltSiteGroup = new System.Web.UI.WebControls.ListItem(siteGroup.Title, siteGroup.Id.ToString());
+                ltSiteGroup.Selected = memberOf.Contains(siteGroup.Id);
+                cblSiteGroups.Items.Add(ltSiteGroup);
+            }
+
+            hdnPreviouslySelectedSiteGroups.Value = String.Join(",", memberOf);
+        }
+
+        private void AddOrRemoveUserToGroup(IEnumerable<string> groupIDs, UserOpType operationType, ClientContext clientContext)
+        {
+            if (groupIDs.Count() > 0)
+            {
+                string userID = txtUserID.Text;
+                GroupCollection collGroup = clientContext.Web.SiteGroups;
+
+                UserCreationInformation userCreationInfo = new UserCreationInformation();
+                userCreationInfo.LoginName = userID;
+
+                foreach (string groupID in groupIDs)
+                {
+                    Group oGroup = collGroup.GetById(Convert.ToInt32(groupID));
+                    if (operationType.Equals(UserOpType.AddUser))
+                    {
+                        oGroup.Users.Add(userCreationInfo);
+                        clientContext.ExecuteQuery();
+                    }
+                    else
+                    {
+                        User user = oGroup.Users.GetByLoginName(userID);
+                        oGroup.Users.Remove(user);
+                        clientContext.ExecuteQuery();
+                    }
+                } //  foreach (string group                
+
+            } // if (groups.Count() > 0)            
+        }
+
+        private void AddUserToSelectedSiteGroups(ClientContext clientContext)
+        {
+            List<string> selectedGroups = new List<string>();
+            string[] newGroups = new string[] { };
+            string[] prevGroups = hdnPreviouslySelectedSiteGroups.Value.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                        
+            foreach (System.Web.UI.WebControls.ListItem grp in cblSiteGroups.Items)
+            {
+                if (grp.Selected)
+                {
+                    selectedGroups.Add(grp.Value);
+                }
+            }
+
+            if (selectedGroups.Count > 0)
+            {
+                if (prevGroups != null && prevGroups.Length > 0)
+                {
+                    newGroups = selectedGroups.ToArray();
+
+                    IEnumerable<string> deleteUserFromGroups = prevGroups.Except(newGroups);
+                    IEnumerable<string> addUserToGroups = newGroups.Except(prevGroups);
+
+                    AddOrRemoveUserToGroup(deleteUserFromGroups, UserOpType.RemoveUser, clientContext);
+                    AddOrRemoveUserToGroup(addUserToGroups, UserOpType.AddUser, clientContext);
+                }
+                else // Add user to site groups if there is no previously selected groups
+                {
+                    AddOrRemoveUserToGroup(selectedGroups, UserOpType.AddUser, clientContext);
+                }
+            } // if (groups.Count > 0)
+            else if (prevGroups != null && prevGroups.Length > 0) // if enduser unselect all options, remove user from site group 
+            {
+                AddOrRemoveUserToGroup(prevGroups, UserOpType.RemoveUser, clientContext);
+            }
+        } // private void AddUserToSelectedSiteGroups
     }
 }
