@@ -28,7 +28,7 @@ Version  | Date | Comments
 # Introduction #
 This sample is implementing the functionality of the reference InfoPath form using plain (old) ASP.Net web forms. 
 
-![](http://i.imgur.com/8BVEfCU.png)
+![](http://i.imgur.com/96OyeMB.png)
 
 # Application architecture #
 The below diagram shows the application architecture used for this sample:
