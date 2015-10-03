@@ -144,14 +144,6 @@
                         <asp:CheckBoxList ID="cblSiteGroups" runat="server" Width="500px"></asp:CheckBoxList>
                     </td>
                 </tr>
-
-                <tr>
-                    <td>
-
-                        <asp:Button ID="Button1" Text="Save" Visible="false" OnClick="btnSave_Click" runat="server" />
-                        <asp:Button ID="Button2" Text="Update" Visible="false" OnClick="btnUpdate_Click" runat="server" />
-                    </td>
-                </tr>
                 <tr>
                     <td>
 
