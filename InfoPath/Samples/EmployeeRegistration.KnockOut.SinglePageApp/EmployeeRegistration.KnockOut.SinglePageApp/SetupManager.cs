@@ -183,6 +183,31 @@ namespace EmployeeRegistration.KnockOut.SinglePageApp
                 Console.WriteLine("Designation list was already available");
             }
 
+            List empAttachmentsList = null;
+            if (!ctx.Web.ListExists("EmpAttachments"))
+            {
+                Console.WriteLine("EmpAttachments list...");
+                empAttachmentsList = ctx.Web.CreateList(ListTemplateType.DocumentLibrary, "EmpAttachments", false, false, "Lists/EmpAttachments", false);
+                ctx.Load(empAttachmentsList);
+                ctx.ExecuteQueryRetry();
+
+                empAttachmentsList.CreateField(@"<Field Type=""Text"" DisplayName=""AttachmentID"" ID=""{E6FAC176-F466-4174-9785-7FB9611CBC00}"" Name=""AttachmentID""></Field>", false);
+                empAttachmentsList.Update();
+                ctx.Load(empAttachmentsList.DefaultView, p => p.ViewFields);
+                ctx.ExecuteQueryRetry();
+
+                // Add fields to view
+                empAttachmentsList.DefaultView.ViewFields.Add("AttachmentID");
+                empAttachmentsList.DefaultView.Update();
+                ctx.ExecuteQueryRetry();
+
+            }
+            else
+            {
+                empAttachmentsList = ctx.Web.GetListByUrl("Lists/EmpAttachments");
+                Console.WriteLine("EmpAttachments list was already available");
+            }
+
             List employeeList = null;
             if (!ctx.Web.ListExists("Employees"))
             {
@@ -197,6 +222,7 @@ namespace EmployeeRegistration.KnockOut.SinglePageApp
                 employeeList.CreateField(@"<Field Type=""Text"" DisplayName=""Designation"" ID=""{AB230804-C137-4ED8-A6D6-722037BDDA3D}"" Name=""Designation""></Field>", false);
                 employeeList.CreateField(@"<Field Type=""Text"" DisplayName=""Location"" ID=""{2EE32832-5EF0-41D0-8CD3-3DE7B9616C21}"" Name=""Location""></Field>", false);
                 employeeList.CreateField(@"<Field Type=""Text"" DisplayName=""Skills"" ID=""{89C02660-822D-4F41-881D-1D533C56017E}"" Name=""Skills""></Field>", false);
+                employeeList.CreateField(@"<Field Type=""Text"" DisplayName=""AttachmentID"" ID=""{53A31281-1C25-4D00-B785-40C71D37AE7B}"" Name=""AttachmentID""></Field>", false);
                 employeeList.Update();
                 ctx.Load(employeeList.DefaultView, p => p.ViewFields);
                 ctx.ExecuteQueryRetry();
@@ -208,6 +234,7 @@ namespace EmployeeRegistration.KnockOut.SinglePageApp
                 employeeList.DefaultView.ViewFields.Add("Designation");
                 employeeList.DefaultView.ViewFields.Add("Location");
                 employeeList.DefaultView.ViewFields.Add("Skills");
+                employeeList.DefaultView.ViewFields.Add("AttachmentID");
                 employeeList.DefaultView.Update();
                 ctx.ExecuteQueryRetry();
 

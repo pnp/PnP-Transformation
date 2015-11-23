@@ -66,12 +66,31 @@
                     </td>
                 </tr>
                 <tr>
+                    <th style="text-align: right; vertical-align: top;">Attachements</th>
+                    <td>
+                        <table>
+                             <tbody data-bind="foreach: Attachments">
+                                <tr>
+                                    <td><a target='_blank' data-bind="attr: { href: attachmentURL, title: fileName }, text: fileName"></a></td>
+                                    <td><a style="cursor: pointer" title="Delete Attachment" data-bind="event:{click: $root.deleteAttachment.bind($data,fileRelativeUrl)}">Delete</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table>
+                            <tr>
+                                <td><input id="empAttachment" type="file"  data-bind="event: {change: changeEmpAttachmentFileInfo}"></td>
+                                <td><button data-bind="click: uploadAttachment">Upload</button></td>
+                            </tr>
+                        </table>                        
+                    </td>
+                </tr>
+                <tr>
                     <td colspan="2">
                         <!-- ko if:isNewForm -->
-                        <p><button data-bind="click: save">Save</button></p>
+                        <p><button id="btnSave" data-bind="click: save">Save</button></p>
                         <!-- /ko -->
                         <!-- ko ifnot:isNewForm -->
-                        <p><button data-bind="click: update">Update</button></p>
+                        <p><button id="btnUpdate" data-bind="click: update">Update</button></p>
                         <!-- /ko -->
                     </td>
                 </tr>

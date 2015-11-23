@@ -15,6 +15,80 @@ function getListItemType(name) {
     return "SP.Data." + name[0].toUpperCase() + name.substring(1) + "ListItem";
 }
 
+function getFileBuffer(file) {
+    var deferred = jQuery.Deferred();
+    var reader = new FileReader();
+    reader.onloadend = function (e) {
+        deferred.resolve(e.target.result);
+    }
+    reader.onerror = function (e) {
+        deferred.reject(e.target.error);
+    }
+    reader.readAsArrayBuffer(file);
+    return deferred.promise();
+}
+
+function uploadDocumentInSharePointLibrary(arrayBuffer, libraryName, fileName) {
+    var url = _spPageContextInfo.webAbsoluteUrl + "/_api/web/getfolderbyserverrelativeurl('Lists/" + libraryName + "')/files/add(url='" + fileName + "')";
+    
+    var uploadDoc = jQuery.ajax({
+        url: url,
+        method: "POST",
+        data: arrayBuffer,
+        processData: false,
+        contentType: "application/json;odata=verbose",
+        headers: {
+            "accept": "application/json;odata=verbose",
+            "X-RequestDigest": $("#__REQUESTDIGEST").val()
+        }
+    });
+
+    return uploadDoc;
+}
+
+function getUploadedAttachmentItemProperties(file) {
+    var attachmentItem = jQuery.ajax({
+        url: file.ListItemAllFields.__deferred.uri,
+        type: "GET",
+        dataType: "json",
+        headers: {
+            Accept: "application/json;odata=verbose"
+        }
+    });
+
+    return attachmentItem;
+}
+
+function updateUploadedDocItemFields(item, libraryName, fileName, attachmentID) {
+    var url = _spPageContextInfo.webAbsoluteUrl + "/_api/web/Lists/getByTitle('" + libraryName + "')/Items(" + item.Id + ")";
+    
+   var updateFields = jQuery.ajax({
+        url: url,
+        type: "POST",
+        data: JSON.stringify({
+            "__metadata": { type: getListItemType(libraryName) },
+            Title: fileName,
+            AttachmentID: attachmentID
+        }),
+        headers: {
+            Accept: "application/json;odata=verbose",
+            "Content-Type": "application/json;odata=verbose",
+            "X-RequestDigest": jQuery("#__REQUESTDIGEST").val(),
+            "IF-MATCH": item.__metadata.etag,
+            "X-Http-Method": "MERGE"
+        }
+    });
+
+   return updateFields;
+}
+
+function failHandler(jqXHR, textStatus, errorThrown, btnForm) {
+    btnForm.disabled = false;
+    var response = JSON.parse(jqXHR.responseText);
+    var message = response ? response.error.message.value : textStatus;
+    alert("Error: " + message);
+}
+
 function EmpViewModel() {
     var self = this;
     // generic view properties
@@ -39,8 +113,104 @@ function EmpViewModel() {
     self.UserID = ko.observable();    
     self.EmpManager = ko.observable();
     self.CountryID = ko.observable();
-    
-    // Push first empty skills record 
+    self.AttachmentID = ko.observable();
+    self.EmpAttachment = ko.observable();
+    self.Attachments = ko.observableArray([]);
+
+    // Add attachment/file info to attachments collection
+    self.addAttachment = function (libraryName, newFileName, fileName) {
+        var fileRelativeUrl = "/Lists/" + libraryName + "/" + newFileName;
+        var attachmentURL = _spPageContextInfo.webAbsoluteUrl + fileRelativeUrl;
+
+        self.Attachments.push({
+            attachmentURL: attachmentURL,
+            fileName: fileName,
+            fileRelativeUrl: newFileName
+        });
+    };
+
+    // Delete uploaded attachment from library
+    self.deleteAttachment = function (fileName, data, event) {
+        var deleteFileUrl = _spPageContextInfo.webAbsoluteUrl + "/_api/web/getfolderbyserverrelativeurl('Lists/EmpAttachments')/files('" + fileName + "')";
+       
+        $.ajax({
+            url: deleteFileUrl,
+            type: "POST",
+            headers: {
+                "Accept": "application/json;odata=verbose",
+                "Content-Type": "application/json;odata=verbose",
+                "X-RequestDigest": $("#__REQUESTDIGEST").val(),
+                "IF-MATCH": "*",
+                "X-Http-Method": "DELETE"
+            },
+            success: function (response) {
+                self.Attachments.remove(data);
+            },
+            error: function (error) {
+                alert(JSON.stringify(error));
+            }
+        });
+    };
+
+    // Upload attachment to library
+    self.uploadAttachment = function () {
+        var attachment = self.EmpAttachment();
+        if (attachment === undefined) {
+            alert("Please upload a file");
+            return;
+        }
+
+        var btnForm;
+        // Disable submit button until file gets uploaded to SharePoint library
+        if (self.isNewForm()) {
+            btnForm = document.getElementById('btnSave');
+        }
+        else {
+            btnForm = document.getElementById('btnUpdate');
+        }
+        btnForm.disabled = true;
+
+        var libraryName = "EmpAttachments";
+        var file = attachment.files[0];
+        var fileName = file.name;
+        var file_name_array = fileName.split(".");
+        var file_extension = file_name_array[file_name_array.length - 1];
+        var newFileName = SP.Guid.newGuid().toString() + "." + file_extension;
+        
+        var getFile = getFileBuffer(file);
+        getFile.done(function (arrayBuffer) {
+            var uploadDocUsingRestApi = uploadDocumentInSharePointLibrary(arrayBuffer, libraryName, newFileName);
+            uploadDocUsingRestApi.done(function (data, textStatus, jqXHR) {
+                var uploadedDocItem = getUploadedAttachmentItemProperties(data.d);
+                uploadedDocItem.done(function (data, textStatus, jqXHR) {
+                    var updateFileProperties = updateUploadedDocItemFields(data.d, libraryName, fileName, self.AttachmentID());
+                    updateFileProperties.done(function (data, textStatus, jqXHR) {
+                        btnForm.disabled = false;
+                        self.addAttachment(libraryName, newFileName, fileName);
+                        var inputEmpAttachment = $("#empAttachment");
+                        inputEmpAttachment.replaceWith(inputEmpAttachment.val('').clone(true));
+                        self.EmpAttachment(undefined);
+                    });
+                    updateFileProperties.fail(function (jqXHR, textStatus, errorThrown) {
+                        failHandler(jqXHR, textStatus, errorThrown, btnForm);
+                    });
+                });
+                uploadedDocItem.fail(function (jqXHR, textStatus, errorThrown) {
+                    failHandler(jqXHR, textStatus, errorThrown, btnForm);
+                });
+            });
+            uploadDocUsingRestApi.fail(function (jqXHR, textStatus, errorThrown) {
+                failHandler(jqXHR, textStatus, errorThrown, btnForm);
+            });
+
+        });
+        getFile.fail(function (error) { alert("Error in reading file: " + error.responseText); });
+    };
+
+    self.changeEmpAttachmentFileInfo = function (data, event) {
+        self.EmpAttachment(event.currentTarget);
+    };
+
     self.addSkill = function () {
         self.Skills.push({
             technology: "",
@@ -172,7 +342,8 @@ function EmpViewModel() {
             "Location": self.Location(),
             "Skills": self.skillsToString(),
             "UserID": self.UserID(),
-            "EmpManager": self.EmpManager()
+            "EmpManager": self.EmpManager(),
+            "AttachmentID": self.AttachmentID()
         };
     };
 
@@ -331,9 +502,27 @@ function EmpViewModel() {
         // Indicate all data for this form is loaded
         self.isFormLoaded(true);
     };
-
+    
+    // Load all attachments of current item
+    self.loadAttachments = function (aID) {
+        var url = _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('EmpAttachments')/items/?$select=File/Name,Title&$expand=File&$filter=AttachmentID eq '" + aID + "'";
+        $.ajax({
+            url: url,
+            type: "GET",
+            headers: { "accept": "application/json;odata=verbose" },
+            success: function (data) {
+                $.each(data.d.results, function (k, l) {
+                    self.addAttachment("EmpAttachments", l.File.Name, l.Title);
+                });
+            },
+            error: function (error) {
+                alert(JSON.stringify(error));
+            }
+        });
+    };       
+    
     //Load data that's needed to initialize the form (designations)
-    self.initNewFormData = function () {
+   self.initNewFormData = function () {
         var siteURL = _spPageContextInfo.webAbsoluteUrl;
         var designationListURL = siteURL + "/_api/web/lists/getbytitle('" + designationListname + "')/items";
 
@@ -371,6 +560,7 @@ function EmpViewModel() {
             }
         });
 
+        self.AttachmentID(SP.Guid.newGuid().toString());
     };
 
     // Load the SharePoint list item that we're editing
@@ -389,6 +579,7 @@ function EmpViewModel() {
                 self.Designation(data.d.Designation);
                 self.loadLocationDropDowns(data.d.Location);
                 self.loadSkills(data.d.Skills);
+                self.loadAttachments(data.d.AttachmentID);
             },
             error: function (error) {
                 alert(JSON.stringify(error));
