@@ -505,6 +505,7 @@ function EmpViewModel() {
     
     // Load all attachments of current item
     self.loadAttachments = function (aID) {
+        self.AttachmentID(aID);
         var url = _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('EmpAttachments')/items/?$select=File/Name,Title&$expand=File&$filter=AttachmentID eq '" + aID + "'";
         $.ajax({
             url: url,
