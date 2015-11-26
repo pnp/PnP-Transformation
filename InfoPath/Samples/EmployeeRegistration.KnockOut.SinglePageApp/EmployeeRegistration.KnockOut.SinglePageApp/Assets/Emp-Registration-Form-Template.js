@@ -85,6 +85,19 @@
                     </td>
                 </tr>
                 <tr>
+                    <th style="text-align: right; vertical-align: top;">Site Groups</th>
+                    <td>
+                        <table>
+                           <tbody data-bind="foreach: SiteGroups">
+                            <tr>
+                               <td><input type="checkbox" data-bind="value: id, checked:$root.UserSiteGroups" /></td>
+                               <td><span data-bind="text: name"></span></td>
+                            </tr>
+                           </tbody>
+                        </table>                        
+                    </td>
+                </tr>
+                <tr>
                     <td colspan="2">
                         <!-- ko if:isNewForm -->
                         <p><button id="btnSave" data-bind="click: save">Save</button></p>

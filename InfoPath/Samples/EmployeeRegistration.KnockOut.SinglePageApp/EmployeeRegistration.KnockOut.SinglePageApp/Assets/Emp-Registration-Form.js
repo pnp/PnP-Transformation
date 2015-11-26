@@ -9,8 +9,6 @@ var isStatesLoaded;
 var isCitiesLoaded;
 var isDesignationsLoaded;
 
-var currentUser;
-
 function getListItemType(name) {
     return "SP.Data." + name[0].toUpperCase() + name.substring(1) + "ListItem";
 }
@@ -110,12 +108,61 @@ function EmpViewModel() {
     self.States = ko.observableArray([]);
     self.Cities = ko.observableArray([]);
     self.Skills = ko.observableArray([]);
-    self.UserID = ko.observable();    
+    self.UserID = ko.observable();
+    self.CurrentUser = ko.observable();
     self.EmpManager = ko.observable();
     self.CountryID = ko.observable();
     self.AttachmentID = ko.observable();
     self.EmpAttachment = ko.observable();
     self.Attachments = ko.observableArray([]);
+    self.SiteGroups = ko.observableArray([]);
+    self.UserSiteGroups = ko.observableArray([]);
+    self.PreviouslySeletedSiteGroups = ko.observableArray([]);
+
+    // Get site groups of current user id
+    self.getUserGroups = function () {
+        var userID = encodeURIComponent(self.CurrentUser());
+        var userGroupsURL = _spPageContextInfo.webAbsoluteUrl + "/_api/web/siteusers(@v)/groups?@v='" + userID + "'";
+
+        $.ajax({
+            url: userGroupsURL,
+            type: "GET",
+            headers: { "accept": "application/json;odata=verbose" },
+            success: function (data) {
+                var results = data.d.results;
+                for (var i = 0; i < results.length; i++) {
+                    self.UserSiteGroups.push(results[i].Id);
+                    self.PreviouslySeletedSiteGroups.push(results[i].Id);
+                }
+            },
+            error: function (error) {
+                alert(JSON.stringify(error));
+            }
+        });        
+    };
+
+    // Get site groups of current web
+    self.getSiteGroups = function () {
+        var siteGroupURL = _spPageContextInfo.webAbsoluteUrl + "/_api/web/sitegroups?$select=Id,Title";
+
+        $.ajax({
+            url: siteGroupURL,
+            type: "GET",
+            headers: { "accept": "application/json;odata=verbose" },
+            success: function (data) {
+                var results = data.d.results;
+                for (var i = 0; i < results.length; i++) {
+                    self.SiteGroups.push({
+                        name: results[i].Title,
+                        id: results[i].Id
+                    });
+                }
+            },
+            error: function (error) {
+                alert(JSON.stringify(error));
+            }
+        });
+    };
 
     // Add attachment/file info to attachments collection
     self.addAttachment = function (libraryName, newFileName, fileName) {
@@ -341,7 +388,7 @@ function EmpViewModel() {
             "Designation": self.Designation(),
             "Location": self.Location(),
             "Skills": self.skillsToString(),
-            "UserID": self.UserID(),
+            "UserID": self.CurrentUser(),
             "EmpManager": self.EmpManager(),
             "AttachmentID": self.AttachmentID()
         };
@@ -350,6 +397,59 @@ function EmpViewModel() {
     // Redirect to the employee list
     self.redirectToList = function () {
         window.location = _spPageContextInfo.webAbsoluteUrl + "/Lists/" + employeeListname;
+    };
+
+    // Add current user to site group based on selection made
+    self.addUserToSiteGroup = function (siteGroupId) {
+        var addUserURL = _spPageContextInfo.webAbsoluteUrl + "/_api/web/sitegroups/getbyid(" + siteGroupId + ")/users";
+        var userItem = { "__metadata": { "type": 'SP.User' }, "LoginName": self.CurrentUser() };
+
+        $.ajax({
+            url: addUserURL,
+            type: "POST",
+            headers: {
+                "accept": "application/json;odata=verbose",
+                "X-RequestDigest": $("#__REQUESTDIGEST").val(),
+                "content-Type": "application/json;odata=verbose"
+            },
+            data: JSON.stringify(userItem),
+            error: function (error) {
+                alert(JSON.stringify(error));
+            }
+        });
+    };
+
+    // Remove current user from site group
+    self.removeUserFromSiteGroup = function (siteGroupId) {
+        var userID = encodeURIComponent(self.CurrentUser());
+        var removeUserURL = _spPageContextInfo.webAbsoluteUrl + "/_api/web/sitegroups(" + siteGroupId + ")/users/removebyloginname(@v)?@v='" + userID + "'";
+
+        $.ajax({
+            url: removeUserURL,
+            type: "POST",
+            headers: {
+                "Accept": "application/json;odata=verbose",
+                "X-RequestDigest": $("#__REQUESTDIGEST").val(),
+                "content-Type": "application/json;odata=verbose"
+            },
+            error: function (error) {
+                alert(JSON.stringify(error));
+            }
+        });
+    };
+
+    self.addOrRemoveUserToOrFromSiteGroups = function () {
+        var addUsers = $(self.UserSiteGroups()).not(self.PreviouslySeletedSiteGroups());
+        for (var i = 0; i < addUsers.length; i++) {
+            self.addUserToSiteGroup(addUsers[i]);
+        }
+
+        var deleteUsers = $(self.PreviouslySeletedSiteGroups()).not(self.UserSiteGroups());
+        for (var i = 0; i < deleteUsers.length; i++) {
+            self.removeUserFromSiteGroup(deleteUsers[i]);
+        }
+
+        return true;
     };
    
     // Update an existing item
@@ -368,7 +468,9 @@ function EmpViewModel() {
             },
             data: JSON.stringify(self.getEmployeeFormData()),
             success: function (data) {
-                self.redirectToList();
+                $.when(self.addOrRemoveUserToOrFromSiteGroups()).done(function () {
+                    self.redirectToList();
+                });
             },
             error: function (error) {
                 alert(JSON.stringify(error));
@@ -392,7 +494,9 @@ function EmpViewModel() {
             },
             data: JSON.stringify(self.getEmployeeFormData()),
             success: function (data) {
-                self.redirectToList();
+                $.when(self.addOrRemoveUserToOrFromSiteGroups()).done(function () {
+                    self.redirectToList();
+                });
             },
             error: function (error) {
                 alert(JSON.stringify(error));
@@ -410,8 +514,8 @@ function EmpViewModel() {
             type: "GET",
             headers: { "accept": "application/json;odata=verbose" },
             success: function (data) {
-                currentUser = data.d.LoginName;
-                self.UserID(data.d.LoginName.replace('i:0#.f|membership|', ''));
+                self.CurrentUser(data.d.LoginName);
+                self.UserID(data.d.LoginName.replace('i:0#.f|membership|', ''));                
             },
             error: function (error) {
                 alert(JSON.stringify(error));
@@ -419,9 +523,12 @@ function EmpViewModel() {
         });
     };
 
-    // Get information about the currently logged on user
+    self.CurrentUser.subscribe(function () {
+        self.getUserGroups();
+    });
+
     self.getNameAndManagerFromProfile = function () {
-        var userID = encodeURIComponent(currentUser);
+        var userID = encodeURIComponent(self.CurrentUser());
         var currentUserURL = _spPageContextInfo.webAbsoluteUrl + "/_api/SP.UserProfiles.PeopleManager/getpropertiesfor(@v)?@v='" + userID + "'&$select=UserProfileProperties";
         
         $.ajax({
@@ -574,7 +681,8 @@ function EmpViewModel() {
             headers: { "accept": "application/json;odata=verbose" },
             success: function (data) {
                 self.EmpNumber(data.d.EmpNumber);
-                self.UserID(data.d.UserID)
+                self.CurrentUser(data.d.UserID);
+                self.UserID(data.d.UserID.replace('i:0#.f|membership|', ''));
                 self.Name(data.d.Title);
                 self.EmpManager(data.d.EmpManager);
                 self.Designation(data.d.Designation);
@@ -600,7 +708,8 @@ function initEmpForm() {
 
     // Load data needed to initialize the view
     empModel.initNewFormData();
-    
+    empModel.getSiteGroups();
+        
     if (typeof itemId != "undefined") {
         // We're editing an existing item...load the needed data that's specific for editing an item
         empModel.ID(itemId);
