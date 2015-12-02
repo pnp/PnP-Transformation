@@ -1,4 +1,4 @@
-# Pattern: Cascading data load/retrieve data based on another field #
+# Pattern: Cascading data load #
 This pattern shows how populate the data in drop down list based on selection of other drop down list.  
 
 Based on the selection of the value in the Country drop down list, the State drop down list is populated. Similarly, based on the selection of the value in the State drop down list, the City drop down list is populated.

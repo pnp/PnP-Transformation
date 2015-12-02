@@ -1,4 +1,4 @@
-# Pattern: Read collection of data and set multiple controls #
+# Pattern: Read data collection and set multiple controls #
 This pattern shows how to read the data from the repeatable control and submitting to List Item.
 
 ## InfoPath approach ##
