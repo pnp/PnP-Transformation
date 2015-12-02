@@ -1,0 +1,1 @@
+here we collect the various SharePoint Add-In samples. These samples mimic the capabilities of the InfoPath employee registration form which you can find in the Reference section

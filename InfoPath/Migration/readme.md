@@ -1,0 +1,1 @@
+Once you transform an InfoPath form to a SharePoint Add-In you also need to migrate the data from InfoPath XML to a new model. This section provides you more input on how to that

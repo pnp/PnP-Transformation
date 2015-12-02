@@ -1,0 +1,1 @@
+This section contains sample InfoPath forms that shows common InfoPath customizations and code patterns. In the samples section we'll show how these common InfoPath customizations and patterns can be realized using alternative development approaches.

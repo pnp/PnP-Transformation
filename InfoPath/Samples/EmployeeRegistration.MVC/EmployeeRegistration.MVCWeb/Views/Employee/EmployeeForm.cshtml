@@ -1,0 +1,171 @@
+﻿@using EmployeeRegistration.MVCWeb.Models
+@model EmployeeRegistration.MVCWeb.Models.Employee
+
+@{
+    ViewBag.Title = "Employee Registration Form";
+}
+<script type="text/javascript">
+    var jsCityVal = '@ViewBag.JsCity';
+    var jsStateID = '@ViewBag.JsStateID';
+
+    function addSkills() {
+        @{ Model.Skills.Add(new Skill()); }
+        addNewSkill();
+    }
+</script>
+
+<h2>@ViewBag.Title</h2>
+<hr />
+<div class="row">
+    @using (Html.BeginForm(Model.ActionName, "Employee", new { SPHostUrl = @ViewBag.SPURL }, FormMethod.Post))
+    {
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true)
+            @Html.HiddenFor(model => model.Id)
+            @ViewBag.Error
+            <div class="form-group">
+                @Html.LabelFor(model => model.EmpNumber, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.EmpNumber)
+                    @Html.ValidationMessageFor(model => model.EmpNumber)
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.UserID, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(model => model.UserID, new { @style = "width:200px" })
+                    <input id="btnGetManager" type="button" title="Get name and manager from profile" value="Get name and manager from profile" onclick="getProfileData()" />
+                    @Html.ValidationMessageFor(model => model.UserID)
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Name, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Name)
+                    @Html.ValidationMessageFor(model => model.Name)
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.EmpManager, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.EmpManager)
+                    @Html.ValidationMessageFor(model => model.EmpManager)
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Designation, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.Designation, (SelectList)Model.Designations, "Select Designation")
+                    @Html.ValidationMessageFor(model => model.Designation)
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Location, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.CountryID, (SelectList)Model.Countries, "Select Country")
+                    @Html.DropDownListFor(model => model.StateID, Enumerable.Empty<SelectListItem>(), "Select State")
+                    @Html.DropDownListFor(model => model.Location, Enumerable.Empty<SelectListItem>(), "Select City")
+                    @Html.ValidationMessageFor(model => model.Location)
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Skills, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <table>
+                        <tr>
+                            <td>@Html.Label("Technology")</td>
+                            <td>
+                                @Html.Label("Experience (in months)")
+                            </td>
+                        </tr>
+                         <tbody id="tbodySkills">
+                             @for (int i = 0; i < Model.SkillsCount; i++)
+                             {
+                                <tr>
+                                    <td> @Html.EditorFor(model => model.Skills[i].Technology)</td>
+                                    <td>
+                                        @Html.EditorFor(model => model.Skills[i].Experience)
+                                    </td>
+                                </tr>
+                             }
+                        </tbody>
+                    </table>
+                    <a href="#" onclick="addSkills()">Add new skill</a>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Attachments, new { @class = "control-label col-md-2" })
+                @Html.HiddenFor(model => model.isFileUploaded)
+                <div class="col-md-10">
+                    <table id="tbAttachments">
+                        <tbody id="tbodyAttachments">
+                            @for (int i = 0; i < Model.AttachmentsCount; i++)
+                            {
+                                <tr>
+                                    <td>
+                                        <a target="_blank" href="@Model.Attachments[i].FileUrl" title="@Model.Attachments[i].FileName">@Model.Attachments[i].FileName</a>
+                                    </td>
+                                    <td>
+                                        <a style="cursor: pointer" title="Delete Attachment" onclick="deleteAttachment(this, '@Model.Attachments[i].FileRelativeUrl')">Delete</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <table>
+                        <tr>
+                            <td>
+                                @Html.HiddenFor(model => model.AttachmentID)
+                                <input type="file" id="empAttachment" />
+                            </td>
+                            <td>
+                                <input type="button" id="btnUpload" onclick="uploadAttachment();" value="Upload" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.SiteGroups, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @for (int i = 0; i < Model.PreviouslySelectedSiteGroupsCount; i++)
+                    {
+                        @Html.HiddenFor(model => model.PreviouslySelectedSiteGroups[i])
+                    }
+                    <table>
+                        <tbody>
+                            @for (int i = 0; i < Model.SiteGroupsCount; i++)
+                            {
+                                <tr>
+                                    <td> @Html.CheckBoxFor(model => model.SiteGroups[i].Checked)</td>
+                                    <td>
+                                        @Html.HiddenFor(model => model.SiteGroups[i].Id)
+                                        @Html.DisplayFor(model => model.SiteGroups[i].Name)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    @Html.ValidationMessageFor(model => model.SiteGroups)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input id="btnSubmit" type="submit" value="@Model.SubmitButtonName" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/employee")
