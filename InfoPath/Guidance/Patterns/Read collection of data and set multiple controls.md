@@ -25,7 +25,7 @@ self.addSkill = function () {
    self.Skills.push({
 	  technology: "",
 	  experience: ""
-  });
+   });
 };
 ```  
 
@@ -45,7 +45,7 @@ The Skills to String code is in the `skillsToString` JavaScript function inside 
 self.skillsToString = function () {
   var empSkills = "";
   $.each(self.Skills(), function (k, l) {
-	     empSkills += l.technology + "," + l.experience + ";";
+	 empSkills += l.technology + "," + l.experience + ";";
   });
 
   return empSkills; 
