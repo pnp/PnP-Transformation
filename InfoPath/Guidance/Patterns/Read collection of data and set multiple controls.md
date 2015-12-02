@@ -46,8 +46,9 @@ self.skillsToString = function () {
   var empSkills = "";
   $.each(self.Skills(), function (k, l) {
 	     empSkills += l.technology + "," + l.experience + ";";
-     });
-   return empSkills; 
+  });
+
+  return empSkills; 
 }
 ```
 
@@ -132,11 +133,11 @@ table.Columns.Add("Technology", typeof(string));
 table.Columns.Add("Experience", typeof(string));
 foreach (string skillData in skills)
 {
-if (skillData != "")
-{
-   string[] skill = skillData.Split(',');
-   table.Rows.Add(skill[0], skill[1]);
-}
+	if (skillData != "")
+	{
+	   string[] skill = skillData.Split(',');
+	   table.Rows.Add(skill[0], skill[1]);
+	}
 }
 rptSkills.DataSource = table;
 rptSkills.DataBind();

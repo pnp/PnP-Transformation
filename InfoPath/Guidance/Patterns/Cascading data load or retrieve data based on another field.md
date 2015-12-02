@@ -59,21 +59,22 @@ Population code for State Drop Down, based on Country value is in the `loadState
 
 ```JavaScript
 self.loadStates = function (countryID) {
-var stateListURL = _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('" + stateListName + "')/items/?$select=Id,Title&$filter=Country/Id eq " + countryID;
-$.ajax({
-	url: stateListURL,
-	type: "GET",
-	headers: { "accept": "application/json;odata=verbose" },
-	success: function (data) {
+	var stateListURL = _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('" + stateListName + "')/items/?$select=Id,Title&$filter=Country/Id eq " + countryID;
+	$.ajax({
+		url: stateListURL,
+		type: "GET",
+		headers: { "accept": "application/json;odata=verbose" },
+		success: function (data) {
 	      $.each(data.d.results, function (k, l) {
-	      self.States.push({ StateId: l.Id, StateName: l.Title });
-      });
-      isStatesLoaded.resolve();
+	      	self.States.push({ StateId: l.Id, StateName: l.Title });
+	      });
+	      isStatesLoaded.resolve();
 		},
-	error: function (error) {
-	  	alert(JSON.stringify(error));
-	    	isStatesLoaded.resolve();
-		} });
+		error: function (error) {
+		  	alert(JSON.stringify(error));
+		    	isStatesLoaded.resolve();
+		} 
+	});
 };
 ```
 
@@ -93,7 +94,7 @@ Population code for City Drop Down is in the `loadCities` JavaScript function in
 
 ```JavaScript
 self.loadCities = function (stateID) {
-var stateListURL = _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('" + cityListName + "')/items/?$select=Id,Title,StateId&$filter=State/Id eq " + stateID;
+	var stateListURL = _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('" + cityListName + "')/items/?$select=Id,Title,StateId&$filter=State/Id eq " + stateID;
 	$.ajax({
 		url: stateListURL,
 		type: "GET",
@@ -101,14 +102,15 @@ var stateListURL = _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytit
 		success: function (data) {
 			$.each(data.d.results, function (k, l) {
 			    self.Cities.push({ CityName: l.Title });
-		});
-		isCitiesLoaded.resolve();
+			});
+			isCitiesLoaded.resolve();
 		},
 		error: function (error) {
 			alert(JSON.stringify(error));
 			isCitiesLoaded.resolve();
-		  } });
-   };
+	  	} 
+	});
+};
 ```
 
 As a result the change in values being populated in City drop down list when the value selected in State is changed
@@ -163,9 +165,9 @@ ListItemCollection cityItems = lstCity.GetItems(query);
 clientContext.Load(cityItems);
 clientContext.ExecuteQuery();
 foreach (var item in cityItems)
- {
-	cityList.Add(new SelectListItem { Text =         item["Title"].ToString(), Value = item["Title"].ToString() });
- }
+{
+	cityList.Add(new SelectListItem { Text = item["Title"].ToString(), Value = item["Title"].ToString() });
+}
 ```
 
 For the **view** weused @Html.DropDownListFor controls to populate **City** drop down list based on value selected in **State** drop down list.
