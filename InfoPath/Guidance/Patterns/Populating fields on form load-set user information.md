@@ -15,17 +15,17 @@ The submit code is in the `getCurrentUser` JavaScript function inside the `EmpVi
 
 ```JavaScript
 self.getCurrentUser = function () {
-var currentUserURL = _spPageContextInfo.webAbsoluteUrl + "/_api/web/currentUser";
-$.ajax({
-	url: currentUserURL,
-	type: "GET",
-	headers: { "accept": "application/json;odata=verbose" },
-	success: function (data) {
-    self.UserID(data.d.LoginName.replace('i:0#.w|', ''));
-	},
-	error: function (error) {
-    alert(JSON.stringify(error));
-				}
+	var currentUserURL = _spPageContextInfo.webAbsoluteUrl + "/_api/web/currentUser";
+	$.ajax({
+		url: currentUserURL,
+		type: "GET",
+		headers: { "accept": "application/json;odata=verbose" },
+		success: function (data) {
+	    self.UserID(data.d.LoginName.replace('i:0#.w|', ''));
+		},
+		error: function (error) {
+	    	alert(JSON.stringify(error));
+		}
 	});
 };
 ```
@@ -43,7 +43,8 @@ The submit code is in the `EmployeeController` inside method `EmployeeForm`:
 ```C#
 PeopleManager peopleManager = new PeopleManager(clientContext);
 PersonProperties personProperties = peopleManager.GetMyProperties();
-clientContext.Load(personProperties, p => p.AccountName);                    clientContext.ExecuteQuery();    
+clientContext.Load(personProperties, p => p.AccountName);
+clientContext.ExecuteQuery();    
 if (personProperties != null && personProperties.AccountName != null) {
         emp.UserID = personProperties.AccountName;
 }
@@ -66,7 +67,8 @@ In `Default.aspx.cs` there the method `LoadListItems` that implements the logic:
 ```C#
 PeopleManager peopleManager = new PeopleManager(clientContext);
 PersonProperties personProperties = peopleManager.GetMyProperties();
-clientContext.Load(personProperties, p => p.AccountName);                    clientContext.ExecuteQuery();    
+clientContext.Load(personProperties, p => p.AccountName);
+clientContext.ExecuteQuery();    
 if (personProperties != null && personProperties.AccountName != null) {
         txtUserID.Text = personProperties.AccountName;
 }

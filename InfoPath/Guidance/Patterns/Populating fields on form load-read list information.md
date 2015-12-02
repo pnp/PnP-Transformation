@@ -30,15 +30,15 @@ $.ajax({
 	type: "GET",
 	headers: { "accept": "application/json;odata=verbose" },
 	success: function (data) {
-    $.each(data.d.results, function (k, l) {
-        self.Designations.push(l.Title);
-    	});
-    isDesignationsLoaded.resolve();
-		},
+	    $.each(data.d.results, function (k, l) {
+	        self.Designations.push(l.Title);
+	    });
+	    isDesignationsLoaded.resolve();
+	},
 	error: function (error) {
-    alert(JSON.stringify(error));
-    isDesignationsLoaded.resolve();
-		}
+	    alert(JSON.stringify(error));
+	    isDesignationsLoaded.resolve();
+	}
 });
 ```
 
@@ -57,9 +57,9 @@ List desgList = web.Lists.GetByTitle("EmpDesignation");
 ListItemCollection desgItems = desgList.GetItems(CamlQuery.CreateAllItemsQuery());
 List<SelectListItem> empDesgList = new List<SelectListItem>();
 foreach (var item in desgItems)
-   {
-empDesgList.Add(new SelectListItem { Text = item["Title"].ToString())}:                          
-   }
+{
+	empDesgList.Add(new SelectListItem { Text = item["Title"].ToString())}:                          
+}
 emp.Designations = new SelectList(empDesgList, "Text", "Text");
 ```
 
