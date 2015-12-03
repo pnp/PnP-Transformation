@@ -15,11 +15,11 @@ Common pattern | SPA using Knockout | ASP.Net MVC | ASP.Net Forms
 [Populating fields on form load - set user information](/InfoPath/Guidance/Patterns/Populating%20fields%20on%20form%20load-set%20user%20information.md) | x | x | x 
 [Populating fields on form load - read list information](/InfoPath/Guidance/Patterns/Populating%20fields%20on%20form%20load-read%20list%20information.md) | x | x | x 
 Populating fields on form load - read list data | x | x | x 
-[Submit the form via code](https://github.com/OfficeDev/PnP-Transformation/blob/dev/InfoPath/Guidance/Patterns/Submit%20the%20form%20via%20code.md) | x | x | x 
+[Submit the form via code](/InfoPath/Guidance/Patterns/Submit%20the%20form%20via%20code.md) | x | x | x 
 Switching view after form submission | x | x | x 
 Retrieving user data | x | x | x 
-[Read data collection and set multiple controls](https://github.com/OfficeDev/PnP-Transformation/blob/dev/InfoPath/Guidance/Patterns/Read%20data%20collection%20and%20set%20multiple%20controls.md) | x | x | x 
-[Cascading data load](https://github.com/OfficeDev/PnP-Transformation/blob/dev/InfoPath/Guidance/Patterns/Cascading%20data%20load.md) | x | x | x 
+[Read data collection and set multiple controls](/InfoPath/Guidance/Patterns/Read%20data%20collection%20and%20set%20multiple%20controls.md) | x | x | x 
+[Cascading data load](/InfoPath/Guidance/Patterns/Cascading%20data%20load.md) | x | x | x 
 Load existing item in form | x | x | x 
 
 
