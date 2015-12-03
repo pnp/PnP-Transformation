@@ -30,8 +30,7 @@ The below figure shows the example data entered in the Knockout js form.
 The submit code is in the `Save` JavaScript function inside the `EmpViewModel` JavaScript function:
 
 ```JavaScript
-	
-    self.save = function () {
+self.save = function () {
     self.canSave(true);        
     var listURL =  _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('" + employeeListname + "')/items";
 	$.ajax({
@@ -44,16 +43,15 @@ The submit code is in the `Save` JavaScript function inside the `EmpViewModel` J
         },
         data: JSON.stringify(self.getEmployeeFormData()),
         success: function (data) {
-                $.when(self.addOrRemoveUserToOrFromSiteGroups()).done(function () {
-                    self.redirectToList();
-                });
-            },
+            $.when(self.addOrRemoveUserToOrFromSiteGroups()).done(function () {
+                self.redirectToList();
+            });
+        },
         error: function (error) {
             alert(JSON.stringify(error));
         }
     });
-	};
-
+};
 ```
 
 The result of this `Save` operation is a list item in the list as specified in the code.
@@ -69,43 +67,42 @@ The below figure shows the example data entered in the MVC form.
 The submit code is in the `EmployeeController` inside method `AddEmployeeToSPList`:
 
 ```C#
+string number = model.EmpNumber;
+string name = model.Name;
+string designation = model.Designation;
+string SPHostUrl = Request.QueryString["SPHostUrl"];
+string userName = string.Empty;
+StringBuilder sbSkills = new StringBuilder();
 
-	string number = model.EmpNumber;
-	string name = model.Name;
-	string designation = model.Designation;
-	string SPHostUrl = Request.QueryString["SPHostUrl"];
-	string userName = string.Empty;
-	StringBuilder sbSkills = new StringBuilder();
+foreach (var skill in model.Skills)
+{
+	sbSkills.Append(skill.Technology).Append(",").Append(skill.Experience).Append(";");
+}
 
-	foreach (var skill in model.Skills)
+var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
+using (var clientContext = spContext.CreateUserClientContextForSPHost())
+{
+	if (clientContext != null)
 	{
-    	sbSkills.Append(skill.Technology).Append(",").Append(skill.Experience).Append(";");
-	}
-
-	var spContext = SharePointContextProvider.Current.GetSharePointContext(HttpContext);
-	using (var clientContext = spContext.CreateUserClientContextForSPHost())
-	{
-    	if (clientContext != null)
-    	{
-        	var lstEmployee = clientContext.Web.Lists.GetByTitle("Employees");
-        	var itemCreateInfo = new ListItemCreationInformation();
-        	var listItem = lstEmployee.AddItem(itemCreateInfo);
-        	listItem["EmpNumber"] = model.EmpNumber;
-        	listItem["Title"] = model.Name;
-        	listItem["UserID"] = model.UserID;
-        	listItem["EmpManager"] = model.EmpManager;
-        	listItem["Designation"] = model.Designation;
-        	listItem["Location"] = model.Location;
-        	listItem["Skills"] = sbSkills.ToString();
-    		if (model.isFileUploaded)
-            {
-                listItem["AttachmentID"] = model.AttachmentID;
-            }
-            listItem.Update();
-            clientContext.ExecuteQuery();
-	        AddUserToSelectedSiteGroups(model, clientContext, model.UserID);
-        }	
-	}
+    	var lstEmployee = clientContext.Web.Lists.GetByTitle("Employees");
+    	var itemCreateInfo = new ListItemCreationInformation();
+    	var listItem = lstEmployee.AddItem(itemCreateInfo);
+    	listItem["EmpNumber"] = model.EmpNumber;
+    	listItem["Title"] = model.Name;
+    	listItem["UserID"] = model.UserID;
+    	listItem["EmpManager"] = model.EmpManager;
+    	listItem["Designation"] = model.Designation;
+    	listItem["Location"] = model.Location;
+    	listItem["Skills"] = sbSkills.ToString();
+		if (model.isFileUploaded)
+        {
+            listItem["AttachmentID"] = model.AttachmentID;
+        }
+        listItem.Update();
+        clientContext.ExecuteQuery();
+        AddUserToSelectedSiteGroups(model, clientContext, model.UserID);
+    }	
+}
 ```
 
 For the **view** we used `input type="submit"` to trigger the save data to list:
@@ -124,42 +121,41 @@ The below figure shows the example data entered in the ASP .Net Web Form.
 In `Default.aspx.cs` there the method `btnSave_Click` that implements the save logic:
 
 ```C#
+using (var clientContext = GetClientContext())
+{
+    var web = GetClientContextWeb(clientContext);
 
-	using (var clientContext = GetClientContext())
+    var lstEmployee = web.Lists.GetByTitle("Employees");
+    var itemCreateInfo = new ListItemCreationInformation();
+    var listItem = lstEmployee.AddItem(itemCreateInfo);
+
+    listItem["EmpNumber"] = txtEmpNumber.Text;
+    listItem["UserID"] = txtUserID.Text;
+    listItem["Title"] = txtName.Text;
+    listItem["EmpManager"] = txtManager.Text;
+    listItem["Designation"] = ddlDesignation.SelectedValue;
+    listItem["Location"] = ddlCity.Text;
+
+    StringBuilder sbSkills = new StringBuilder();
+    RepeaterItemCollection skills = rptSkills.Items;
+    foreach (RepeaterItem skill in skills)
     {
-        var web = GetClientContextWeb(clientContext);
-
-        var lstEmployee = web.Lists.GetByTitle("Employees");
-        var itemCreateInfo = new ListItemCreationInformation();
-        var listItem = lstEmployee.AddItem(itemCreateInfo);
-
-        listItem["EmpNumber"] = txtEmpNumber.Text;
-        listItem["UserID"] = txtUserID.Text;
-        listItem["Title"] = txtName.Text;
-        listItem["EmpManager"] = txtManager.Text;
-        listItem["Designation"] = ddlDesignation.SelectedValue;
-        listItem["Location"] = ddlCity.Text;
-
-        StringBuilder sbSkills = new StringBuilder();
-        RepeaterItemCollection skills = rptSkills.Items;
-        foreach (RepeaterItem skill in skills)
-        {
-            TextBox tbTech = (TextBox)skill.FindControl("rptTxtTechnology");
-            TextBox tbSkill = (TextBox)skill.FindControl("rptTxtExperience");
-            sbSkills.Append(tbTech.Text).Append(",").Append(tbSkill.Text).Append(";");
-        }
-        listItem["Skills"] = sbSkills.ToString();
-
-        if (rptUploadedFiles.Items.Count > 0)
-        {
-            listItem["AttachmentID"] = hdnAttachmentID.Value;
-        }
-
-        listItem.Update();
-        clientContext.ExecuteQuery();
-
-        AddUserToSelectedSiteGroups(clientContext);
+        TextBox tbTech = (TextBox)skill.FindControl("rptTxtTechnology");
+        TextBox tbSkill = (TextBox)skill.FindControl("rptTxtExperience");
+        sbSkills.Append(tbTech.Text).Append(",").Append(tbSkill.Text).Append(";");
     }
+    listItem["Skills"] = sbSkills.ToString();
+
+    if (rptUploadedFiles.Items.Count > 0)
+    {
+        listItem["AttachmentID"] = hdnAttachmentID.Value;
+    }
+
+    listItem.Update();
+    clientContext.ExecuteQuery();
+
+    AddUserToSelectedSiteGroups(clientContext);
+}
 ```
 
 The submit itself is triggered via the `btnSave` on the form:
