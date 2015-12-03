@@ -52,7 +52,7 @@ In `Default.aspx.cs` there the method `btnSave_Click` that implements the save l
 
 ```C#
 	string url = HttpContext.Current.Request.Url.AbsoluteUri;
-              url = url.Replace("Default.aspx", "Thanks.aspx");
+    url = url.Replace("Default.aspx", "Thanks.aspx");
    	Response.Redirect(url);
 ```
 

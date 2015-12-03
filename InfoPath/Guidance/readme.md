@@ -12,8 +12,8 @@ The table below lists all the common patterns, the InfoPath implementation and t
 
 Common pattern | SPA using Knockout | ASP.Net MVC | ASP.Net Forms
 ---------------|:------------------:|:-----------:|:-----------:
-[Populating fields on form load - set user information](https://github.com/OfficeDev/PnP-Transformation/blob/dev/InfoPath/Guidance/Patterns/Populating%20fields%20on%20form%20load-set%20user%20information.md) | x | x | x 
-[Populating fields on form load - read list information](https://github.com/OfficeDev/PnP-Transformation/blob/dev/InfoPath/Guidance/Patterns/Populating%20fields%20on%20form%20load-read%20list%20information.md) | x | x | x 
+[Populating fields on form load - set user information](/Patterns/Populating%20fields%20on%20form%20load-set%20user%20information.md) | x | x | x 
+[Populating fields on form load - read list information](/Patterns/Populating%20fields%20on%20form%20load-read%20list%20information.md) | x | x | x 
 Populating fields on form load - read list data | x | x | x 
 [Submit the form via code](https://github.com/OfficeDev/PnP-Transformation/blob/dev/InfoPath/Guidance/Patterns/Submit%20the%20form%20via%20code.md) | x | x | x 
 Switching view after form submission | x | x | x 
