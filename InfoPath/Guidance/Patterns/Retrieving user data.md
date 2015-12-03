@@ -15,6 +15,7 @@ string lastname = string.Empty;
 string manager = string.Empty;
 XPathNavigator form = this.MainDataSource.CreateNavigator();
 form.SelectSingleNode("/my:EmployeeForm/my:txtError", NamespaceManager).SetValue("");               
+
 string userID = form.SelectSingleNode("/my:EmployeeForm/my:txtUserID", NamespaceManager).Value;
 XPathNavigator profileNav = this.DataSources["GetUserProfileByName"].CreateNavigator();
 profileNav.SelectSingleNode("/dfs:myFields/dfs:queryFields/tns:GetUserProfileByName/tns:AccountName", NamespaceManager).SetValue(userID);
@@ -22,21 +23,20 @@ WebServiceConnection webServiceConnection = (WebServiceConnection)this.DataConne
 webServiceConnection.Execute();
 string profileXPath = "/dfs:myFields/dfs:dataFields/tns:GetUserProfileByNameResponse/tns:GetUserProfileByNameResult/tns:PropertyData/tns:Values/tns:ValueData/tns:Value[../../../tns:Name = '{0}']";
 if (profileNav.SelectSingleNode(string.Format(profileXPath, "FirstName"), NamespaceManager) != null)
-  {
+{
 	firstname = profileNav.SelectSingleNode(string.Format(profileXPath, "FirstName"), NamespaceManager).Value;
-  }
+}
 if (profileNav.SelectSingleNode(string.Format(profileXPath, "LastName"), NamespaceManager) != null)
-  {
+{
 	lastname = profileNav.SelectSingleNode(string.Format(profileXPath, "LastName"), NamespaceManager).Value;
-  }
+}
 if (profileNav.SelectSingleNode(string.Format(profileXPath, "Manager"), NamespaceManager) != null)
-  {
+{
 	manager = profileNav.SelectSingleNode(string.Format(profileXPath, "Manager"), NamespaceManager).Value;
-  }
+}
 string userName = string.Format("{0} {1}", firstname, lastname);                
 form.SelectSingleNode("/my:EmployeeForm/my:txtName", NamespaceManager).SetValue(userName);
 form.SelectSingleNode("/my:EmployeeForm/my:txtManager", NamespaceManager).SetValue(manager);
-}
 ```
 
 As a result **Name** and **Manager** text fields are populated with the values retrieved from the code.
@@ -52,30 +52,32 @@ Retrieving user data code is in the `getNameAndManagerFromProfile` JavaScript fu
 
 ```JavaScript
 self.getNameAndManagerFromProfile = function () {
-var userID = self.UserID();
-var currentUserURL = _spPageContextInfo.webAbsoluteUrl + "/_api/SP.UserProfiles.PeopleManager/getpropertiesfor(@v)?@v='" + userID + "'&$select=UserProfileProperties";
-$.ajax({
-	url: currentUserURL,
-	type: "GET",
-	headers: { "accept": "application/json;odata=verbose" },
-	success: function (data) {
-  	var properties = data.d.UserProfileProperties.results;
-  	var fN, lN;
-  	properties.forEach(function (property) {
-  	if (property.Key == "FirstName") {
-       fN = property.Value;
-     }
-	if (property.Key == "LastName") {
-       lN = property.Value;
-     }
-	if (property.Key == "Manager") {
-       self.EmpManager(property.Value);
-     }
-   });
-  self.Name(fN + " " + lN);	},
-	error: function (error) {
-  alert(JSON.stringify(error));
-	} });
+	var userID = self.UserID();
+	var currentUserURL = _spPageContextInfo.webAbsoluteUrl + "/_api/SP.UserProfiles.PeopleManager/getpropertiesfor(@v)?@v='" + userID + "'&$select=UserProfileProperties";
+	$.ajax({
+		url: currentUserURL,
+		type: "GET",
+		headers: { "accept": "application/json;odata=verbose" },
+		success: function (data) {
+		  	var properties = data.d.UserProfileProperties.results;
+		  	var fN, lN;
+		  	properties.forEach(function (property) {
+			  	if (property.Key == "FirstName") {
+			       fN = property.Value;
+			    }
+				if (property.Key == "LastName") {
+			       lN = property.Value;
+			    }
+				if (property.Key == "Manager") {
+			       self.EmpManager(property.Value);
+			    }
+		    })	    
+			self.Name(fN + " " + lN);	
+		},
+		error: function (error) {
+	  		alert(JSON.stringify(error));
+		} 
+	});
 };
 ```
 
@@ -95,19 +97,20 @@ string empManager = string.Empty;
 SharePointContext spContext = Session["Context"] as SharePointContext;              
 using (var clientContext = spContext.CreateUserClientContextForSPHost())
 {
-	if (clientContext != null)
-    	{
-    	  string[] propertyNames = { "FirstName", "LastName", "Manager" };
-    	  PeopleManager peopleManager = new PeopleManager(clientContext);
-		  UserProfilePropertiesForUser prop = new  UserProfilePropertiesForUser(clientContext, userID, propertyNames);
-		  IEnumerable<string> profileProperty = peopleManager.GetUserProfilePropertiesFor(prop);
-    	  clientContext.Load(prop);
-    	  clientContext.ExecuteQuery();
-    	  if (profileProperty != null && profileProperty.Count() > 0)
-        {
-			empName = string.Format("{0} {1}", profileProperty.ElementAt(0), profileProperty.ElementAt(1));
-           	empManager = profileProperty.ElementAt(2);
-        } }           
+   if (clientContext != null)
+   {
+	  string[] propertyNames = { "FirstName", "LastName", "Manager" };
+	  PeopleManager peopleManager = new PeopleManager(clientContext);
+	  UserProfilePropertiesForUser prop = new  UserProfilePropertiesForUser(clientContext, userID, propertyNames);
+	  IEnumerable<string> profileProperty = peopleManager.GetUserProfilePropertiesFor(prop);
+	  clientContext.Load(prop);
+	  clientContext.ExecuteQuery();
+	  if (profileProperty != null && profileProperty.Count() > 0)
+      {
+		empName = string.Format("{0} {1}", profileProperty.ElementAt(0), profileProperty.ElementAt(1));
+       	empManager = profileProperty.ElementAt(2);
+      } 
+   }           
 }
 ```
 
@@ -134,12 +137,12 @@ IEnumerable<string> profileProperty = peopleManager.GetUserProfilePropertiesFor(
 clientContext.Load(prop);
 clientContext.ExecuteQuery();
 if (profileProperty != null && profileProperty.Count() > 0)
-  {
+{
 	txtName.Text = string.Format("{0} {1}", profileProperty.ElementAt(0), profileProperty.ElementAt(1));
-    	txtManager.Text = profileProperty.ElementAt(2);
-  }
+    txtManager.Text = profileProperty.ElementAt(2);
+}
 else
-  {
+{
 	string noProfileData = string.Format("No data found for user id: {0}", accountName.Replace(@"\",@"\\"));    	
 	ClientScript.RegisterStartupScript(this.GetType(), "errorMessage", "alert('" + noProfileData + "');", true);
 }
