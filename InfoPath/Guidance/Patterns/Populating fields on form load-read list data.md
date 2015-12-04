@@ -1,6 +1,50 @@
 # Pattern: Populating fields on form load - read list data #
 This pattern shows how to programmatically read list item data on form load.
 
+## InfoPath approach ##
+When the InfoPath is opened from InfoPath form library, it reads the xml data of form library list item and loads form in InfoPath form.
+
+The below example shows the existing form library list item of XML data in a SharePoint form library.
+
+```XML
+<?xml version="1.0" encoding="utf-8"?>
+<?mso-infoPathSolution name="urn:schemas-microsoft-com:office:infopath:EmpRegLib:-myXSD-2015-07-20T22-43-58" solutionVersion="1.0.0.481" productVersion="15.0.0.0" PIVersion="1.0.0.0" href="https://intranet.poc.com/sites/rajdev/EmpRegLib/Forms/template.xsn"?>
+<?mso-application progid="InfoPath.Document" versionProgid="InfoPath.Document.4"?>
+<?mso-infoPath-file-attachment-present?>
+<my:EmployeeForm xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pc="http://schemas.microsoft.com/office/infopath/2007/PartnerControls" xmlns:ma="http://schemas.microsoft.com/office/2009/metadata/properties/metaAttributes" xmlns:d="http://schemas.microsoft.com/office/infopath/2009/WSSList/dataFields" xmlns:q="http://schemas.microsoft.com/office/infopath/2009/WSSList/queryFields" xmlns:dfs="http://schemas.microsoft.com/office/infopath/2003/dataFormSolution" xmlns:dms="http://schemas.microsoft.com/office/2009/documentManagement/types" xmlns:s="uuid:BDC6E3F0-6DA3-11d1-A2A3-00AA00C14882" xmlns:dt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882" xmlns:rs="urn:schemas-microsoft-com:rowset" xmlns:z="#RowsetSchema" xmlns:ns1="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:ns2="http://www.w3.org/2005/Atom" xmlns:tns="http://microsoft.com/webservices/SharePointPortalServer/UserProfileService" xmlns:s1="http://microsoft.com/wsdl/types/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns3="http://schemas.microsoft.com/sharepoint/soap/directory/" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" xmlns:my="http://schemas.microsoft.com/office/infopath/2003/myXSD/2015-07-20T22:43:58" xmlns:xd="http://schemas.microsoft.com/office/infopath/2003" xml:lang="en-US">
+	<my:ddlDesignation>SERVICE ENGINEER</my:ddlDesignation>
+	<my:txtName>Raja Reddy</my:txtName>
+	<my:txtEmpNumber>10001</my:txtEmpNumber>
+	<my:ddlCountry>2</my:ddlCountry>
+	<my:ddlState>1</my:ddlState>
+	<my:ddlCity>Redmond</my:ddlCity>
+	<my:Skills>
+		<my:Skill>
+			<my:txtTechnology>SharePoint</my:txtTechnology>
+			<my:txtExperience>10</my:txtExperience>
+		</my:Skill>
+	</my:Skills>
+	<my:txtUserID>mgmt7\ms-mla-raredd</my:txtUserID>
+	<my:txtManager>mgmt7\ms-mla-paraja</my:txtManager>
+	<my:txtError></my:txtError>
+	<my:Attachments>
+		<my:EmpAttachment>
+			<my:Attachment>x0lGQRQAAAABAAAAAAAAAMYBAAAKAAAATABpAG4AawBzAC4AdAB4AHQAAAANCl	Rvb2xzOg0KLS0tLS0tLS0tLS0tLS0tLS0tLQ0KaHR0cHM6Ly9zdGFja2VkaXQuaW8vZWRpdG9yIyA	NCmh0dHA6Ly93d3cubWFya2Rvd25wYWQuY29tLyANCg0KU3ludGF4Og0KLS0tLS0tLS0tLS0tLS0t	LS0tLQ0KaHR0cHM6Ly9jb25mbHVlbmNlLmF0bGFzc2lhbi5jb20vYml0YnVja2V0c2VydmVyL21hc	mtkb3duLXN5bnRheC1ndWlkZS03NzY2Mzk5OTUuaHRtbA0KaHR0cHM6Ly9oZWxwLmdpdGh1Yi5jb2	0vYXJ0aWNsZXMvbWFya2Rvd24tYmFzaWNzLyANCg0KR2l0aHViOg0KLS0tLS0tLS0tLS0tLS0tLS	0tLQ0KaHR0cHM6Ly9naXRodWIuY29tL3JhamFzaGVrYXJ1c2EvUG5QLVRyYW5zZm9ybWF0aW9uL3R	yZWUvZGV2L0luZm9QYXRoL0d1aWRhbmNlDQoNCmh0dHBzOi8vZ2l0aHViLmNvbS9PZmZpY2VEZXYv	UG5QLVRyYW5zZm9ybWF0aW9uL3RyZWUvbWFzdGVyL0luZm9QYXRoL0d1aWRhbmNl
+</my:Attachment>
+		</my:EmpAttachment>
+	</my:Attachments>
+	<my:SiteGroups>
+		<my:SiteGroup>7</my:SiteGroup>
+	<my:SiteGroup>7</my:SiteGroup><my:SiteGroup>21</my:SiteGroup></my:SiteGroups>
+	<my:siteUrl>https://intranet.poc.com/sites/rajdev/</my:siteUrl>
+	<my:prevSiteGroups>Excel Services Viewers,RajDev Visitors</my:prevSiteGroups>
+</my:EmployeeForm>
+```
+
+As a result, when the form is opened again (from the form library or after downlaoding), then the saved data is loaded into the respective form controls:
+
+![](images/IP/P3_SetListDataToForm.png)
+
 ## Single Page Application using Knockout.js ##
 When edit item is clicked in the list, it redirects to the asp.net provider hosted app page and loads the data of list item.
 
@@ -120,6 +164,29 @@ if (emplistItem != null)
 	}
 	emp.Skills = lsSkills;
 	emp.SkillsCount = lsSkills.Count;
+
+	List<EmpAttachment> lsAttachments = new List<EmpAttachment>();
+    if (attachmentItems.Count > 0)
+        {
+            foreach (ListItem item in attachmentItems)
+        {
+            lsAttachments.Add(new EmpAttachment
+            {
+                FileName = item["Title"].ToString(),
+                FileUrl = Request.QueryString["SPHostUrl"] + "/EmpAttachments/" + item["FileLeafRef"].ToString(),
+                FileRelativeUrl = item["FileRef"].ToString()
+            });
+        }
+    }
+        emp.AttachmentID = attachementID;
+        emp.Attachments = lsAttachments;
+        emp.AttachmentsCount = lsAttachments.Count;
+	}
+	else
+	{
+    	emp.AttachmentID = Guid.NewGuid().ToString();
+	}
+
 	emp.ActionName = "UpdateEmployeeToSPList";
 	emp.SubmitButtonName = "Update Employee";
 }
@@ -168,6 +235,16 @@ if (itemID != null)
 	     }
 	
 	    LoadSkills(emplistItem["Skills"].ToString());
+		string attachementID = ConvertObjectToString(emplistItem["AttachmentID"]);
+        if (attachementID != "")
+        {
+            hdnAttachmentID.Value = attachementID;
+            LoadAttachmentsFromSPList(attachementID, clientContext);
+        }
+        else
+        {
+            hdnAttachmentID.Value = Guid.NewGuid().ToString();
+        }
 	    btnUpdate.Visible = true;
 	} // if (emplistItem != null)
 }
