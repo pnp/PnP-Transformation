@@ -47,7 +47,7 @@ As a result, on clicking the edit item link, as shown in the below figure:
 
 This will redirect the page to the App default page loaded with the list item, instead of the default edit item page.
 
-![](images\MVC\P11_LoadExistingItem.png)
+![](images/MVC/P11_LoadExistingItem.png)
 
 
 ## ASP.Net Forms approach ##
