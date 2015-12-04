@@ -69,7 +69,7 @@ As mentioned earlier, on form load, all the site groups corresponding to the sit
 On the click of the Save button, the user would be added to all the Site Groups that are checked and removed from the others.
 
 ## Example: ##
-<kbd>![](images/KO/P10_CheckInSiteGroup.png)</kbd>
+![](images/KO/P10_CheckInSiteGroup.png)
 
 Code for adding or removing a user from site group is in the `AddUserToSelectedSiteGroups` JavaScript function inside the `EmpViewModel` JavaScript function:
 
