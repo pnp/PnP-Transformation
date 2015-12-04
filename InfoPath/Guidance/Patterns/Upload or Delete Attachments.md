@@ -196,7 +196,7 @@ Below is the screen shot depicting the successful upload of file while saving a 
 
 In Asp .Net web forms, FileUpload control is used to upload the file to document library in SharePoint Site. Also an Attachment ID is added to the list item as a reference to the files corresponding to that list item in the document library. For more than one file uploads, same Attachment ID is saved for all the files.
 
-## 1.	Upload Function: ## 
+## 1.	Upload Function: ##
 In `Default.aspx.cs` there the method `btnUpload_Click` that implements the attachment upload logic:
 
 
