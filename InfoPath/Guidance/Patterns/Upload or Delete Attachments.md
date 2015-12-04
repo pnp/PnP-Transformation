@@ -92,7 +92,7 @@ As the result the attachment ID is stored in the list item. And the correspondin
 ![][filesCorrespondingToAttachmentId]  
 
 
-## 2.	Delete Function: ## 
+## 2.	Delete Function:  ##
 For delete purpose, a link button is used in the Repeater Control which gets added on the form, after successful upload of the file to the document library.
 
 The attachment deletion code is in the `deleteAttachment` JavaScript function inside the `EmpViewModel` JavaScript function:
