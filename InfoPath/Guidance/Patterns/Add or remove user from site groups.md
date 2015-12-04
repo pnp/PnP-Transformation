@@ -42,8 +42,8 @@ while (iter.MoveNext())
 		 if (prevSitegroups.Length > 0)
 		 {
 		   currSitegroups = selectedGroups.ToArray();
-		IEnumerable<string> deleteUserFromGroups =                                                                           prevSitegroups.Except(currSitegroups);
-		IEnumerable<string> addUserToGroups = currSitegroups.Except(prevSitegroups);		
+		   IEnumerable<string> deleteUserFromGroups =                                                                           prevSitegroups.Except(currSitegroups);
+		   IEnumerable<string> addUserToGroups = currSitegroups.Except(prevSitegroups);		
 		   AddOrRemoveUserToGroup(deleteUserFromGroups, UserOpType.RemoveUser);
 		   AddOrRemoveUserToGroup(addUserToGroups, UserOpType.AddUser);
 		 }
@@ -69,7 +69,7 @@ As mentioned earlier, on form load, all the site groups corresponding to the sit
 On the click of the Save button, the user would be added to all the Site Groups that are checked and removed from the others.
 
 ## Example: ##
-![](images/KO/P10_CheckInSiteGroup.png)
+<kbd>![](images/KO/P10_CheckInSiteGroup.png)</kbd>
 
 Code for adding or removing a user from site group is in the `AddUserToSelectedSiteGroups` JavaScript function inside the `EmpViewModel` JavaScript function:
 
@@ -80,7 +80,7 @@ self.addOrRemoveUserToOrFromSiteGroups = function () {
 	{
 	   self.addUserToSiteGroup(addUsers[i]);
 	}
-	var deleteUsers =                                            $(self.PreviouslySeletedSiteGroups()).not(self.UserSiteGroups());
+	var deleteUsers = $(self.PreviouslySeletedSiteGroups()).not(self.UserSiteGroups());
 	for (var i = 0; i < deleteUsers.length; i++) 
     {
  	   self.removeUserFromSiteGroup(deleteUsers[i]);
@@ -133,7 +133,7 @@ if (selectedGroups.Count > 0)
 	}
 	else // Add user to site groups if there is no previously selected groups
 	{
-		AddOrRemoveUserToGroup(selectedGroups, UserOpType.AddUser,               clientContext, userID);
+		AddOrRemoveUserToGroup(selectedGroups, UserOpType.AddUser, clientContext, userID);
 	}
 } // if (groups.Count > 0)
 else if (prevGroups != null && prevGroups.Length > 0) // if enduser unselect all options, remove user from site group 
@@ -182,7 +182,7 @@ foreach (System.Web.UI.WebControls.ListItem grp in cblSiteGroups.Items)
 			newGroups = selectedGroups.ToArray();
 			IEnumerable<string> deleteUserFromGroups = prevGroups.Except(newGroups);
 			IEnumerable<string> addUserToGroups = newGroups.Except(prevGroups);
-			AddOrRemoveUserToGroup(deleteUserFromGroups, UserOpType.RemoveUser,    clientContext);
+			AddOrRemoveUserToGroup(deleteUserFromGroups, UserOpType.RemoveUser, clientContext);
 			AddOrRemoveUserToGroup(addUserToGroups, UserOpType.AddUser, clientContext);
 		}
 		else // Add user to site groups if there is no previously selected groups
