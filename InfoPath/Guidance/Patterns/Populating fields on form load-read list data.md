@@ -4,7 +4,7 @@ This pattern shows how to programmatically read list item data on form load.
 ## InfoPath approach ##
 When the InfoPath is opened from InfoPath form library, it reads the xml data of form library list item and loads form in InfoPath form.
 
-The below example shows the existing form library list item of XML data in a SharePoint form library.
+The below example shows the existing list item of XML data in a SharePoint form library.
 
 ```XML
 <?xml version="1.0" encoding="utf-8"?>
@@ -41,7 +41,7 @@ The below example shows the existing form library list item of XML data in a Sha
 </my:EmployeeForm>
 ```
 
-As a result, when the form is opened again (from the form library or after downlaoding), then the saved data is loaded into the respective form controls:
+As a result, when the form is opened, form library list item data is loaded into the respective form controls:
 
 ![](images/IP/P3_SetListDataToForm.png)
 
