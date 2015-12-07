@@ -6,7 +6,7 @@ In this section we'll explain how one can transform InfoPath forms to solutions 
 
 The approach we've taken is to create a reference InfoPath form that implements the common patterns we've seen while working with several large customers. For each of these patterns we first explain the InfoPath implementation, followed by the implementation of that pattern using the alternative approaches. The screenshot is showing the reference form which implements an employee registration system.
 
-![](http://i.imgur.com/esc3rMP.png)
+![](Patterns/images/InfoPathForm.png)
 
 The table below lists all the common patterns, the InfoPath implementation and the equivalent implementation for the alternative approaches (if there's an `X` in the table). Click on the listed pattern to learn more.
 
@@ -20,9 +20,9 @@ Common pattern | SPA using Knockout | ASP.Net MVC | ASP.Net Forms
 [Retrieving user data](/InfoPath/Guidance/Patterns/Retrieving%20user%20data.md) | x | x | x 
 [Read data collection and set multiple controls](/InfoPath/Guidance/Patterns/Read%20data%20collection%20and%20set%20multiple%20controls.md) | x | x | x 
 [Cascading data load](/InfoPath/Guidance/Patterns/Cascading%20data%20load.md) | x | x | x 
-Upload or delete attachments | x | x | x
-Add or remove user from site groups | x | x | x
-Load existing item in form | x | x | x 
+[Upload or delete attachments](/InfoPath/Guidance/Patterns/Upload%20or%20Delete%20Attachments.md) | x | x | x
+[Add or remove user from site groups](/InfoPath/Guidance/Patterns/Add%20or%20remove%20user%20from%20site%20groups.md) | x | x | x
+[Load existing item in form](/InfoPath/Guidance/Patterns/Load%20existing%20item%20in%20form.md) | x | x | x 
 
 
 # InfoPath limitations and best practices #
