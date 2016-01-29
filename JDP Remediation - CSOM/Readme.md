@@ -8,7 +8,7 @@ Following operations can be performed using this application:
 <span style="color:red;font-weight:bold">2</span> <span style="color:blue">Generate Non-Default Master Page Usage Report</span>  
 <span style="color:red;font-weight:bold;">3</span> <span style="color:blue;">Generate Site Column & Content Type Usage Report</span>  
 <span style="color:red;font-weight:bold;">4</span> <span style="color:blue;">Delete Missing Setup Files</span>  
-<span style="color:red">**5**</span> <span style="color:blue;">Delete Missing Features</span>  
+<span style="color:red">5</span> <span style="color:blue;">Delete Missing Features</span>  
 <span style="color:red;font-weight:bold;">6</span> <span style="color:blue;">Delete Missing Event Receivers</span>   
 <span style="color:red;font-weight:bold;">Q</span> <span style="color:blue;">Quit</span>
 
@@ -52,7 +52,7 @@ This operation is helpful in trying to remediate the Missing Setup Files reports
 This functionality reads an input file in CSV format, which should contain header columns like - *ContentDatabase, SetupFileDirName, SetupFileExtension, SetupFileName, SetupFilePath, SiteCollection, UpgradeStatus, WebApplication, WebUrl*. Generates result in output file - ***DeleteMissingSetupFiles-yyyyMMdd_hhmmss.log*** (verbose log file).
 
 
-## 5. Generate Site Column & Content Type Usage Report ##
+## 5. Delete Missing Features ##
 This operation reads a list of feature definitions from an input file and deletes the associated feature from the webs and sites of the target SharePoint environment.  
 
 This operation is helpful in trying to remediate the Missing Feature reports.  It attempts to remove all specified features from the target SharePoint environment.  
@@ -60,7 +60,7 @@ This operation is helpful in trying to remediate the Missing Feature reports.  I
 This functionality reads an input file in CSV format, which should contain header columns like - *ContentDatabase, FeatureId, FeatureTitle, SiteCollection, Source, UpgradeStatus, WebApplication, WebUrl*. Generates result in output file - ***DeleteMissingFeatures-yyyyMMdd_hhmmss.log*** (verbose log file).
 
 
-## 6. Generate Site Column & Content Type Usage Report ##
+## 6. Delete Missing Event Receivers ##
 This operation reads a list of event receiver definitions from an input file and deletes the associated event receiver from the sites, webs, and lists of the target SharePoint environment.  
 
 This operation is helpful in trying to remediate the Missing Event Receiver reports.  It attempts to remove all specified event receivers from the target SharePoint environment.  
