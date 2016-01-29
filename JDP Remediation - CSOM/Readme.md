@@ -1,3 +1,29 @@
+# JDP Remediation - CSOM #
+
+### Summary ###
+This sample shows an JDP Remediation - CSOM application that is used to perform FTC cleanup post to solution retraction.
+
+### Applies to ###
+-  Office 365 Dedicated (D)
+-  SharePoint 2013 on-premises
+
+
+### Solution ###
+Solution | Author(s)
+---------|----------
+JDP Remediation - CSOM | Infosys Ltd, Ron Tielke (**Microsoft**)
+
+### Version history ###
+Version  | Date | Comments
+---------| -----| --------
+1.0  | January 29th 2016 | Initial release
+
+### Disclaimer ###
+**THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.**
+
+
+----------
+
 # Introduction #
 This is a client-side Console application that leverages the v15 CSOM client SDKs to perform operations against a remote SPO-D 2013 farm.  
 
