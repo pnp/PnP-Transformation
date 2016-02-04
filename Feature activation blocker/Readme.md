@@ -38,13 +38,13 @@ Disable Features activation/deactivation validation Steps:
    <li>Ensure that the solution whose feature activation/deactivation to be disabled should be in deployed state</li> <li>”JDP.Transformation.DisableFeatureActivation.wsp” solution deployment to be performed using MSOCAF tool Update the variables $urls with the web application urls in “EnableWebApplicationFeature.Ps1”. Execute “EnableWebApplicationFeature.Ps1”. This script activates the feature “JDP.Transformation.DisableFeatureActivation_Control” for the provided urls in the variables $urls. This feature activation creates lists “Disable Features List” and "Disable Feature Message" in the root site collection for the provided urls in the variables $urls.</li>
 	<li>Customer can follow below options to create/update the lists that required to disable features and to display customer message on features page.
 <ol> 
-__Option 1__: 
+Option 1: 
 <ol type="a">
 <li>Customer provide the list of features (i.e. feature ID) to be updated in the “Disable Features List” list under ‘FeatureID’ column</li>
 <li>Customer provide Title and Description to be updated in the “Disable Feature Message” list with single item</li>
 </ol>  
-<u>Option 2</u>: After this change is processed, customer updates both “Disable Features List” and “Disable Feature Message” lists directly<br/>
-<u>Option 3</u>: Customer creates “Disable Features List” and “Disable Feature Message” lists before this change. Updates the “Disable Features List” list with list of feature IDs to be disabled. Updates “Disable Feature Message” list with custom message to be displayed on features page.  
+Option 2: After this change is processed, customer updates both “Disable Features List” and “Disable Feature Message” lists directly<br/>
+Option 3: Customer creates “Disable Features List” and “Disable Feature Message” lists before this change. Updates the “Disable Features List” list with list of feature IDs to be disabled. Updates “Disable Feature Message” list with custom message to be displayed on features page.  
 </ol>
 </li>
 	<li>Verify the specific site-web features added to the list, the Activate/Deactivate button should be disabled</li>
