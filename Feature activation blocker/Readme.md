@@ -1,7 +1,7 @@
 # Feature Activation Blocker #
 
 ### Summary ###
-This sample shows an DisableFeatureActivation application that is used to block feature activation.
+This sample shows an DisableFeatureActivation solution that is used to block feature activation.
 
 ### Applies to ###
 -  Office 365 Dedicated (D)
@@ -11,7 +11,7 @@ This sample shows an DisableFeatureActivation application that is used to block 
 ### Solution ###
 Solution | Author(s)
 ---------|----------
-Feature Activation Blocker | Infosys Ltd
+Feature Activation Blocker | Antons Mislevics(**Microsoft**), Infosys Ltd
 
 ### Version history ###
 Version  | Date | Comments
