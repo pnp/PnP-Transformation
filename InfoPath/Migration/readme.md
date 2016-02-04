@@ -1,4 +1,4 @@
-This section contains utilities that are needed when you migrate InfoPath forms to either SharePoint Online (DvNext / MT).
+This section contains utilities that are needed when you migrate InfoPath forms to SharePoint Online (DvNext / MT).
 
 # EmpRegConsole #
 Once you transform an InfoPath form to a SharePoint Add-In you also need to migrate the data from InfoPath XML to a new model. This sample provides you more input on how to that.
