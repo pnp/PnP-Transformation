@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<DeploymentManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.sharepointonline.microsoft.com">
+  <SolutionsManifest>
+    <Solution Name="jdp.transformation.disablefeatureactivation" Version="1.0" Action="Deploy">
+      <SolutionDescription>jdp.transformation.disablefeatureactivation</SolutionDescription>
+      <SolutionFileName>jdp.transformation.disablefeatureactivation.wsp</SolutionFileName>
+      <AllowGACDeploy>true</AllowGACDeploy>
+      <AllowCAS>true</AllowCAS>
+    </Solution>
+  </SolutionsManifest>
+</DeploymentManifest>
