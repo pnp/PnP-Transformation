@@ -37,13 +37,14 @@ Disable Features activation/deactivation validation Steps:
 <ol type="1">
    <li>Ensure that the solution whose feature activation/deactivation to be disabled should be in deployed state</li> <li>”JDP.Transformation.DisableFeatureActivation.wsp” solution deployment to be performed using MSOCAF tool Update the variables $urls with the web application urls in “EnableWebApplicationFeature.Ps1”. Execute “EnableWebApplicationFeature.Ps1”. This script activates the feature “JDP.Transformation.DisableFeatureActivation_Control” for the provided urls in the variables $urls. This feature activation creates lists “Disable Features List” and "Disable Feature Message" in the root site collection for the provided urls in the variables $urls.</li>
 	<li>Customer can follow below options to create/update the lists that required to disable features and to display customer message on features page.
+<ol> 
+<u>Option 1</u>: 
 <ol type="a">
-  <li>
-Option 1: 
-Customer provide the list of features (i.e. feature ID) to be updated in the “Disable Features List” list under ‘FeatureID’ column
-Customer provide Title and Description to be updated in the “Disable Feature Message” list with single item</li>
-<li>Option 2: After this change is processed, customer updates both “Disable Features List” and “Disable Feature Message” lists directly</li>
-<li>Option 3: Customer creates “Disable Features List” and “Disable Feature Message” lists before this change. Updates the “Disable Features List” list with list of feature IDs to be disabled. Updates “Disable Feature Message” list with custom message to be displayed on features page.</li>  
+<li>Customer provide the list of features (i.e. feature ID) to be updated in the “Disable Features List” list under ‘FeatureID’ column</li>
+<li>Customer provide Title and Description to be updated in the “Disable Feature Message” list with single item</li>
+</ol>  
+<u>Option 2</u>: After this change is processed, customer updates both “Disable Features List” and “Disable Feature Message” lists directly<br/>  
+<u>Option 3</u>: Customer creates “Disable Features List” and “Disable Feature Message” lists before this change. Updates the “Disable Features List” list with list of feature IDs to be disabled. Updates “Disable Feature Message” list with custom message to be displayed on features page.  
 </ol>
 </li>
 	<li>Verify the specific site-web features added to the list, the Activate/Deactivate button should be disabled</li>
@@ -51,9 +52,8 @@ Customer provide Title and Description to be updated in the “Disable Feature M
 
 Rollback steps:  
 <ol type="1">
-<li>Update the variables $urls with the web application urls in “DeleteFeaturesList.ps1”. Execute “DeleteFeaturesList.ps1”. This script deletes **“Disable Features List”** list from all web sites where it was created as part of deployment.</li> 
-<li> Update the variables $urls with the web application urls in “DisableWebApplicationFeature.Ps1”. Execute “DisableWebApplicationFeature.Ps1”. This script deactivates the feature “JDP.Transformation.DisableFeatureActivation_Control” for the provided urls in the variables $urls.</li>
-<li> Rollback the ”JDP.Transformation.DisableFeatureActivation.wsp” solution using MSOCAF tool.</li>
+<li>Update the variables $urls with the web application urls in “DisableWebApplicationFeature.Ps1”. Execute “DisableWebApplicationFeature.Ps1”. This script deactivates the feature “JDP.Transformation.DisableFeatureActivation_Control” for the provided urls in the variables $urls. This feature deactivation deletes the lists “Disable Features List” and "Disable Feature Message".</li>
+<li>Rollback the “JDP.Transformation.DisableFeatureActivation.wsp” solution using MSOCAF tool. </li>
 </ol>
 
 
