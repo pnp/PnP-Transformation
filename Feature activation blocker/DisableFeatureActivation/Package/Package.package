@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="8c938343-c783-479d-bda5-de8074a82a9e" solutionId="8c938343-c783-479d-bda5-de8074a82a9e" resetWebServer="false" sharePointProductVersion="15.0" name="JDP.Transformation.DisableFeatureActivation" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
+  <features>
+    <featureReference itemId="208bd05b-3e62-46e8-929d-1ca43da12eb0" />
+  </features>
+  <projectItems>
+    <projectItemReference itemId="d2ef9836-55ee-4c18-87f3-e6920b4fe398" />
+  </projectItems>
+</package>
