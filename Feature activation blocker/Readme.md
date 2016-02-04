@@ -11,7 +11,7 @@ This sample shows an DisableFeatureActivation solution that is used to block fea
 ### Solution ###
 Solution | Author(s)
 ---------|----------
-Feature Activation Blocker | Antons Mislevics(**Microsoft**), Infosys Ltd
+Feature Activation Blocker | Antons Mislevics (**Microsoft**), Infosys Ltd
 
 ### Version history ###
 Version  | Date | Comments
@@ -25,7 +25,7 @@ Version  | Date | Comments
 ----------
 
 # The Process for Disable Features Activation/Deactivation #
-The process of disabling the Site-Web scoped features activation/deactivation is performed with the solution ”JDP.Transformation.DisableFeatureActivation.wsp” installation and enabling the web application feature “JDP.Transformation.DisableFeatureActivation_Control”.  
+The process of disabling the Site-Web scoped features activation/deactivation is performed with the solution ”DisableFeatureActivation.wsp” installation and enabling the web application feature “JDP.Transformation.DisableFeatureActivation_Control”.  
 
 Package should be prepared with the following: 
 <ol type="a">
@@ -35,7 +35,7 @@ Package should be prepared with the following:
 
 Disable Features activation/deactivation validation Steps:  
 <ol type="1">
-   <li>Ensure that the solution whose feature activation/deactivation to be disabled should be in deployed state</li> <li>”JDP.Transformation.DisableFeatureActivation.wsp” solution deployment to be performed using MSOCAF tool Update the variables $urls with the web application urls in “EnableWebApplicationFeature.Ps1”. Execute “EnableWebApplicationFeature.Ps1”. This script activates the feature “JDP.Transformation.DisableFeatureActivation_Control” for the provided urls in the variables $urls. This feature activation creates lists “Disable Features List” and "Disable Feature Message" in the root site collection for the provided urls in the variables $urls.</li>
+   <li>Ensure that the solution whose feature activation/deactivation to be disabled should be in deployed state</li> <li>”DisableFeatureActivation.wsp” solution deployment to be performed using MSOCAF tool Update the variables $urls with the web application urls in “EnableWebApplicationFeature.Ps1”. Execute “EnableWebApplicationFeature.Ps1”. This script activates the feature “JDP.Transformation.DisableFeatureActivation_Control” for the provided urls in the variables $urls. This feature activation creates lists “Disable Features List” and "Disable Feature Message" in the root site collection for the provided urls in the variables $urls.</li>
 	<li>Customer can follow below options to create/update the lists that required to disable features and to display customer message on features page.
 <ol> 
 Option 1: 
