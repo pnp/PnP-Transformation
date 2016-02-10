@@ -1,6 +1,7 @@
 # InfoPath transformation guidance #
 In this section of the PnP Transformation repository you'll find IP that will help you transform InfoPath forms to SharePoint Add-In model based equivalents. This section is organized as follows:
 - **[Guidance](https://github.com/OfficeDev/PnP-Transformation/tree/master/InfoPath/Guidance)** - contains documentation on InfoPath limitations in Office 365 and describes remediation models and approaches
+- **[Scanning](https://github.com/OfficeDev/PnP-Transformation/tree/master/InfoPath/Scanning)** - holds the PowerShell scripts and tools that you need to use to scan your SharePoint farm to determine the amount of InfoPath forms that require transformation
 - **[Reference](https://github.com/OfficeDev/PnP-Transformation/tree/master/InfoPath/Reference)** - contains sample InfoPath forms (e.g. employee registration form) that show common InfoPath customizations and patterns. In the samples section we'll show how these common InfoPath customizations and patterns can be realized using alternative (SharePoint Add-In) developments
 - **[Samples](https://github.com/OfficeDev/PnP-Transformation/tree/master/InfoPath/Samples)** - here we collect the various (SharePoint Add-In) samples. These samples mimic the capabilities of the InfoPath employee registration form which you can find in the Reference section
 - **[Migration](https://github.com/OfficeDev/PnP-Transformation/tree/master/InfoPath/Migration)** - this section contains utilities that are needed when you migrate InfoPath forms to SharePoint Online (DvNext / MT).

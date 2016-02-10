@@ -25,6 +25,6 @@ Common pattern | SPA using Knockout | ASP.Net MVC | ASP.Net Forms
 [Load existing item in form](/InfoPath/Guidance/Patterns/Load%20existing%20item%20in%20form.md) | x | x | x 
 
 
-# InfoPath limitations and best practices #
-
+# InfoPath transformation and remediation steps #
+The **decks** folder contains PowerPoint presentations that describe the approach you can follow to help your customer with InfoPath form remediation/transformation. 
 
