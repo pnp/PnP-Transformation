@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<discovery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/disco/">
+  <contractRef ref="https://intranet.campoc.com/_vti_bin/webpartpages.asmx?wsdl" docRef="https://intranet.campoc.com/_vti_bin/webpartpages.asmx" xmlns="http://schemas.xmlsoap.org/disco/scl/" />
+  <soap address="https://intranet.campoc.com/_vti_bin/webpartpages.asmx" xmlns:q1="http://microsoft.com/sharepoint/webpartpages" binding="q1:WebPartPagesWebServiceSoap" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+  <soap address="https://intranet.campoc.com/_vti_bin/webpartpages.asmx" xmlns:q2="http://microsoft.com/sharepoint/webpartpages" binding="q2:WebPartPagesWebServiceSoap12" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+</discovery>
