@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F1C0F444-A0BC-408B-905A-42A015E4D933}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Transformation.PowerShell</RootNamespace>
+    <AssemblyName>Transformation.PowerShell</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.SharePoint.Client, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files\Common Files\microsoft shared\Web Server Extensions\15\ISAPI\Microsoft.SharePoint.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SharePoint.Client.Publishing, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files\Common Files\microsoft shared\Web Server Extensions\15\ISAPI\Microsoft.SharePoint.Client.Publishing.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SharePoint.Client.Runtime, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files\Common Files\microsoft shared\Web Server Extensions\15\ISAPI\Microsoft.SharePoint.Client.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="OfficeDevPnP.Core">
+      <HintPath>DLL\OfficeDevPnP.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\System.Management.Automation\v4.0_3.0.0.0__31bf3856ad364e35\System.Management.Automation.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Base\Elementbase.cs" />
+    <Compile Include="Base\TrasnformationPowerShellCmdlet.cs" />
+    <Compile Include="Common\AuthenticationHelper.cs" />
+    <Compile Include="Common\Constants.cs" />
+    <Compile Include="Common\CSV\ExportCSV.cs" />
+    <Compile Include="Common\CSV\ImportCSV.cs" />
+    <Compile Include="Common\Utilities\ArrayUtility.cs" />
+    <Compile Include="Common\Utilities\ExceptionCSV.cs" />
+    <Compile Include="Common\Utilities\FileUtility.cs" />
+    <Compile Include="Common\Utilities\Logger.cs" />
+    <Compile Include="Common\Utilities\StringUtility.cs" />
+    <Compile Include="GhostingAndUnGhosting\DownloadFile.cs" />
+    <Compile Include="GhostingAndUnGhosting\GhostingAndUnGhostingBase.cs" />
+    <Compile Include="GhostingAndUnGhosting\GhostingAndUnGhostingHelper.cs" />
+    <Compile Include="GhostingAndUnGhosting\UnGhostFile-Copy.cs" />
+    <Compile Include="GhostingAndUnGhosting\UnGhostFile-Move.cs" />
+    <Compile Include="ListMigration\ListMigrate-CSV.cs" />
+    <Compile Include="ListMigration\ListMigrate-Web.cs" />
+    <Compile Include="ListMigration\ListMigrationBase.cs" />
+    <Compile Include="ListMigration\ListMigrationHelper.cs" />
+    <Compile Include="MasterPage\MasterPageBase.cs" />
+    <Compile Include="MasterPage\MasterPageHelper.cs" />
+    <Compile Include="MasterPage\UpdateMasterPage-DiscoveryUsage.cs" />
+    <Compile Include="MasterPage\UpdateMasterPage-SiteCollection.cs" />
+    <Compile Include="MasterPage\UpdateMasterPage-Web.cs" />
+    <Compile Include="PageLayouts\PageLayoutBase.cs" />
+    <Compile Include="PageLayouts\PageLayoutHelper.cs" />
+    <Compile Include="PageLayouts\UpdatePageLayout-DiscoveryUsage.cs" />
+    <Compile Include="PageLayouts\UpdatePageLayout-SiteCollection.cs" />
+    <Compile Include="PageLayouts\UpdatePageLayout-Web.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="SiteColumnAndContentTypes\AddSiteColumnToContentType-CSV.cs" />
+    <Compile Include="SiteColumnAndContentTypes\AddSiteColumnToContentType-Web.cs" />
+    <Compile Include="SiteColumnAndContentTypes\CreateContentType-CSV.cs" />
+    <Compile Include="SiteColumnAndContentTypes\CreateContentType-Web.cs" />
+    <Compile Include="SiteColumnAndContentTypes\CreateSiteColumn-CSV.cs" />
+    <Compile Include="SiteColumnAndContentTypes\CreateSiteColumn-Web.cs" />
+    <Compile Include="SiteColumnAndContentTypes\RemoveSiteColumnByID-CSV.cs" />
+    <Compile Include="SiteColumnAndContentTypes\RemoveSiteColumnByID-Web.cs" />
+    <Compile Include="SiteColumnAndContentTypes\RemoveSiteColumnByType-CSV.cs" />
+    <Compile Include="SiteColumnAndContentTypes\RemoveSiteColumnByType-Web.cs" />
+    <Compile Include="SiteColumnAndContentTypes\ReplaceContentTypeInList-CSV.cs" />
+    <Compile Include="SiteColumnAndContentTypes\ReplaceContentTypeInList-Web.cs" />
+    <Compile Include="SiteColumnAndContentTypes\SiteColumnAndContentTypeBase.cs" />
+    <Compile Include="SiteColumnAndContentTypes\SiteColumnAndContentTypeHelper.cs" />
+    <Compile Include="Web References\WebPartPagesService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="WebPart\AddWebPart.cs" />
+    <Compile Include="WebPart\AddWebPartByUsageCSV.cs" />
+    <Compile Include="WebPart\ConfigureNewWebPartXml.cs" />
+    <Compile Include="WebPart\DeleteWebPart.cs" />
+    <Compile Include="WebPart\DeleteWebPartByUsageCSV.cs" />
+    <Compile Include="WebPart\GetWebPartProperties.cs" />
+    <Compile Include="WebPart\GetWebPartPropertiesByUsageCSV.cs" />
+    <Compile Include="WebPart\GetWebPartsByWeb.cs" />
+    <Compile Include="WebPart\GetWebPartUsage.cs" />
+    <Compile Include="WebPart\ReplaceWebPart.cs" />
+    <Compile Include="WebPart\ReplaceWebPartByUsageCSV.cs" />
+    <Compile Include="WebPart\TransformWebPartByWeb.cs" />
+    <Compile Include="WebPart\UploadAppInAppCatalog.cs" />
+    <Compile Include="WebPart\UploadDependencyFile.cs" />
+    <Compile Include="WebPart\WebPartPropertiesEntity.cs" />
+    <Compile Include="WebPart\WebPartTransformationBase.cs" />
+    <Compile Include="WebPart\WebPartTransformationHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="https://intranet.campoc.com/_vti_bin/webpartpages.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\WebPartPagesService\</RelPath>
+      <UpdateFromURL>https://intranet.campoc.com/_vti_bin/webpartpages.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Transformation_PowerShell_WebPartPagesService_WebPartPagesWebService</CachedSettingsPropName>
+    </WebReferenceUrl>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\WebPartPagesService\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\WebPartPagesService\webpartpages.wsdl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Web References\WebPartPagesService\webpartpages.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Dll\OfficeDevPnP.Core.dll" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
