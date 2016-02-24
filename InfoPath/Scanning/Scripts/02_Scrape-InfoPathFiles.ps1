@@ -16,6 +16,7 @@ try
     $retVal = $false
 
     $localPath = "c:\Scanner\InfoPath"   
+    $scraperPath = "c:\Scanner\InfoPath\InfoPathScraper"
 
     $fileDateTime = [DateTime]::Now.ToString("MMddyyyy_hhmmss")  #Ensure the Output and Error Log Files have the same Date/Time name
     $errorFile = [string]::Format("{0}\InfoPath_Errors_{1}.csv", $localPath, $fileDateTime)
@@ -27,16 +28,20 @@ try
     $errorLogPath =  $xsnFolder + "\InfoPathScraper_error.log" 
     $xsnInfoPath = $xsnFolder + "\InfoPathFileInfo.log"
 
-    ## Run the scraper utility over everything
-    cmd.exe /c "dir /s/b $xsnFolder\*.xsn > $filePath"
 
-    #InfoPathScraper.exe was failing with an error stating $filePath could not be found, I think that is a timing issue on larger 
-    #farms where the above dir call hasn't quite closed the handle to $filepath. Putting this hacky workaround in place to
-    #try and avoid that problem.
-    Start-Sleep -Seconds 60     
+    $StartDate=(GET-DATE)
+        
+    #grab the file list
+    $xsnFiles = Get-ChildItem $xsnFolder -Recurse -Filter *.xsn
+    #run scraper file per file
+    foreach($xsn in $xsnFiles)
+    {
+        [string] (& $scraperPath\infopathscraper.exe /csv /file `"$($xsn.FullName)`" /outfile `"$reportPath`" /append  2>&1) | out-file $errorLogPath -Append
+    } 
 
-    cmd.exe /C "$localPath\InfoPathScraper\infopathscraper.exe /csv /filelist $filePath /outfile $reportPath /append 2> $errorLogPath"
-    
+    $endDate=(GET-DATE)
+    NEW-TIMESPAN –Start $StartDate –End $EndDate | out-file $errorLogPath -Append   
+
     $retVal = $true
 }
 catch [Exception]
