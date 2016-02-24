@@ -5,6 +5,14 @@ Parses information out of all the XSN/UDCX files in the farm and generates outpu
 .DESCRIPTION
 Execute the script to scan all content databases and feature folders for impacted InfoPath templates.
 
+Typical errors one might see with this script are:
+- "Microsoft.SharePoint.SPException: Access to this Web site has been blocked. Please contact the administrator to resolve this problem."
+- "System.Management.Automation.RuntimeException: You cannot call a method on a null-valued expression."
+- "Cannot find an SPSite object with Id or Url: <site id>. ---> System.IO.FileNotFoundException: The site with the id <site id> could not be found"
+
+These errors all indicate that the site where the XSN/UDCX file is residing either is deleted (bottom 2 errors) or is locked (first error).
+
+
 .Example
 .\01_Get-InfoPathFiles.ps1
 
