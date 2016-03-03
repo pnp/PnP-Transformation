@@ -23,7 +23,28 @@ namespace UdcxRemediation.Console
             public bool InheritCustomMaster;
         }
 
-        public static ClientContext CreateAuthenticatedUserContext(string domain, string username, SecureString password, string siteUrl)
+        public static ClientContext CreateClientContextBasedOnAuthMode(bool useAppModel, string domain, string username, SecureString password, string siteUrl)
+        {
+            if (useAppModel)
+            {
+                return CreateAppOnlyClientContext(siteUrl);
+            }
+            else
+            {
+                return CreateAuthenticatedUserContext(domain, username, password, siteUrl);
+            }
+        }
+
+        private static ClientContext CreateAppOnlyClientContext(string siteUrl)
+        {
+            var parentSiteUri = new Uri(siteUrl);
+            string realm = TokenHelper.GetRealmFromTargetUrl(parentSiteUri);
+            var token = TokenHelper.GetAppOnlyAccessToken(TokenHelper.SharePointPrincipal, parentSiteUri.Authority, realm).AccessToken;
+            var clientContext = TokenHelper.GetClientContextWithAccessToken(parentSiteUri.ToString(), token);
+
+            return clientContext;
+        }
+        private static ClientContext CreateAuthenticatedUserContext(string domain, string username, SecureString password, string siteUrl)
         {
             ClientContext userContext = new ClientContext(siteUrl);
             if (String.IsNullOrEmpty(domain))

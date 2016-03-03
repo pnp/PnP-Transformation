@@ -11,6 +11,24 @@ namespace UdcxRemediation.Console
     public static class Program
     {
         /// <summary>
+        // Return a value of TRUE if you want the utility to leverage the App Model for AuthN/AuthZ
+        // Return a value of FALSE if you want the utility to leverage User Credentials for AuthN/AuthZ
+        /// </summary>
+        public static bool UseAppModel
+        {
+            get {
+                try
+                {
+                    return System.Configuration.ConfigurationManager.AppSettings["UseAppModel"].ToBoolean();
+                }
+                catch 
+                {
+                    return true;
+                }
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the domain provided by user
         /// </summary>
         ///
@@ -37,7 +55,11 @@ namespace UdcxRemediation.Console
         }
         public static void Main(string[] args)
         {
-            GetCredentials();
+            if (UseAppModel == false)
+            {
+                GetCredentials();
+            }
+
             string inputFilePath = GetInputFilePath();
             CommentUDCXFileNodes.DoWork(inputFilePath);
 

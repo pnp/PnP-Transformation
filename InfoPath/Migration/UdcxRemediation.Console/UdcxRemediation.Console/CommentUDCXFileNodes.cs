@@ -88,45 +88,153 @@ namespace UdcxRemediation.Console
             {
                 leafName = leafName.TrimStart(new char[] { '/' });
             }
+            string serverRelativeFolderPath = "/" + dirName;
             string serverRelativeFilePath = "/" + dirName + '/' + leafName;
 
             try
             {
                 Logger.LogInfoMessage(String.Format("Processing UCDX File [{0}/{1}] of Web [{2}] ...", dirName, leafName, webUrl), true);
-               
-                using (ClientContext userContext = Helper.CreateAuthenticatedUserContext(Program.AdminDomain, Program.AdminUsername, Program.AdminPassword, siteUrl))
+
+                // IMPORTANT: Open the webUrl, not the siteUrl, so Folder.Files.Add() can properly process files of child webs
+                using (ClientContext userContext = Helper.CreateClientContextBasedOnAuthMode(Program.UseAppModel, Program.AdminDomain, Program.AdminUsername, Program.AdminPassword, webUrl))
                 {
+                    Web web = userContext.Web;
+                    userContext.Load(web);
                     userContext.ExecuteQuery();
 
-                    FileInformation info = Microsoft.SharePoint.Client.File.OpenBinaryDirect(userContext, serverRelativeFilePath);
-
                     XNamespace xns = "http://schemas.microsoft.com/office/infopath/2006/udc";
-                    XDocument doc = XDocument.Load(XmlReader.Create(info.Stream));                    
-                    XElement authElem = doc.Root.Element(xns + "ConnectionInfo").Element(xns + "Authentication");
+                    XDocument doc = null;
 
+                    Logger.LogInfoMessage(String.Format("Getting contents of UCDX File [{0}] from Web [{1}] ...", serverRelativeFilePath, webUrl), false);
+                    // Approach to read File contents depends on Auth Model chosen
+                    if (Program.UseAppModel == true)
+                    {
+                        string originalFileContents = SafeGetFileAsString(web, serverRelativeFilePath);
+                        if (String.IsNullOrEmpty(originalFileContents))
+                        {
+                            Logger.LogErrorMessage(String.Format("Could not get contents of UCDX File"), false);
+                            udcxOutput.Status = Constants.ErrorStatus + ": could not get file contents.";
+                            _WriteUDCList.Add(udcxOutput);
+                            return;
+                        }
+
+                        doc = XDocument.Load(new StringReader(originalFileContents));
+                    }
+                    else
+                    {
+                        FileInformation info = Microsoft.SharePoint.Client.File.OpenBinaryDirect(userContext, serverRelativeFilePath);
+                        doc = XDocument.Load(XmlReader.Create(info.Stream));
+                    }
+                    Logger.LogInfoMessage(String.Format("Got contents of UCDX File"), false);
+
+                    XElement authElem = doc.Root.Element(xns + "ConnectionInfo").Element(xns + "Authentication");
                     if (authElem != null)
                     {
                         string authData = authElem.ToString();
                         authData = authData.Replace("<udc:Authentication xmlns:udc=\"" + xns + "\">", "<udc:Authentication>");
                         authElem.ReplaceWith(new XComment(authData));
-                        
+
                         string saveUdcxContent = doc.Declaration.ToString() + doc.ToString();
 
-                        using (MemoryStream memoryStream = new MemoryStream())
+                        using (MemoryStream contentStream = new MemoryStream())
                         {
-                            StreamWriter writer = new StreamWriter(memoryStream);
+                            StreamWriter writer = new StreamWriter(contentStream);
                             writer.Write(saveUdcxContent);
                             writer.Flush();
-                            memoryStream.Position = 0;
+                            contentStream.Position = 0;
 
-                            Microsoft.SharePoint.Client.File.SaveBinaryDirect(userContext, serverRelativeFilePath, memoryStream, true);
+                            Logger.LogInfoMessage(String.Format("Saving contents of UCDX File [{0}] to Web [{1}] ...", serverRelativeFilePath, webUrl), false);
+                            // Approach to save File contents depends on Auth Model chosen
+                            if (Program.UseAppModel == true)
+                            {
+                                Folder targetFolder = null;
+
+                                // grab the parent folder in preparation for the file upload...
+                                Logger.LogInfoMessage(String.Format("Getting folder [{0}] of Web [{1}] ...", serverRelativeFolderPath, webUrl), false);
+                                try
+                                {
+                                    targetFolder = web.GetFolderByServerRelativeUrl(serverRelativeFolderPath);
+                                    userContext.Load(targetFolder);
+                                    userContext.ExecuteQuery();
+
+                                    Logger.LogInfoMessage(String.Format("Got folder"), false);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Logger.LogErrorMessage(String.Format("CommentUDCXFileNode() failed for UDCX File [{0}/{1}] of Web [{2}]: Reason={3}; Error={4}", dirName, leafName, webUrl,
+                                        "Upload Folder was not Found.",
+                                        "[" + ex.Message + "] | [" + ex.HResult + "] | [" + ex.Source + "] | [" + ex.StackTrace + "] | [" + ex.TargetSite + "]"), false);
+                                    udcxOutput.Status = Constants.ErrorStatus + ": Upload Folder was not Found.";
+                                    _WriteUDCList.Add(udcxOutput);
+                                    return;
+                                }
+
+                                // check-out the file (if needed) in preparation for the file upload...
+                                try
+                                {
+                                    Logger.LogInfoMessage(String.Format("Checking out file [{0}] ...", leafName), false);
+                                    web.CheckOutFile(serverRelativeFilePath);
+                                    Logger.LogInfoMessage(String.Format("Checked out file"), false);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Logger.LogErrorMessage(String.Format("CommentUDCXFileNode() failed for UDCX File [{0}/{1}] of Web [{2}]: Reason={3}; Error={4}", dirName, leafName, webUrl,
+                                        "File Checkout failed.",
+                                        "[" + ex.Message + "] | [" + ex.HResult + "] | [" + ex.Source + "] | [" + ex.StackTrace + "] | [" + ex.TargetSite + "]"), false);
+                                    udcxOutput.Status = Constants.ErrorStatus + ": File Checkout failed.";
+                                    _WriteUDCList.Add(udcxOutput);
+                                    return;
+                                }
+
+                                // upload the modified file...
+                                Microsoft.SharePoint.Client.File targetFile = null;
+                                Logger.LogInfoMessage(String.Format("Uploading file [{0}] ...", leafName), false);
+                                try
+                                {
+                                    targetFile = targetFolder.UploadFile(leafName, contentStream, true);
+                                    Logger.LogInfoMessage(String.Format("Uploaded file"), false);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Logger.LogErrorMessage(String.Format("CommentUDCXFileNode() failed for UDCX File [{0}/{1}] of Web [{2}]: Reason={3}; Error={4}", dirName, leafName, webUrl,
+                                        "File Upload failed.",
+                                        "[" + ex.Message + "] | [" + ex.HResult + "] | [" + ex.Source + "] | [" + ex.StackTrace + "] | [" + ex.TargetSite + "]"), false);
+                                    udcxOutput.Status = Constants.ErrorStatus + ": File Upload failed.";
+                                    _WriteUDCList.Add(udcxOutput);
+                                    return;
+                                }
+
+                                // publish the modified file (executes check-in, publish, and approval as needed)...
+                                try
+                                {
+                                    Logger.LogInfoMessage(String.Format("Publishing file [{0}] ...", leafName), false);
+                                    targetFile.PublishFileToLevel(FileLevel.Published);
+                                    Logger.LogInfoMessage(String.Format("Published file"), false);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Logger.LogErrorMessage(String.Format("CommentUDCXFileNode() failed for UDCX File [{0}/{1}] of Web [{2}]: Reason={3}; Error={4}", dirName, leafName, webUrl,
+                                        "File Publish failed.",
+                                        "[" + ex.Message + "] | [" + ex.HResult + "] | [" + ex.Source + "] | [" + ex.StackTrace + "] | [" + ex.TargetSite + "]"), false);
+                                    udcxOutput.Status = Constants.ErrorStatus + ": File Publish failed.";
+                                    _WriteUDCList.Add(udcxOutput);
+                                    return;
+                                }
+                            }
+                            else
+                            {
+                                Microsoft.SharePoint.Client.File.SaveBinaryDirect(userContext, serverRelativeFilePath, contentStream, true);
+                            }
+                            Logger.LogInfoMessage(String.Format("Saved contents of UCDX File [{0}] to Web [{1}]", serverRelativeFilePath, webUrl), false);
+
+                            udcxOutput.Status = Constants.SuccessStatus;
+                            Logger.LogSuccessMessage(String.Format("Updated UCDX File [{0}/{1}] of Web [{2}]", dirName, leafName, webUrl), false);
                         }
-
-                        udcxOutput.Status = Constants.SuccessStatus;
                     }
                     else
                     {
                         udcxOutput.Status = Constants.NoAuthNodeFound;
+                        Logger.LogWarningMessage(String.Format("Skipped UCDX File [{0}/{1}] of Web [{2}]: Reason={3}", dirName, leafName, webUrl, Constants.NoAuthNodeFound), false);
                     }
                 }
             }
@@ -146,6 +254,20 @@ namespace UdcxRemediation.Console
 
             Common.Utilities.FileUtility.WriteCsVintoFile(reportFileName, ref _WriteUDCList);
         }
+
+        private static string SafeGetFileAsString(Web web, string serverRelativeFilePath)
+        {
+            try
+            {
+                return web.GetFileAsString(serverRelativeFilePath);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogErrorMessage(String.Format("SafeGetFileAsString() failed for File [{0}] of Web [{1}]: Error={2}", serverRelativeFilePath, web.Url, ex.Message), false);
+                return String.Empty;
+            }
+        }
+
 
     }
 }
