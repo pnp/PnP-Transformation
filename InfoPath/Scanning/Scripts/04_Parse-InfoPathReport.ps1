@@ -25,6 +25,7 @@ try
     $Global:productVersions = @()
     $Global:publishUrls = @()
     $Global:soapConnections = @()
+    $Global:restConnections = @()
     $Global:udcConnections = @()
     $Global:adoConnections = @()
     $Global:dataConnections = @()
@@ -40,6 +41,7 @@ try
                                 "GetCommonManager" = "userprofileservice.asmx"
                                 "GetCommonMemberships" = "userprofileservice.asmx"
                                 "GetUserMemberships" = "userprofileservice.asmx"
+                                #"GetRunningWorkflowTasksForCurrentUser" = "workflow.asmx"
                                 "GetUserPropertyByAccountName" = "userprofileservice.asmx"
                                 "CheckInFile" = "lists.asmx"
                                 "CheckOutFile" = "lists.asmx"
@@ -167,6 +169,18 @@ try
             }
         }
 
+        foreach($item in $Global:restConnections)
+        {
+            if($item.ColumnA -ne $currentObject.URN)
+            {
+                continue
+            }
+
+            if ($item.ColumnC -eq "") { $item.ColumnC = "connection in form" }
+            
+            $urls += [string]::Format("REST:{0}", $item.ColumnC)
+        }
+
         foreach($item in $Global:udcConnections)
         {
             if($item.ColumnA -ne $currentObject.URN)
@@ -286,6 +300,11 @@ try
                                     } 
                                  }
 
+                "RESTConnection" {                                      
+                                    $Global:restConnections += $item
+                                    Add-Urn($item.ColumnA)                                    
+                                 }
+
                 "UdcConnection" {
                                     $Global:udcConnections += $item
                                     Add-Urn($item.ColumnA)
@@ -375,11 +394,7 @@ try
                                                                SiteUrls = [string]::Empty
                                                                URLs = [string]::Empty
                                                                UnsupportedSoapCalls = [string]::Empty
-                                                               UnsupportedSoapCallsCount = 0
-                                                               UnsupportedUdcCalls = [string]::Empty
-                                                               UnsupportedUdcCallsCount = 0
-                                                               UnsupportedAdoConnection = [string]::Empty
-                                                               UnsupportedAdoConnectionInstances = 0
+                                                               UnsupportedSoapCallsCount = 0                                                              
                                                                UnsupportedDataConnectionTypes = [string]::Empty
                                                                UnsupportedDataConnectionInstances = 0
                                                                ManagedCode = $false
