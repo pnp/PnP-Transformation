@@ -94,8 +94,10 @@ This is a CSV that follows in which the header row is at least expected with the
 - **WebUrl**: This column should contain the Url of the SharePoint Web
 - **ListName**: This column should contain the InfoPath form’s list name
 
-
 See [PeoplePickerReport.csv](/InfoPath/Migration/PeoplePickerRemediation.Console/PeoplePickerReport.csv) for a report sample.
+
+**Note:**
+You can also take the output from the 06_Parse-InfoPathPeoplePickerReport script in the scanning folder and use the GeneratePeoplePickerCSOMInput.ps1 script to transform that in a valid format for this tool. Keep in mind though that a manual validation of the data input is still required!
 
 ### Output - PeoplePickerDataFix_dd_mm_yyyy_hh_mm_ss.csv ###
 A status report .csv file is generated at the end of the application, which will show status of InfoPath forms people picker data fix. 

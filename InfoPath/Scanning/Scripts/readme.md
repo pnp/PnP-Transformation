@@ -30,6 +30,7 @@ Following scripts are used to obtain a list of potentially problematic InfoPath 
 - **03_Get-UdcxReport.ps1**: all UDXC files downloaded using the 01_Get-InfoPathFiles.ps1 script will be parsed and a CSV report will be generated. This report is needed for UDCX file fixing once these files are migrated over to SharePoint Online
 - **04_Parse-InfoPathReport.ps1**: the data exported using the 02_Scrape-InfoPathFiles.ps1 script is analyzed and all forms which potentially are problematic will be listed in a CSV report
 - **05_Get-InfoPathUsageInformation.ps1**: you can use this script to acquire usage Information of the forms which are listed in the previous step. This information can be helpful to guide your customer in determining which forms are still business relevant as you most likely only want to spent effort on those
+- **06_Parse-InfoPathPeoplePickerReport.ps1**: the data exported using the 02_Scrape-InfoPathFiles.ps1 script is analyzed and all forms which have an or more people picker controls will be listed in a CSV report. You can use this report to determine which InfoPath XML files do require a migration of the stored user/group account information (checkout the PeoplePickerRemediation.Console application in the migration folder)
 
 
 **Important:**
