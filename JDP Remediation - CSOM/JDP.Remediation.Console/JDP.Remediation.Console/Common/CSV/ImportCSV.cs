@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using JDP.Remediation.Console.Common.Utilities;
+using Microsoft.VisualBasic.FileIO;
 
 namespace JDP.Remediation.Console.Common.CSV
 {
@@ -261,6 +262,99 @@ namespace JDP.Remediation.Console.Common.CSV
                 }
             }
             return dt;
+        }
+
+        public static DataTable Read(string strFilePath, string Delemeter)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                StreamReader sr = new StreamReader(strFilePath);
+                string[] headers = sr.ReadLine().Split(',');
+
+                foreach (string header in headers)
+                {
+                    switch (header.ToLower().Trim())
+                    {
+                        case "webapplication":
+                        case "webapplicationurl":
+                            dt.Columns.Add("WebApplication");
+                            break;
+                        case "sitecollectionurl":
+                        case "sitecollection":
+                            dt.Columns.Add("SiteCollection");
+                            break;
+                        default:
+                            dt.Columns.Add(header);
+                            break;
+                    }
+                }
+                while (!sr.EndOfStream)
+                {
+                    string readline = sr.ReadLine();
+                    //string[] rows = readline.Split(',');
+
+                    string[] delimiterChars = { "," };
+                    string[] rows = RexCsvSplitter.Split(readline);
+
+                    DataRow dr = dt.NewRow();
+                    for (int i = 0; i < rows.Length; i++)
+                    {
+                        string value = rows[i];
+                        dr[i] = value;
+                    }
+                    dt.Rows.Add(dr);
+                }
+            }
+            catch 
+            {
+            
+            }
+            
+            return dt;
+
+
+        }
+
+        private static DataTable GetDataTabletFromCSVFile(string csv_file_path, string Delemeter, bool HasFieldsEnclosedInQuotes)
+        {
+            DataTable csvData = new DataTable();
+
+            try
+            {
+
+                using (TextFieldParser csvReader = new TextFieldParser(csv_file_path))
+                {
+                    csvReader.SetDelimiters(new string[] { Delemeter });
+                    csvReader.HasFieldsEnclosedInQuotes = HasFieldsEnclosedInQuotes;
+                    string[] colFields = csvReader.ReadFields();
+                    foreach (string column in colFields)
+                    {
+                        DataColumn datecolumn = new DataColumn(column);
+                        datecolumn.AllowDBNull = true;
+                        csvData.Columns.Add(datecolumn);
+                    }
+
+                    while (!csvReader.EndOfData)
+                    {
+                        string[] fieldData = csvReader.ReadFields();
+                        //Making empty value as null
+                        for (int i = 0; i < fieldData.Length; i++)
+                        {
+                            if (fieldData[i] == "")
+                            {
+                                fieldData[i] = null;
+                            }
+                        }
+                        csvData.Rows.Add(fieldData);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return csvData;
         }
     }
 

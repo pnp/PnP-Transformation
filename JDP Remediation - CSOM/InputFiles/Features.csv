@@ -1,0 +1,268 @@
+﻿FeatureID,FeatureName,SolutionName,FeatureScope
+f0f9a242-5c29-4750-8f7a-c11d00635c33,Anubhav_SiteColumns Feature1,anubhav_sitecolumns.wsp,Site
+a2428e6d-8fbc-428d-8abb-6332cc5c4d3c,AnubhavContentTypeER SiteColumns,anubhavcontenttypeer.wsp,Site
+82a16e50-d128-49d9-b387-8ba7882bd69b,AnubhavContentTypeER ContentType,anubhavcontenttypeer.wsp,Site
+14502138-871b-4cd4-9e01-a40d84f465d9,AnubhavContentTypeER AttachER,anubhavcontenttypeer.wsp,Site
+25113e4f-5021-4bc8-8f07-4e8df87ab258,Aviva Add Missing Web Parts Feature,aviva.oneintranet.solution.web.wsp,Site
+A3F50EF7-7E00-41e6-9903-0E38AA2378B5,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+A056D754-7EBA-43eb-BE93-FC58C6A5FAD3,Best Bets Suggestions,aviva.oneintranet.solution.web.wsp,Site
+BAA826A9-4CE7-48cc-94F4-16F5BD2927DF,BestBetsSuggestions List Template,aviva.oneintranet.solution.web.wsp,Site
+E1046D23-9560-4e07-9179-41FE5FBA7899,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+94119a41-a585-4cb8-bd5a-d17dd3dc5f5b,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Web
+23906335-4195-4056-8391-A1B2EADAFA7C,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Web
+3CCFF316-1DCC-443e-84A6-D01E6C10D7A9,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Web
+19FFEE75-FBAE-4a6d-9F19-496803CB958D,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+A7A400DC-9561-42dd-980F-36B2E77B20EA,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+851E5702-F162-43e9-B267-9E4F5316EC89,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+32219613-ACE9-4196-BA7D-363FDEA9D5BE,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+8DC48A9F-98CD-4b4c-BE2E-A48537D930E9,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,WebApplication
+0C445DB9-00AF-4887-A036-F3FB8619EF74,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Web
+C98A153D-0AB8-41f7-97E6-780AFBFFA2D1,Aviva edit metadata team page and settings link,aviva.oneintranet.solution.web.wsp,Web
+c8e03bc5-f068-40a5-8260-e9fef73f3216,Emergency and Security Link,aviva.oneintranet.solution.web.wsp,WebApplication
+ACDCE072-9E77-478e-816D-684FD27C67D2,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+{43CE2F03-317B-4216-8C98-99796322238A},$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Web
+776F4A3C-B74C-4334-82F1-74CB89E8BB02,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+1BA63CC9-848B-43ab-B117-82135F011B8D,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,WebApplication
+22DA90CB-AE3D-4226-BA6C-D2DF07A327DD,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+E2AB4BDE-5634-4A2D-AA9B-F949C222D045,Aviva Featured Links Site Columns,aviva.oneintranet.solution.web.wsp,Site
+71C6138F-A7C0-49e1-90DF-30D915C47A56,Aviva Base Web Features Stapling,aviva.oneintranet.solution.web.wsp,WebApplication
+2D4251A7-67FA-4a6c-AD33-1A3C53BD8DAB,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+AFAB4017-FAEA-493d-8501-01DE64E24340,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Web
+1B3CDA7E-7F0E-4802-A160-BA0B99E09EB1,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+23C090FE-1230-4130-9A70-611DFD822AEA,Aviva Language Menu,aviva.oneintranet.solution.web.wsp,WebApplication
+39AF6170-98F0-41df-B823-C3945B710829,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+{C0FAF85F-2318-4899-A0F5-D0F950342F07},Aviva Logging,aviva.oneintranet.solution.web.wsp,Farm
+3E631AF3-F3FB-4927-A33F-9B031B36A711,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Farm
+D4140C79-A6BD-4fa2-A9A3-E2A08E3646A6,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+D7EA8042-5EBD-46f5-AFCA-E2B792CF4953,Aviva Publishing Page Layouts Feature,aviva.oneintranet.solution.web.wsp,Site
+c6d2621d-8f21-4158-976c-137a7a30fa9b,Page Status Web Part,aviva.oneintranet.solution.web.wsp,WebApplication
+45B31DA6-43DA-4ada-938F-45DAD557CE7C,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+27F86749-6B23-4F56-BCAA-313DA8E230A2,SmallSearchInputBox,aviva.oneintranet.solution.web.wsp,Site
+A4950771-686C-41D4-938B-3E564040B82B,Pester Plaque,aviva.oneintranet.solution.web.wsp,WebApplication
+49C19EED-4588-41a4-92FA-2D842EB137C4,Provisioning feature for the Aviva OneIntranet solution.,aviva.oneintranet.solution.web.wsp,Site
+D06ECF20-81B5-4964-A182-F2B2DCD14573,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Web
+A7BD3B17-2920-4297-8E2E-37DA0E253927,Rating List View,aviva.oneintranet.solution.web.wsp,Site
+DB898965-7644-44e1-92D9-C54359F8AE90,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+49852445-63D9-4b9b-9652-708445F80ED5,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+573CF8FF-95EC-4166-BDB6-CE4A6859EA88,Reset Aviva Page Layouts Feature,aviva.oneintranet.solution.web.wsp,Site
+{670540E8-CB22-4DDD-A35A-8DEF89F17A6D},Resource Literal Web Part,aviva.oneintranet.solution.web.wsp,Site
+0AB4190A-AFCA-4824-955F-7EC81AAE7670,Scheduled Advert List,aviva.oneintranet.solution.web.wsp,Web
+94637F0B-5E78-470d-AC6A-2E6547900D86,Scheduled Advert List Template,aviva.oneintranet.solution.web.wsp,Web
+30E114DD-E383-46f7-99E8-19294B6A709A,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+7B206174-D8A1-41CB-8C98-7E883A36FA61,Scope Search Control,aviva.oneintranet.solution.web.wsp,WebApplication
+EBD86520-DDCB-45CF-BD73-DC8C5B7BE022,Aviva Search Site Configuration,aviva.oneintranet.solution.web.wsp,Web
+7D93598C-1D8C-4275-9607-965ED76FCFE3,Aviva SharePrice DataReceiver TimerJob,aviva.oneintranet.solution.web.wsp,WebApplication
+59D46873-DE57-4271-BB48-64809B17EAC4,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+04C66A75-AA28-4067-932D-AFEF67196D39,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+828A6EDD-0AE3-415e-B4DC-C315635FE74D,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Web
+311BB1E2-9E8C-485d-B869-84451380259F,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Web
+FF692CEA-8AE4-45b1-8397-006514306C4B,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+57DD0C0F-7506-4566-AED0-629764F9B9F4,Aviva Update MasterPage,aviva.oneintranet.solution.web.wsp,Site
+06d77b33-76b2-4a14-bef4-3e4b4203d88e,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+A10279AD-22A1-47a3-8390-7A52BC4E022C,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+{4EBF6325-ABE7-4097-847E-FC3263F8EDC1},"$Resources:VideoRibbon,videoplayer_featurename",aviva.oneintranet.solution.web.wsp,Site
+{073C4E60-6D38-42A7-83FE-C27A230A3747},Aviva Video Ribbon,aviva.oneintranet.solution.web.wsp,Site
+{86EE9185-85B6-4DBD-960C-5CAC92850092},"$Resources:VideoRibbon,videowebpart_featurename;",aviva.oneintranet.solution.web.wsp,Site
+BBA20869-D4A8-4bf4-9628-1F09FA9B5F00,Aviva OneIntranet : Web.Config Modifications,aviva.oneintranet.solution.web.wsp,WebApplication
+07553601-c9a8-4ba1-a620-06408c656eef,Aviva OneIntranet : Web.Config Modifications for My Sites,aviva.oneintranet.solution.web.wsp,WebApplication
+FD63B58E-1182-46c4-903F-0006229141E7,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+00BFEA71-1C5E-4A24-B310-BA51C3EB7A58,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+DA2175EB-CB68-45d3-9ED9-1F8092A01E01,$Resources:FeatureName,aviva.oneintranet.solution.web.wsp,Site
+A249FB3B-9526-4510-AF1C-8E12ED9A0622,Aviva You Are Here,aviva.oneintranet.solution.web.wsp,Site
+7908835E-B08E-415F-A14C-BD7C94EFD404,Aviva Search With People Scope,aviva.oneintranet.solution.web.wsp,WebApplication
+4b7028f1-999d-458c-a551-e680c2d2a540,ContentTypeEventReceiver Feature1,contenttypeeventreceiver.wsp,Web
+68458954-c00b-436f-99dd-9c8b6dec97b1,ContentTypeUsageTesting Feature1,contenttypeusagetesting.wsp,Web
+9f372db0-fa25-4c59-bd73-39862db2fcd9,Contoso.ContentType Feature,contoso.contenttype.wsp,Site
+7435ae5c-91b5-4f0e-8c96-de5e77207e9c,Contoso.ContentType Test Blank,contoso.contenttype.wsp,WebApplication
+ac1d0639-b16c-46d8-beb9-e1c3645af5ae,Contoso.EventReceiver,contoso.contenttype.wsp,Web
+6c966619-5d5c-400c-b193-396b5238aee3,Contoso.DeployFiles,contoso.deployfiles.wsp,Site
+53a719c7-6766-4bba-bf89-a5789ea2360a,Contoso.Intranet - Farm Default,contoso.intranet.wsp,Farm
+7e2ab32f-6903-44b9-affc-8f31360bfbbb,Contoso.Intranet - Site Default Publishing,contoso.intranet.wsp,Site
+a3fed161-004e-4a9c-bb07-1966f27f2cab,Contoso.Intranet - Site Default,contoso.intranet.wsp,Site
+c2f9c992-99b0-4ee7-8e48-5d9949e77d3d,Contoso.Intranet - Web Default,contoso.intranet.wsp,Web
+02464339-e494-4257-8018-403b5a4371d9,Contoso.Intranet - Web Default Publishing,contoso.intranet.wsp,Web
+ca596be2-ef4a-48c1-8467-9f59124f7ed9,Contoso.WebPart2 Feature1,contoso.webpart2.wsp,Site
+825bf18e-0efe-4b70-946b-a06bcef1dff3,CreateCustomPolicies - Declaratively create content types with Policies,createcustompolicies.wsp,Site
+154b106b-c811-4595-b3cf-245060b884f7,CTDemo Feature1,ctdemo.wsp,Web
+8b664241-21e9-44ce-bcae-e772fcb4ccb5,EvalEventReceiverFeature,cteventereceiver.wsp,Web
+5d6bc4d7-16bf-4e9a-9006-cfd14b9f27fb,CTFromFTC Feature1,ctfromftc.wsp,Web
+fb154ba8-16ec-40f6-b77b-905d9d5d9cbc,CTSCAnalysisForPMT Feature1,ctscanalysisforpmt.wsp,Site
+e80e232c-7b1a-4b6e-bad4-4bf62664cdd5,CustomAspxPages Feature1,customaspxpages.wsp,Web
+4a066dc6-1bee-4a07-bb13-46781558d994,CustomEventReceiverOne itemAddedER,customeventreceiverone.wsp,Site
+2eb75b1e-e869-4664-9f0b-4088cc2f7a3b,CustomEventReceivers Feature1,customeventreceivers.wsp,Web
+728cd1d5-c22f-4060-984d-d38207152c68,CustomEventReceiverThree Feature1,customeventreceiverthree.wsp,Web
+45cb9840-705f-410d-acd0-fe1e53b60e81,CustomEventReceiverTwo Feature1,customeventreceivertwo.wsp,Site
+2135e033-71b2-40d6-a53f-2ce916c7ab67,CustomField Feature1,customfield.wsp,Web
+48e86892-0ec3-4710-b061-26c21702ec21,CustomNewField Feature1,customnewfield.wsp,Web
+32ccfe5b-e2ff-43e1-a66c-ede7c995250a,CustomSiteColumnandContentType Feature1,customsitecolumnandcontenttype.wsp,Web
+4a015108-ce50-463b-bc9e-9b5e99f6b63e,CustomSiteDefinition Feature1,customsitedefinition.wsp,Site
+64558355-a970-4e48-8a2c-849417be0dfc,CustomVSItemUpdate Feature1,customvsitemupdate.wsp,Web
+57ded087-885b-45aa-becb-5dacf3d16c4d,CustomWFVS Feature2,customwfvs.wsp,Web
+3c232783-41d5-4958-807b-cf87f85e1e12,CustomWFVS Feature1,customwfvs.wsp,Web
+a6c87a55-d08d-4949-ad63-413e6b7ad1cb,CustomWorkflowDeploy Feature2,customworkflowdeploy.wsp,Web
+4fa6e00a-5889-45b3-aee4-4f1fb5cdb7de,CustomWorkflowDeploy Feature1,customworkflowdeploy.wsp,Web
+340be594-6eb2-4a80-93f1-f9e70ea2525b,CustomWorkflowProject Feature2,customworkflowproject.wsp,Web
+663a7371-a96e-4f54-adb4-b6cb57c2d158,CustomWorkflowProject Feature1,customworkflowproject.wsp,Web
+b86418ef-12d2-463d-9c7b-0d5e8578e084,DataSheet Feature1,datasheet.wsp,Site
+f1f19a9b-876c-4098-a174-d54e13eb0014,DeployASPX Feature1,deployaspx.wsp,Web
+3d059f90-32bb-4b76-8806-199406df9595,DiscPLTest Feature1,discpltest.wsp,Web
+0a489b2b-0b0e-4810-93a7-b5bceb810561,DivCustomFieldType2Feature1,divcustomfieldtype2.wsp,Site
+c7daf4ff-358b-4679-a55a-d5308144ec29,DivSampleProject Feature1,divsampleproject.wsp,Web
+d7c90276-bccd-45f0-bf64-1a33268cda15,DocSetProvisioning Feature1,docsetprovisioning.wsp,Site
+77edeaba-6d47-11dc-8314-0800200c9a66,Useful Sharepoint Designer Activities 0.5.0 Alpha,dp.sharepoint.workflow.wsp,WebApplication
+6633bed0-6d85-4517-bdae-71c0f556b2e4,ERCT Feature1,erct.wsp,Web
+9aef7e5d-98a3-4099-9c2d-32c427ffe79a,ERItemAddedIntoOtherList Feature1,eritemaddedintootherlist.wsp,Web
+b4c43ac2-b9b9-460e-8037-be7afd49cb14,EvalPageLayoutFeature,evallabproject.wsp,Web
+da620525-6fc2-495c-9350-0fda59e005c2,EvalMasterPage Feature,evalmasterpage.wsp,Site
+5cc6648f-1b59-40a3-b683-6d72f3106faf,EventReceivers Content Types,eventreceivers.wsp,Site
+9c47a716-9de7-42b7-a6c4-18310575c4c6,EventReceivers - Site Collection Feature,eventreceivers.wsp,Site
+da186b10-409b-48dc-a2d4-24262e806125,EventReceivers - List Instance,eventreceivers.wsp,Web
+0ab5eb3c-e3cc-423d-854d-10e5401c8226,EventReceivers - Subsite feature,eventreceivers.wsp,Web
+86256679-456a-42da-8b89-587adb129afe,EventReceivers - Programmatic Associator,eventreceivers.wsp,Web
+2570fd82-25b0-4374-81d0-f3e1770a66ac,FarmSolutionFeature Feature1,farmsolutionfeature.wsp,Web
+a8a71fdb-fc09-4003-98ed-c7f39fa0230a,FeatureFTCSBTest Feature1,featureftcsbtest.wsp,Web
+05858f38-a897-4e80-92fc-88eedfaf0d8d,FeatureReceiver Feature1,featurereceiver.wsp,Web
+d0ba6fff-18b8-4fcf-8813-ae448726f676,FilesInRootModule Feature1,filesinrootmodule.wsp,Web
+0934955f-d333-5f57-6a62-d7bebdd3ee7a,EmpRegForm,form-empregform.wsp,Site
+0bedc105-bc8f-6061-0c3d-a7772c38ac07,EmpRegistrationForm,form-empregistrationf.wsp,Site
+f6c04a1c-d0f2-6937-19cc-dd8777cd7f25,RichtextField_AdminApproved_Published,form-richtextfield_ad.wsp,Site
+f808f9bd-5181-15c7-c2f3-91553937edce,Incident Reporting,form-template.wsp,Site
+8686a0dd-7c3f-2b66-63e1-298d4fce24b7,TrialForm4,form-trialform4.wsp,Site
+c7401bb0-bfc1-4a19-b7b1-775480f98d96,FTCContentType Feature1,ftccontenttype.wsp,Web
+4e9378ef-5784-498f-9709-2df2e3b7bdb5,FTCCTandSC Feature1,ftcctandsc.wsp,Web
+6c5042b1-3e35-4c9f-a379-8e10268803bc,FTCCTSC Feature1,ftcctsc.wsp,Web
+e6322a72-797c-4cd3-bb91-987dc9b3ff1e,FTCCustomListER Feature1,ftccustomlister.wsp,Web
+ad1e0c96-2b90-4ab8-8acd-98e3075a0c23,FTCDocumentSet Feature1,ftcdocumentset.wsp,Site
+375e707b-93c4-4e84-be6a-fcd4f8744cbb,FTCListItemER Feature1,ftclistitemer.wsp,Web
+4184eeae-598c-46c7-8c3d-518d064f42c9,FTCMasterPageOne Feature1,ftcmasterpageone.wsp,Site
+34726d5b-e047-49dd-a56f-64a59f824683,FTCMasterPageOne RashCustomMasterPage,ftcmasterpageone.wsp,Site
+4204894e-cdb0-4a95-b8ae-3c110b63675e,FTCSCCTList Feature1,ftcscctlist.wsp,Web
+1d5c51dd-6c30-4ad2-839f-b37f83e4ad2a,FTCSiteColumn Feature1,ftcsitecolumn.wsp,Web
+cadbe7a3-a904-457d-9a38-a84107d238ec,FTCTextFile Feature1,ftctextfile.wsp,Web
+75bd038f-1356-4aa8-b1c4-e923feac2c48,FTCVisualWebPart Feature1,ftcvisualwebpart.wsp,Site
+04a45833-932b-4048-ac83-0491af47e60d,FTCVisualWebPartTesting Feature1,ftcvisualwebparttesting.wsp,Site
+e9a3cac0-d2eb-4ff5-b2dd-bf7d0dc42c51,FTCWebPart Feature1,ftcwebpart.wsp,Site
+91c431c2-6ca5-44c2-9b7c-f5ffc41b4554,ISBN_Field_Type Feature1,isbn_field_type.wsp,Web
+6f33e1fa-723b-4771-9e18-fa0470803735,ItemCTEventReceiver Feature1,itemcteventreceiver.wsp,Site
+d073413c-3bd4-4fcc-a0ff-61e0e8043843,JDP.Transformation.DisableFeatureActivation Control,jdp.transformation.disablefeatureactivation.wsp,WebApplication
+5c5dfb64-b756-4d29-bfcf-50cab5dab207,KWizCom Datasheet View for SharePoint 2013,kwizcom datasheet view for sharepoint 2013 v11.1.00.wsp,Site
+eb515910-46ec-428b-88ba-91bc970f4faf,KWizCom Datasheet View for SharePoint 2013,kwizcom datasheet view for sharepoint 2013 v11.1.00.wsp,Web
+055bf606-efdd-4e00-b36e-7685c855d9ab,KWizCom Cascading Lookup Field,kwizcom sharepoint cascading lookup plus field type 2013 v14.3.00 evaluation.wsp,Farm
+055bf606-efdd-4e00-b36e-7685c855d9ab,KWizCom Cascading Lookup Field,kwizcom sharepoint cascading lookup plus field type v14.3.00 evaluation 2010 bc.wsp,Farm
+fdfeeaf7-db7e-4073-9578-18ce8eda5c72,KWizCom Features Administration,kwizcom sharepoint foundation 2013 v13.3.77.wsp,Farm
+b781c3a4-a714-4582-ae66-2ab0da239473,KWizCom Logging,kwizcom sharepoint foundation 2013 v13.3.77.wsp,Site
+a76d1d41-2030-4ebf-a5da-2e5cc605b06b,KWizCom Site Collection License Management,kwizcom sharepoint foundation 2013 v13.3.77.wsp,Site
+f0aa7e41-d055-42c3-8a93-760ec0f737ec,MissingWebPartPageCheck Feature1,missingwebpartpagecheck.wsp,Web
+d75b8655-dbc4-42c4-9c4c-96328f2498c5,Activate Custom Master,mylabproject.wsp,Site
+c5cef19b-c93d-4b04-b0f1-905e275195f8,myvwebpart Feature1,myvwebpart.wsp,Site
+b7654b2f-3c38-437f-afde-c981bb7e5f20,"$Resources:NewsGatorWSS,NewsGatorSocialWebPartsFeatureTitle;",newsgator.core.wsp,Site
+b1f0af18-53c2-4875-9f53-26f1637ff828,"$Resources:NewsGatorWSS,NewsGatorNewsFeedIntegrationFeatureTitle;",newsgator.core.wsp,Web
+c5d7418c-a196-4ee7-8024-576607726854,"$Resources:NewsGatorWSS,FeatureTitle_Columns;",newsgator.core.wsp,Site
+fd52fa6e-27bc-4a12-817f-f5f00231215b,"$Resources:NewsGatorWSS,RatingsFeatureTitle;",newsgator.core.wsp,Web
+fb12eda7-b288-4faf-8b9c-20f3ed4f91e8,"$Resources:NewsGatorWSS,KeywordsFeatureTitle;",newsgator.core.wsp,Web
+3732f402-de0e-4cfa-91d3-055dec3cb94e,Tag Note Column HIDDEN,newsgator.core.wsp,Site
+50742a89-6bff-41f8-9a7f-201c2115ea40,"$Resources:NewsGatorWSS,BlogGhostWriterFeatureTitle;",newsgator.core.wsp,Web
+e5881af9-4846-4f49-be1c-320dba619c7b,"$Resources:NewsGatorWSS,ActivityInstallerFeatureTitle;",newsgator.core.wsp,Farm
+b5d5fe0a-27c7-4c42-b113-498f77ff03d5,"$Resources:NewsGatorWSS,TypeMapperFeatureTitle;",newsgator.core.wsp,Farm
+0987c14c-98b7-47c7-b7c7-a2969d322788,"$Resources:NewsGatorWSS,NewsGatorSocialInstallerFeatureTitle;",newsgator.core.wsp,Farm
+67251da4-be65-46bd-9e62-08aed3068425,"$Resources:NewsGatorWSS,MySiteLookoutFeatureTitle;",newsgator.core.wsp,Site
+e953b8f2-23f5-46ae-9054-e7f634f3732b,"$Resources:NewsGatorWSS,FeatureTitle_MySiteFixer;",newsgator.core.wsp,Site
+2b42b5a5-e174-4024-ba49-3769905fca36,"$Resources:NewsGatorWSS,NewsGatorAdditionalPageHeadFeatureTitle;",newsgator.core.wsp,Farm
+722ef87a-10ff-49e9-a4c0-2b2d32255210,"$Resources:NewsGatorWSS,BlockLookout360_Web_FeatureTitle;",newsgator.core.wsp,Web
+3f57dd4d-a75f-40a8-be85-1a2d32d7c48e,"$Resources:NewsGatorWSS,BlockLookout360_Site_FeatureTitle;",newsgator.core.wsp,Site
+855fea8b-b443-4f99-9d94-56346e5a4425,"$Resources:NewsGatorWSS,BlockLookout360_WebApp_FeatureTitle;",newsgator.core.wsp,WebApplication
+c0088822-0bad-4757-bf6d-84d465191292,"$Resources:NewsGatorWSS,ItemConversationFeatureTitle;",newsgator.core.wsp,WebApplication
+5170e50e-25cd-4d0d-be18-4fe9ccf4be9b,"$Resources:NewsGatorWSS,NewsGatorTypeAheadHarvesterTitle;",newsgator.core.wsp,Farm
+fec5d510-98a6-4729-aaf0-87893cd75c5f,"$Resources:NewsGatorWSS,AutoProvisionMySiteTitle;",newsgator.core.wsp,Farm
+ff162387-0ca2-4807-864a-fde094df27d7,"$Resources:NewsGatorWSS,CustomStylesAndScriptsFeatureTitle;",newsgator.core.wsp,Farm
+2719f650-6bcd-4575-9055-5f8c4bf81a2a,"$Resources:NewsGatorWSS,ChromeFixFeatureTitle;",newsgator.core.wsp,Farm
+5ed9392e-5c44-4cd1-9e8b-4927b3bd36c1,"$Resources:NewsGatorWSS,Lookout360FarmFeatureTitle;",newsgator.core.wsp,Farm
+29e9a673-31a4-46a3-b0d2-d8e1db1dbd92,NintexLiveAdminLinks,nintexlivecore.wsp,Web
+EB657559-BE37-4b91-A369-1C201183C779,"$Resources:NWResource,WebPartFeature_Title;",nintexworkflow2013.wsp,Site
+9BF7BF98-5660-498a-9399-BC656A61ED5D,"$Resources:NWWebResource,TeamSiteFeature_Title;",nintexworkflow2013.wsp,Web
+54668547-c03f-4bb5-aaab-d9568ebaf9c9,$Resources:TeamSiteFeature_LiveCatalog_Title;,nintexworkflow2013.wsp,Site
+485f5158-4b8a-453f-9eeb-7b33f5112adf,$Resources:TeamSiteFeature_LiveCatalog_CentralAdminTitle;,nintexworkflow2013.wsp,Web
+80BF3218-7353-11DF-AF9F-058BDFD72085,"$Resources:NWResource,InfoPathFeature_Title;",nintexworkflow2013.wsp,Site
+86C83D16-605D-41b4-BFDD-C75947899AC7,Nintex Workflow Content Type Upgrade,nintexworkflow2013.wsp,Site
+4DB97F4C-E643-4B1B-9F6A-43A9D817E6A2,Nintex Workflow Claims Migrator,nintexworkflow2013.wsp,Farm
+F7937973-0CF9-4f2d-A549-BE2D3C25B772,"$Resources:NWAdminResource,AdminFeature_Title;",nintexworkflow2013.wsp,Web
+0561D315-D5DB-4736-929E-26DA142812C5,"$Resources:NWResource,SiteCollectionFeature_Title;",nintexworkflow2013.wsp,Site
+EB657559-BE37-4b91-A369-1C201183C779,"$Resources:NWResource,WebPartFeature_Title;",nintexworkflow2013backwardscompatibilityui.wsp,Site
+9BF7BF98-5660-498a-9399-BC656A61ED5D,"$Resources:NWWebResource,TeamSiteFeature_Title;",nintexworkflow2013backwardscompatibilityui.wsp,Web
+54668547-c03f-4bb5-aaab-d9568ebaf9c9,$Resources:TeamSiteFeature_LiveCatalog_Title;,nintexworkflow2013backwardscompatibilityui.wsp,Site
+485f5158-4b8a-453f-9eeb-7b33f5112adf,$Resources:TeamSiteFeature_LiveCatalog_CentralAdminTitle;,nintexworkflow2013backwardscompatibilityui.wsp,Web
+80BF3218-7353-11DF-AF9F-058BDFD72085,"$Resources:NWResource,InfoPathFeature_Title;",nintexworkflow2013backwardscompatibilityui.wsp,Site
+86C83D16-605D-41b4-BFDD-C75947899AC7,Nintex Workflow Content Type Upgrade,nintexworkflow2013backwardscompatibilityui.wsp,Site
+F7937973-0CF9-4f2d-A549-BE2D3C25B772,"$Resources:NWAdminResource,AdminFeature_Title;",nintexworkflow2013backwardscompatibilityui.wsp,Web
+0561D315-D5DB-4736-929E-26DA142812C5,"$Resources:NWResource,SiteCollectionFeature_Title;",nintexworkflow2013backwardscompatibilityui.wsp,Site
+53164B55-E60F-4bed-B582-A87DA32B92F1,"$Resources:NWResource,EnterpriseWebPartFeature_Title;",nintexworkflow2013enterprisefeatures.wsp,Site
+2FB9D5DF-2FB5-403d-B155-535C256BE1DC,"$Resources:NWWebResource,TeamSiteFeature_EnterpriseTitle;",nintexworkflow2013enterprisefeatures.wsp,Web
+AA61EF91-EE2B-42d5-9911-7C6557AD90C2,"$Resources:NWAdminResource,AdminFeature_EnterpriseTitle;",nintexworkflow2013enterprisefeatures.wsp,Web
+d29834fe-8640-4b25-8bbf-c03d841886cb,OrphanWebPartFTC Feature1,orphanwebpartftc.wsp,Site
+d065516b-b65f-4875-afb3-d1f8636b0fe4,PageLayoutDemo Feature,pagelayoutdemo.wsp,Web
+32ac2926-367d-4fd3-8e09-96463b8e4d62,PageLayoutDeploy Feature1,pagelayoutdeploy.wsp,Web
+ff28a765-aba9-497d-8d55-eb992c1067bd,PMFTCContentTypeSiteColumn Feature1,pmftccontenttypesitecolumn.wsp,Web
+d57d6298-0747-4cc5-96b6-0806e71f5942,PMFTCMasterPage Feature1,pmftcmasterpage.wsp,Web
+3d1fc365-fdc7-4d94-92e2-3d85e95a2bee,PMTCustomWebPartTEstOne Feature1,pmtcustomwebparttestone.wsp,Site
+14461e40-77c2-47d3-bd71-5f658a70360e,PMTFTCSCAnalysis Feature1,pmtftcscanalysis.wsp,Web
+646b6387-4d49-4d21-8a9c-cd6cc2fb47ee,PMTTestHariCustomList Feature1,pmttestharicustomlist.wsp,Web
+7dc545f5-1e25-48c9-bea2-98d81bf8fa8c,PMTWebPartTestTwo Feature1,pmtwebparttesttwo.wsp,Site
+a965607c-1cae-4cc3-ba47-3c6be4802e54,PreMtDeleteSiteTest Feature1,premtdeletesitetest.wsp,Site
+4731346e-8c0a-4c43-9285-be0d86f19eed,RashCTSC Feature1,rashctsc.wsp,Web
+16555e60-c1f3-44c8-a138-4e66e3c2f165,RemCT Feature1,remct.wsp,Site
+ff95a0ad-a170-483f-9b4b-29d4881bfd91,Remove-CR-POC Feature,remove_cr_poc.wsp,Web
+4842fccd-d5d6-4a46-a6d8-aa175c91873f,SampleWebPart Feature1,samplewebpart.wsp,Site
+5fb5313a-011a-4a0c-aff2-409f0bcefdd4,SCFTC_Test Feature1,scftc_test.wsp,Web
+9bbb70eb-7dc9-450a-b0cb-cc8a0ad303dc,SetupFileUsingFarmSolution Feature1,setupfileusingfarmsolution.wsp,Web
+61e02b35-ccc0-4deb-a818-b61b0db6dddc,SharePointFeatureDemo,sharepointfeature.wsp,Site
+d5d4746a-cf92-422e-8fa5-869f1b016d3e,SharePointProject2 Feature1,sharepointproject2.wsp,Web
+fdd9384e-7814-4e44-b101-bed0e28a2f98,Shell.SharePoint.SAEF Site Attribute Additions,shell.sharepoint.saef_v2.1.wsp,Site
+bbc2aabf-21ce-4223-8120-c1ff3d84ff33,Shell.SharePoint.SAEF Site Attributes,shell.sharepoint.saef_v2.1.wsp,Site
+f0297d6e-0ed1-4c54-8e7f-79f2ac6cff49,Shell.SharePoint.SAEF Shell Content Types,shell.sharepoint.saef_v2.1.wsp,Site
+e0115d32-0b81-4cc2-9c4c-c9ba8cd2d6e3,Shell.SharePoint.SAEF Logger List,shell.sharepoint.saef_v2.1.wsp,Web
+f9b7e179-cda6-42a4-829f-41a28e75ebe5,Shell.SharePoint.SAEF Update MMS Link,shell.sharepoint.saef_v2.1.wsp,Site
+53991b67-2bab-483d-bd89-e196a7112979,Shell.SharePoint.SAEF Fetch Updated Metadata,shell.sharepoint.saef_v2.1.wsp,Site
+1a3caacd-0de3-409e-8f97-f744384aa474,Shell.SharePoint.SAEF Actions,shell.sharepoint.saef_v2.1.wsp,Farm
+7c211f8e-a40d-4496-9684-da8b7cbe03b2,Shell.SharePoint.SAEF Create SAEF Administration site,shell.sharepoint.saef_v2.1.wsp,WebApplication
+62f5042f-cf3b-443c-909b-fee4e92bda20,Shell.SharePoint.SAEF Edit Multiple Properties,shell.sharepoint.saef_v2.1.wsp,Site
+8572f3c9-6afc-43a1-9fd4-534b061a7149,Shell.SharePoint.SAEF Provision SAEF Administration site,shell.sharepoint.saef_v2.1.wsp,Web
+1af3a0e9-9755-4e6b-9757-1c82f2f4fc91,Shell.SharePoint.SAEF.MMSReplication Manager,shell.sharepoint.saef_v2.1.wsp,Site
+ECFD1DD3-6820-48FA-9785-2E5EF4F2A36C,Shell.SharePoint.SAEF.MMSReplication MMS Replication Job,shell.sharepoint.saef_v2.1.wsp,WebApplication
+6ea7c78e-281e-4046-a510-c0486a7b450e,Shell.SharePoint.SAEF Administration Custom Actions,shell.sharepoint.saef_v2.1.wsp,Site
+a01325b1-e4ff-4ac3-bf12-d87091d42e27,Shell.SharePoint.SAEF Sandbox Logging,shell.sharepoint.saef_v2.1.wsp,Web
+aec62978-4d51-4eba-bcaa-c6fca994b736,Shell.SharePoint.SAEF Register Logging,shell.sharepoint.saef_v2.1.wsp,Site
+2fba2ff3-cf38-4bab-be4d-7fc90d7eda8a,Shell.SharePoint.SAEF Application Configuration Framework,shell.sharepoint.saef_v2.1.wsp,WebApplication
+cea4c9d2-8b77-4e01-aef0-6b0758e5b157,Shell.SharePoint.SAEF Large Collections,shell.sharepoint.saef_v2.1.wsp,Site
+278f1a8c-65ea-4a57-a4ea-ba1f80e30b66,Shell.SharePoint.SAEF Feature Upgrade Lists,shell.sharepoint.saef_v2.1.wsp,Site
+1e738d05-0a69-48dc-9743-13655b720381,Shell.SharePoint.SAEF SiteAttribute Update TimerJob,shell.sharepoint.saef_v2.1.wsp,WebApplication
+8f1ed135-7aaa-4466-8082-94311527d2fa,Shell.SharePoint.SAEF Feature Upgrade History List,shell.sharepoint.saef_v2.1.wsp,Site
+cc9c691b-a365-4935-b503-a4e738736ca6,Shell.SharePoint.SAEF FeatureUpgradeFrameWorkTimerJob,shell.sharepoint.saef_v2.1.wsp,WebApplication
+c96b05cc-95cb-4d51-8bc1-2fa04c1010b0,Shell.SharePoint.SAEF Webtrends,shell.sharepoint.saef_v2.1.wsp,Site
+6b9480e6-f0d9-4ac7-8366-fc1328caad19,Shell.SharePoint.SAEF User Notifications,shell.sharepoint.saef_v2.1.wsp,Web
+1252c415-68be-45ad-9c25-3361f7371974,Shell.SharePoint.SAEF.DeclareAsRecord DAR Timer Jobs,shell.sharepoint.saef_v2.1.wsp,WebApplication
+c16fefe9-5a9e-4f39-8a6f-cd077b2f1090,Shell.SharePoint.SAEF DAR,shell.sharepoint.saef_v2.1.wsp,Site
+2e206921-2be1-4988-a240-fb770c4a6cea,Shell.SharePoint.SAEF Upgrades,shell.sharepoint.saef_v2.1.wsp,WebApplication
+05dceec5-26a6-4f87-a5c9-fda62ea3d410,Shell.SharePoint.SAEF Retrofitting,shell.sharepoint.saef_v2.1.wsp,WebApplication
+9d7b80b0-112a-4c6c-89e7-39a4ca209a01,SiteColumnContentTypeTesting Feature1,sitecolumncontenttypetesting.wsp,Web
+6f21ec8f-e80b-4207-a5b1-5d767ae395c3,SiteColumnCTTesting Feature1,sitecolumncttesting.wsp,Web
+203a0574-99c4-44ce-a810-6eef884b2ece,SiteLevlvelEventReceiver Feature1,sitelevlveleventreceiver.wsp,Site
+68fe86bb-35ce-4fda-94e1-bde2166153c2,Datasheet View,spdatasheet.wsp,Site
+31994685-b8cf-4918-85a8-100946b1c02c,Datasheet View,spdatasheet.wsp,Web
+5aeaf7b8-c3e9-47b2-b3d8-0dba27d23a3d,SPWFTestProj Feature1,spwftestproj.wsp,Web
+1d7e283c-6795-4225-9c29-e597bfdea4ad,SPWorld.News Feature1,spworld.news.wsp,Site
+555d391c-65d5-4c2f-9544-83651ed592fc,teamsitedeletedsetupfiletest Feature1,teamsitedeletedsetupfiletest.wsp,Web
+c42fd765-5e9a-415a-a16e-eda18ab1a654,tester Feature1,tester.wsp,Web
+1da9eef7-a3a1-41f0-a706-892a4fa529fe,TestFeature Feature1,testfeature.wsp,Site
+442fb4d3-8e88-45c6-bf76-a1a73adbcec2,TestListDefinition Feature2,testlistdef.wsp,Site
+039fe1e3-de9f-4f4d-8e30-9e36dc52d862,TestPageLayout Feature1,testpagelayout.wsp,Web
+5b957997-9153-4fef-98ba-5ce150541fb1,TestSiteDef Feature1,testsitedef.wsp,Site
+1cd50f86-e87a-4cd3-ae5f-5304925e5557,TestSiteDefinitionOne Feature1,testsitedefinitionone.wsp,Site
+5eac0bf8-59bb-46f1-8aba-a799d4110444,TestTimerJob Feature1,testtimerjob.wsp,WebApplication
+822b854f-ad97-49c7-b15a-f820fcb54443,TestWebPartOne Feature1,testwebpartone.wsp,Site
+39321814-1222-4f9b-833a-8d67d06773cc,TestWP Feature1,testwp.wsp,Site
+d1861bd7-c146-4e15-b28d-309a846990d1,TiRaWebPart Feature1,tirawebpart.wsp,Site
+78806d7a-83b6-4f75-820e-2278f37f1b1b,TiRaWebPart2 Feature1,tirawebpart2.wsp,Site
+ac7b6105-b09e-42f4-8933-7d8c2e49e7f7,UnghostingTools Feature2,unghostingtools.wsp,Site
+c138150c-0621-48f4-bde6-5545a56284ea,WebPartTestFeature,webparttest.wsp,Site
+cbb83bae-cf38-4c83-a74c-823a5548fea6,WebPartUsingFarmSolution Feature1,webpartusingfarmsolution.wsp,Site
+a7407913-0c3b-4bc7-8391-c9d3346cd09a,YBBEST Add Event Receiver To ContentType Item,ybbest.addeventreceivertocontenttype.wsp,Web
