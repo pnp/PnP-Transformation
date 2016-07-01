@@ -1,7 +1,7 @@
 # JDP Remediation - CSOM #
 
 ### Summary ###
-This sample shows an JDP Remediation - CSOM application that is used to perform FTC cleanup post to solution retraction.
+hiii---This sample shows an JDP Remediation - CSOM application that is used to perform FTC cleanup post to solution retraction.
 
 ### Applies to ###
 -  Office 365 Dedicated (D)
