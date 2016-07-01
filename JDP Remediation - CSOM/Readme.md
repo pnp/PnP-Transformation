@@ -44,7 +44,8 @@ Following operations can be performed using this application:
 <span style="color:red;font-weight:bold;">Q</span> 
 <span style="color:blue;">Quit</span>
 
-![](\images\Remedy-AllOptions.jpg) 
+![](\images/Remedy-AllOptions.jpg) 
+
 
 As soon as you run this application, you would need to provide some inputs to execute this console application to get your desired results.
 
