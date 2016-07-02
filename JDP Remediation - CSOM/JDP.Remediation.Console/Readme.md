@@ -208,9 +208,9 @@ This operation is helpful in trying to remediate the Missing Feature report of t
 
 
 #### Input ####
-- **PreMT_MissingFeature.csv **
-  * This is a CSV that follows the format and content of the **PreMT_MissingFeature.csv** file of the Pre-Migration scan. A header row is expected with the following format:
-      * ContentDatabase, FeatureId, FeatureTitle, SiteCollection, Source, UpgradeStatus, WebApplication, WebUrl
+- **PreMT_MissingFeature.csv**
+	* This is a CSV that follows the format and content of the PreMT_MissingFeature.csv file of the Pre-Migration scan. A header row is expected with the following format:
+    	* ContentDatabase, FeatureId, FeatureTitle, SiteCollection, Source, UpgradeStatus, WebApplication, WebUrl
 
 #### Output ####
 - **DeleteMissingFeatures-yyyyMMdd_hhmmss.log**
@@ -260,3 +260,185 @@ This operation is helpful in trying to remediate the Missing Event Receiver repo
           * Cause: The specified web (subweb, subsite, etc.) does not exist
           * Remediation: none; the web does not exist
 
+
+### Operation 7-Delete Missing Workflow Associations ###
+This operation reads a list of workflow association files from an input file and deletes them from the sites, webs, and lists of the target SharePoint environment.
+
+This operation is helpful in trying to remediate the Workflow Associations report of the Pre-Migration Scan.  It attempts to remove all specified files from the target SharePoint environment.
+
+
+#### Input ####
+- **PreMT_MissingWorkflowAssociaitons.csv**
+  * This is a CSV that follows the format and content of the **PreMT_MissingWorkflowAssociaitons.csv** file of the Pre-Migration scan. A header row is expected with the following format:
+      * ContentDatabase, DirName, Extension, ExtensionForFile, Id, LeafName, ListId, SetupPath, SiteCollection, WebApplication, WebUrl, WFSVC_ListFile, SetupPath, SiteCollection, WebApplication, WebUrl, WFSVC_ListFile
+
+#### Output ####
+- **DeleteMissingWorkflowAssociations-yyyyMMdd_hhmmss.log**
+	* This is the verbose log file of the scan.  
+	* Success messages of interest:
+		* SUCCESS: Deleted File: {0}
+	* Informational messages of interest:
+		* none
+	* Error messages of interest:
+		* Error=File Not Found
+			* Cause: The specified file or folder does not exist
+			* Remediation: none; the file is gone
+		* Error=The file is checked out for editing
+			* Cause: someone has checked out the file for editing
+			* Remediation:
+				* Visit the site containing the locked file
+				* Undo the check-out
+				* Delete the locked file
+		* (404) Not Found
+			* Cause: The specified site collection does not exist
+			* Remediation: none; the site collection does not exist
+		* Cannot contact site at the specified URL
+			* Cause: The specified web (subweb, subsite, etc.) does not exist
+			* Remediation: none; the web does not exist
+
+### Operation 8- Generate List Template Report with FTC Analysis ###
+This operation searches for the Customized elements **(Content Types, Site Columns and Event Receivers)** after extracting the downloaded list templates.
+On choosing this option, we would be asked how to proceed for this operation as shown below 
+
+	1)	Process with Auto-generated Site Collection Report  
+	2)	Process with PreMT/Discovery ListTemplate Report  
+	3)	Process with SiteCollectionUrls separated by comma (,)
+
+#### Input ####
+
+- Web Application Url `(Mandatory for Option 1, not for other Options)`
+- Single or Multiple Site Collection Urls `(Mandatory for Option 3, not for other Options)`
+- PreMT_AllListTemplatesInGallery_Usage.csv `(Mandatory for Option 2, not for others)`
+	OR  AllListTemplatesInGallery_Usage.csv`(Mandatory for Option 2, not for others)`
+- CustomFields.csv `(Mandatory for all Options)`
+- EventReceivers.csv `(Mandatory for all Options)`
+- ContentTypes.csv `(Mandatory for all Options)`
+
+
+#### Output ####
+
+- **ListTemplateCustomization_Usage.csv**
+	- If customization is available in any list templates record for any component - ContentTypes, Event Receiver and Site Column, then we'll report information related to that List Template. 
+- **SiteCollections.txt** `(Output for only Option 1)`
+	- This is file will list all the Site Collections that will be processed for the Web Application Url.
+- **DownloadAndModifyListTemplate-yyyymmdd-hhhhmmss.log**
+	* This is the verbose log file of the scan.  
+	* Success messages of interest:
+		* SUCCESS: Deleted File: {0}
+	* Informational messages of interest:
+		* none
+	* Error messages of interest:
+		* Error=File Not Found
+			* Cause: The specified file or folder does not exist
+			* Remediation: none; the file is gone
+		* Error=The file is checked out for editing
+			* Cause: someone has checked out the file for editing
+			* Remediation:
+				* Visit the site containing the locked file
+				* Undo the check-out
+				* Delete the locked file
+		* (404) Not Found
+			* Cause: The specified site collection does not exist
+			* Remediation: none; the site collection does not exist
+		* Cannot contact site at the specified URL
+			* Cause: The specified web (subweb, subsite, etc.) does not exist
+			* Remediation: none; the web does not exist
+
+> **Note:** If any of the input files *(ContentTypes.csv, CustomFields.csv, EventReceivers.csv)* is not present in the input folder provided by the user, or the file has no entries then corresponding element/s would not be searched to get the customization details in the list templates.
+
+> **Example:** If user has provided only *ContentTypes.csv and CustomFields.csv* in input folder, and *EventReceivers.csv* is not provide in input folder, then  *isCustomEventReceiver* column will have `NO INPUT FILE` value in output report as user has not provided this input file. 
+
+
+### Operation 9- Generate Site Template Report with FTC Analysis ###
+This operation searches for the Customized elements** (Content Types, Site Columns, Features and Event Receivers)** after extracting the downloaded site templates.
+On choosing this option, we would be asked how to proceed for this operation as shown below 
+
+	1)	Process with Auto-generated Site Collection Report  
+	2)	Process with PreMT/Discovery SiteTemplate Report  
+	3)	Process with SiteCollectionUrls separated by comma (,)
+
+#### Input ####
+
+- Web Application Url `(Mandatory for Option 1, not for other Options)`
+- Single or Multiple Site Collection Urls `(Mandatory for Option 3, not for other Options)`
+- PreMT_AllSiteTemplatesInGallery_Usage.csv `(Mandatory for Option 2, not for other Options)`	
+	OR    
+AllSiteTemplatesInGallery_Usage.csv `(Mandatory for Option 2, not for other Options)`
+- ContentTypes.csv `(Mandatory for all Options)`
+- CustomFields.csv `(Mandatory for all Options)`
+- EventReceivers.csv `(Mandatory for all Options)`
+- Features.csv `(Mandatory for all Options)`
+
+
+#### Output ####
+
+- **SiteTemplateCustomization_Usage.csv**
+	- If customization is available in any site templates record for any component - Features, ContentTypes, Event Receiver and Site Column, then we'll report information related to that Site Template. 
+- **SiteCollections.txt** `(Output for only Option 1)`
+	- This is file will list all the Site Collections that will be processed for the Web Application Url.
+- **DownloadAndModifySiteTemplate-yyyymmdd-hhhhmmss.log**
+	* This is the verbose log file of the scan.  
+	* Success messages of interest:
+		* SUCCESS: Deleted File: {0}
+	* Informational messages of interest:
+		* none
+	* Error messages of interest:
+		* Error=File Not Found
+			* Cause: The specified file or folder does not exist
+			* Remediation: none; the file is gone
+		* Error=The file is checked out for editing
+			* Cause: someone has checked out the file for editing
+			* Remediation:
+				* Visit the site containing the locked file
+				* Undo the check-out
+				* Delete the locked file
+		* (404) Not Found
+			* Cause: The specified site collection does not exist
+			* Remediation: none; the site collection does not exist
+		* Cannot contact site at the specified URL
+			* Cause: The specified web (subweb, subsite, etc.) does not exist
+			* Remediation: none; the web does not exist
+
+> **Note:** If any of the input files *(Features.csv, ContentTypes.csv, CustomFields.csv, EventReceivers.csv)* is not present in the input folder provided by the user, or the file has no entries then corresponding element/s would not be searched to get the customization details in the site templates.
+
+> **Example:** If user has provided only *Features.csv, ContentTypes.csv and CustomFields.csv* in input folder, and *EventReceivers.csv* is not provide in input folder, then  *isCustomEventReceiver* column will have `NO INPUT FILE` value in output report as user has not provided this input file. 
+
+### Operation 10- Delete All List Template based on Pre-Scan OR Discovery Output OR Output generated by Option 8 above ###
+This operation reads a list of list templates having customized elements, from an input file generated by **Operation 8**, and deletes them from the sites, webs, and lists of the target SharePoint environment.
+
+This operation is helpful in trying to remediate the Missing List Templates in Gallery report of the Pre-Migration Scan.  It attempts to remove all specified list templates from the target SharePoint environment.
+ 
+
+#### Input ####
+
+- PreMT_AllListTemplatesInGallery_Usage.csv `(from PreMT Tool)`  
+OR
+- AllListTemplatesInGallery_Usage.csv `(from Discovery Tool) `  
+OR
+- ListTemplateCustomization_Usage.csv `(Output from Operation 8)`  
+
+#### Output ####
+
+
+- **DeleteListTemplates-yyyymmdd-hhhhmmss.log**
+	* This is the verbose log file of the scan.  
+	* Success messages of interest:
+		* SUCCESS: Deleted File: {0}
+	* Informational messages of interest:
+		* none
+	* Error messages of interest:
+		* Error=File Not Found
+			* Cause: The specified file or folder does not exist
+			* Remediation: none; the file is gone
+		* Error=The file is checked out for editing
+			* Cause: someone has checked out the file for editing
+			* Remediation:
+				* Visit the site containing the locked file
+				* Undo the check-out
+				* Delete the locked file
+		* (404) Not Found
+			* Cause: The specified site collection does not exist
+			* Remediation: none; the site collection does not exist
+		* Cannot contact site at the specified URL
+			* Cause: The specified web (subweb, subsite, etc.) does not exist
+			* Remediation: none; the web does not exist
