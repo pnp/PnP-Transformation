@@ -36,7 +36,7 @@ On executing the Console Application, we get 3 choices of Operations, which are 
 <span style="color:red;font-weight:bold;">3</span> <span style="color:blue;">Self Service Report</span>  
 <span style="color:red;font-weight:bold;">4</span> <span style="color:blue;">Exit</span>  
 
-![](\images/\ChoiceOfOperations.png) 
+![](\images/ChoiceOfOperations.PNG) 
 
 As soon as you run this application, you would need to provide some inputs to execute this console application to get your desired results.
 
