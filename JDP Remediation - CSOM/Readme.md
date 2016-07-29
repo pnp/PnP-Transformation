@@ -50,14 +50,14 @@ This application logs all exceptions if any occur while execution. This console 
 
 Please find below small summary on each command that has been implemented in this application.
 
-![](\images/JDP.png) 
+![](\images/JDP.PNG) 
 
 Please find below more details on these functionalities that has been implemented in this application:  
 
 ## <span style="color:blue;">1 - Transformation</span>   ##
 On selecting 1st Choice of Operation, we get the following operations as shown in the below screenshot:
 
-![](\images/ChoiceOfOperation1.png) 
+![](\images/ChoiceOfOperation1.PNG) 
 
 These operations are listed and explained as below:
 
@@ -126,7 +126,7 @@ Also it asks user for input of the following parameters: whether to replace the 
 ## <span style="color:Blue;">2 - Clean-Up</span> ##
 On selecting 2nd Choice of Operation, we get the following operations as shown in the below screenshot:
 
-![](\images\ChoiceOfOperations2.png) 
+![](\images/ChoiceOfOperations2.PNG) 
 
 These operations are listed and explained as below:
 
@@ -147,7 +147,7 @@ This operation is helpful in trying to remediate the Missing Setup Files reports
 
 On selecting this Operation, we get the following options as shown in the below screenshot:
 
-![](\images\SetupFileCleanUp.png) 
+![](\images/SetupFileCleanUp.PNG) 
 
 This functionality reads an input file in CSV format, which should contain header columns like - *ContentDatabase, SetupFileDirName, SetupFileExtension, SetupFileName, SetupFilePath, SiteCollection, UpgradeStatus, WebApplication, WebUrl*. Generates result in output file - ***DeleteMissingSetupFiles-yyyyMMdd_hhmmss.log*** (verbose log file).
 
@@ -158,7 +158,7 @@ This operation is helpful in trying to remediate the Missing Feature reports.  I
 
 On selecting this Operation, we get the following options as shown in the below screenshot:
 
-![](\images\FeatureCleanUp.png) 
+![](\images/FeatureCleanUp.PNG) 
 
 This functionality reads an input file in CSV format, which should contain header columns like - *ContentDatabase, FeatureId, FeatureTitle, SiteCollection, Source, UpgradeStatus, WebApplication, WebUrl*. Generates result in output file - ***DeleteMissingFeatures-yyyyMMdd_hhmmss.log*** (verbose log file).
 
@@ -169,7 +169,7 @@ This operation is helpful in trying to remediate the Missing Event Receiver repo
 
 On selecting this Operation, we get the following options as shown in the below screenshot:
 
-![](\images\ERCleanUp.png) 
+![](\images/ERCleanUp.PNG) 
 
 This functionality reads an input file in CSV format, which should contain header columns like - *Assembly, ContentDatabase, EventName, HostId, HostType, SiteCollection, WebApplication, WebUrl*. Generates result in output file - ***DeleteMissingEventReceivers-yyyyMMdd_hhmmss.log*** (verbose log file).
 
@@ -181,7 +181,7 @@ This operation is helpful in trying to remediate the Workflow Associations repor
 
 On selecting this Operation, we get the following options as shown in the below screenshot:
 
-![](\images\WFAssociationCleanUp.png) 
+![](\images/WFAssociationCleanUp.PNG) 
 
 **Input**
 
@@ -198,7 +198,7 @@ This operation reads a list of list templates having customized elements, from a
 
 On selecting this Operation, we get the following options as shown in the below screenshot:
 
-![](\images\ListTemplateCleanUp.png) 
+[](\images/ListTemplateCleanUp.PNG) 
 
 This operation is helpful in trying to remediate the Missing List Templates in Gallery report of the Pre-Migration Scan.  It attempts to remove all specified list templates from the target SharePoint environment.
 
@@ -220,7 +220,7 @@ This operation reads a list of webparts from an input file () and deletes the as
 
 On selecting this Operation, we get the following options as shown in the below screenshot:
 
-![](\images\WebPartCleanUp.png) 
+![](\images/WebPartCleanUp.PNG) 
 
 
 If the type is **all** then all the web parts in the input file are deleted. Whereas, if a specific type is mentioned, then only those web parts types are deleted from the given input file. 
@@ -242,7 +242,7 @@ OR
 ## <span style="color:Blue;">3 - Self Service Report</span> ##
 On selecting 3rd Choice of Operation, we get the following operations as shown in the below screenshot:
 
-![](\images\ChoiceOfOperation3.png) 
+![](\images/ChoiceOfOperation3.PNG) 
 
 These operations are listed and explained as below:
 
