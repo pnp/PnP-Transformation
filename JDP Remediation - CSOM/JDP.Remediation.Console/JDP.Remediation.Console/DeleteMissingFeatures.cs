@@ -20,6 +20,8 @@ namespace JDP.Remediation.Console
         public static void DoWork()
         {
             Logger.OpenLog("DeleteMissingFeatures");
+            if (!ShowInformation())
+                return;
             Logger.LogInfoMessage(String.Format("Scan starting {0}", DateTime.Now.ToString()), true);
 
             string inputFileSpec = Environment.CurrentDirectory + "\\" + Constants.MissingFeaturesInputFileName;
@@ -40,16 +42,14 @@ namespace JDP.Remediation.Console
                 {
                     Logger.LogErrorMessage(String.Format("DeleteMissingFeature() failed: Error={0}", ex.Message), true);
                 }
-
-                Logger.LogInfoMessage(String.Format("Scan completed {0}", DateTime.Now.ToString()), true);
             }
             else
             {
                 Logger.LogInfoMessage("There is nothing to delete from the '" + inputFileSpec + "' File ", true);
 
             }
+            Logger.LogInfoMessage(String.Format("Scan completed {0}", DateTime.Now.ToString()), true);
             Logger.CloseLog();
-
         }
 
         private static void DeleteMissingFeature(MissingFeaturesInput missingFeature)
@@ -67,7 +67,7 @@ namespace JDP.Remediation.Console
             }
             else
             {
-                targetUrl=missingFeature.WebUrl;
+                targetUrl = missingFeature.WebUrl;
             }
 
             if (targetUrl.IndexOf("http", StringComparison.InvariantCultureIgnoreCase) < 0)
@@ -232,5 +232,17 @@ namespace JDP.Remediation.Console
             Logger.LogInfoMessage("-------------------------------------------------", false);
         }
 
+        private static bool ShowInformation()
+        {
+            bool doContinue = false;
+            string option = string.Empty;
+            System.Console.WriteLine(Constants.MissingFeaturesInputFileName + " file needs to be present in current working directory (where JDP.Remediation.Console.exe is present) for Feature cleanup ");
+            System.Console.WriteLine("Please make sure you verify the data before executing Clean-up option as cleaned Features can't be rollback.");
+            System.Console.WriteLine("Press 'y' to proceed further. Press any key to go for Clean-Up Menu.");
+            option = System.Console.ReadLine().ToLower();
+            if (option.Equals("y", StringComparison.OrdinalIgnoreCase))
+                doContinue = true;
+            return doContinue;
+        }
     }
 }

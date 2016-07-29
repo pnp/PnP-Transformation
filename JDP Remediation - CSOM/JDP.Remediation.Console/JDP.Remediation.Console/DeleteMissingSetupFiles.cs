@@ -16,6 +16,8 @@ namespace JDP.Remediation.Console
         public static void DoWork()
         {
             Logger.OpenLog("DeleteMissingSetupFiles");
+            if (!ShowInformation())
+                return;
             Logger.LogInfoMessage(String.Format("Scan starting {0}", DateTime.Now.ToString()), true);
             string inputFileSpec = Environment.CurrentDirectory + "\\" + Constants.MissingSetupFilesInputFileName;
             IEnumerable<MissingSetupFilesInput> objInputMissingSetupFiles = ImportCSV.ReadMatchingColumns<MissingSetupFilesInput>(inputFileSpec, Constants.CsvDelimeter);
@@ -23,7 +25,7 @@ namespace JDP.Remediation.Console
             {
                 try
                 {
-                    Logger.LogInfoMessage(String.Format("Preparing to delete a total of {0} files ...",objInputMissingSetupFiles.Cast<Object>().Count()), true);
+                    Logger.LogInfoMessage(String.Format("Preparing to delete a total of {0} files ...", objInputMissingSetupFiles.Cast<Object>().Count()), true);
 
                     foreach (MissingSetupFilesInput missingFile in objInputMissingSetupFiles)
                     {
@@ -34,19 +36,19 @@ namespace JDP.Remediation.Console
                 {
                     Logger.LogErrorMessage(String.Format("DeleteMissingSetupFiles() failed: Error={0}", ex.Message), true);
                 }
-                Logger.LogInfoMessage(String.Format("Scan completed {0}", DateTime.Now.ToString()), true);
             }
             else
             {
                 Logger.LogInfoMessage("There is nothing to delete from the '" + inputFileSpec + "' File ", true);
             }
+            Logger.LogInfoMessage(String.Format("Scan Completed {0}", DateTime.Now.ToString()), true);
             Logger.CloseLog();
         }
 
         private static void DeleteMissingFile(MissingSetupFilesInput missingFile)
         {
 
-            if (missingFile==null)
+            if (missingFile == null)
             {
                 return;
             }
@@ -65,7 +67,7 @@ namespace JDP.Remediation.Console
             // clean the inputs
             if (setupFileDirName.EndsWith("/"))
             {
-                setupFileDirName = setupFileDirName.TrimEnd(new char[] { '/'});
+                setupFileDirName = setupFileDirName.TrimEnd(new char[] { '/' });
             }
             if (setupFileName.StartsWith("/"))
             {
@@ -116,6 +118,19 @@ namespace JDP.Remediation.Console
             {
                 Logger.LogErrorMessage(String.Format("DeleteMissingFile() failed for {0}: Error={1}", targetFilePath, ex.Message), false);
             }
+        }
+
+        private static bool ShowInformation()
+        {
+            bool doContinue = false;
+            string option = string.Empty;
+            System.Console.WriteLine(Constants.MissingSetupFilesInputFileName + " file needs to be present in current working directory (where JDP.Remediation.Console.exe is present) for SetupFile cleanup ");
+            System.Console.WriteLine("Please make sure you verify the data before executing Clean-up option as Cleaned Setup files can't be rollback.");
+            System.Console.WriteLine("Press 'y' to proceed further. Press any key to go for Clean-Up Menu.");
+            option = System.Console.ReadLine().ToLower();
+            if (option.Equals("y", StringComparison.OrdinalIgnoreCase))
+                doContinue = true;
+            return doContinue;
         }
     }
 }

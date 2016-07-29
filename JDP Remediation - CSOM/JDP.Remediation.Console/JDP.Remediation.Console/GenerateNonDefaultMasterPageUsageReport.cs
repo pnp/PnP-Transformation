@@ -26,6 +26,8 @@ namespace JDP.Remediation.Console
         public static void DoWork()
         {
             Logger.OpenLog("GenerateNonDefaultMasterPageUsageReport");
+            if (!ShowInformation())
+                return;
             Logger.LogInfoMessage(String.Format("Scan starting {0}", DateTime.Now.ToString()), true);
 
             string inputFileSpec = Environment.CurrentDirectory + "\\" + Constants.UsageReport_SitesInputFileName;
@@ -113,6 +115,18 @@ namespace JDP.Remediation.Console
             {
                 Logger.LogErrorMessage(String.Format("ProcessWeb() failed for {0}: Error={1}", webUrl, ex.Message), false);
             }
+        }
+
+        private static bool ShowInformation()
+        {
+            bool doContinue = false;
+            string option = string.Empty;
+            System.Console.WriteLine(Constants.UsageReport_SitesInputFileName + " file needs to be present in current working directory (where JDP.Remediation.Console.exe is present) to generate usage report. ");
+            System.Console.WriteLine("Press 'y' to proceed further. Press any key to go for Self Service Report Menu.");
+            option = System.Console.ReadLine().ToLower();
+            if (option.Equals("y", StringComparison.OrdinalIgnoreCase))
+                doContinue = true;
+            return doContinue;
         }
     }
 }

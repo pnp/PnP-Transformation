@@ -42,7 +42,9 @@ namespace JDP.Remediation.Console
 
         public static void LogErrorMessage(string msg, bool toConsole = true)
         {
+            System.Console.ForegroundColor = System.ConsoleColor.Red;
             LogMessage("ERROR: " + msg, toConsole);
+            System.Console.ResetColor();
         }
         public static void LogWarningMessage(string msg, bool toConsole = true)
         {
@@ -84,6 +86,10 @@ namespace JDP.Remediation.Console
         public static void ConsoleMessage(string msg)
         {
             System.Console.WriteLine(msg);
+        }
+        public static string CurrentDateTime()
+        {
+            return DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString();
         }
 
     }

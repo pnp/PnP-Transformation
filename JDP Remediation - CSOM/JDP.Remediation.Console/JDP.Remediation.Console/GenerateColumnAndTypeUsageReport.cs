@@ -27,7 +27,7 @@ namespace JDP.Remediation.Console
             public Guid Id;
             public string Name;
 
-             public SiteColumnSpec(string id, string name)
+            public SiteColumnSpec(string id, string name)
             {
                 this.Id = new Guid(id.Trim());
                 this.Name = name.Trim();
@@ -37,6 +37,8 @@ namespace JDP.Remediation.Console
         public static void DoWork()
         {
             Logger.OpenLog("GenerateColumnAndTypeUsageReport");
+            if (!ShowInformation())
+                return;
             Logger.LogInfoMessage(String.Format("Scan starting {0}", DateTime.Now.ToString()), true);
 
             string contentTypesInputFileSpec = Environment.CurrentDirectory + "\\" + Constants.UsageReport_ContentTypesInputFileName;
@@ -47,7 +49,7 @@ namespace JDP.Remediation.Console
             {
                 string[] arr = s.Split(',');
                 contentTypes.Add(new ContentTypeSpec(arr[0], arr[1]));
-            }            
+            }
 
             string siteColumnsInputFileSpec = Environment.CurrentDirectory + "\\" + Constants.UsageReport_SiteColumnsInputFileName;
             string[] siteColumnRows = Helper.ReadInputFile(siteColumnsInputFileSpec, true);
@@ -141,7 +143,7 @@ namespace JDP.Remediation.Console
         private static void ScanWeb(Web web, List<ContentTypeSpec> contentTypes, List<SiteColumnSpec> siteColumns)
         {
             try
-            { 
+            {
                 // scan the web for our custom site columns
                 foreach (SiteColumnSpec sc in siteColumns)
                 {
@@ -292,6 +294,18 @@ namespace JDP.Remediation.Console
             {
                 Logger.LogErrorMessage(String.Format("ReportContentTypeUsage() failed for LIST [{0}] of WEB {1}: Error={2}", list.Title, web.Url, ex.Message), false);
             }
+        }
+
+        private static bool ShowInformation()
+        {
+            bool doContinue = false;
+            string option = string.Empty;
+            System.Console.WriteLine("Input file needs to be present in current working directory (where JDP.Remediation.Console.exe is present) to generate usage report. ");
+            System.Console.WriteLine("Press 'y' to proceed further. Press any key to go for Self Service Report Menu.");
+            option = System.Console.ReadLine().ToLower();
+            if (option.Equals("y", StringComparison.OrdinalIgnoreCase))
+                doContinue = true;
+            return doContinue;
         }
     }
 }

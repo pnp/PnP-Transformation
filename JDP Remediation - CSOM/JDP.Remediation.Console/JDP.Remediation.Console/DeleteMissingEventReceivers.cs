@@ -20,6 +20,8 @@ namespace JDP.Remediation.Console
         public static void DoWork()
         {
             Logger.OpenLog("DeleteMissingEventReceivers");
+            if (!ShowInformation())
+                return;
             Logger.LogInfoMessage(String.Format("Scan starting {0}", DateTime.Now.ToString()), true);
 
             string inputFileSpec = Environment.CurrentDirectory + "\\" + Constants.MissingEventReceiversInputFileName;
@@ -40,16 +42,14 @@ namespace JDP.Remediation.Console
                 {
                     Logger.LogErrorMessage(String.Format("DeleteMissingEventReceivers() failed: Error={0}", ex.Message), true);
                 }
-
-                Logger.LogInfoMessage(String.Format("Scan completed {0}", DateTime.Now.ToString()), true);
             }
             else
             {
-                Logger.LogInfoMessage("There is nothing to delete from the '"+inputFileSpec+"' File ", true);
+                Logger.LogInfoMessage("There is nothing to delete from the '" + inputFileSpec + "' File ", true);
 
             }
+            Logger.LogInfoMessage(String.Format("Scan completed {0}", DateTime.Now.ToString()), true);
             Logger.CloseLog();
-
         }
 
         private static void DeleteMissingEventReceiver(MissingEventReceiversInput MissingEventReceiver)
@@ -235,6 +235,17 @@ namespace JDP.Remediation.Console
                 Logger.LogErrorMessage(String.Format("DeleteListEventReceiver() failed for Event Receiver [{0}] on list [{1}] of web {2}; Error={3}", eventName, hostId, webUrl, ex.Message), false);
             }
         }
-
+        private static bool ShowInformation()
+        {
+            bool doContinue = false;
+            string option = string.Empty;
+            System.Console.WriteLine(Constants.EventReceiversInput + " file needs to be present in current working directory (where JDP.Remediation.Console.exe is present) for EventReceivers cleanup ");
+            System.Console.WriteLine("Please make sure you verify the data before executing Clean-up option as cleaned EventReceivers can't be rollback.");
+            System.Console.WriteLine("Press 'y' to proceed further. Press any key to go for Clean-Up Menu.");
+            option = System.Console.ReadLine().ToLower();
+            if (option.Equals("y", StringComparison.OrdinalIgnoreCase))
+                doContinue = true;
+            return doContinue;
+        }
     }
 }
