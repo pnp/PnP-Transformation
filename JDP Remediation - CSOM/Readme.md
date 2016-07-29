@@ -36,7 +36,7 @@ On executing the Console Application, we get 3 choices of Operations, which are 
 <span style="color:red;font-weight:bold;">3</span> <span style="color:blue;">Self Service Report</span>  
 <span style="color:red;font-weight:bold;">4</span> <span style="color:blue;">Exit</span>  
 
-![](\images\ChoiceOfOperations.png) 
+![](\images/ChoiceOfOperations.png) 
 
 As soon as you run this application, you would need to provide some inputs to execute this console application to get your desired results.
 
@@ -50,14 +50,14 @@ This application logs all exceptions if any occur while execution. This console 
 
 Please find below small summary on each command that has been implemented in this application.
 
-![](\images\JDP.png) 
+![](\images/JDP.png) 
 
 Please find below more details on these functionalities that has been implemented in this application:  
 
 ## <span style="color:blue;">1 - Transformation</span>   ##
 On selecting 1st Choice of Operation, we get the following operations as shown in the below screenshot:
 
-![](\images\ChoiceOfOperation1.png) 
+![](\images/ChoiceOfOperation1.png) 
 
 These operations are listed and explained as below:
 
