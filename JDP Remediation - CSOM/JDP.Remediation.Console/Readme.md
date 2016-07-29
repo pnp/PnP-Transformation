@@ -64,13 +64,13 @@ On executing the Console Application, we get 3 choices of Operations, which are 
 
 The same are shown in the Screen shot below:
 
-![](\images\ChoiceOfOperations.png)
+![](\images/ChoiceOfOperations.PNG)
 
 ## <span style="color:blue;">1 - Transformation</span> ##
 
 On selecting 1st Choice of Operation, we get the following operations as shown in the below screenshot:
 
-![](\images\ChoiceOfOperation1.png) 
+![](\images/\ChoiceOfOperation1.PNG) 
 
 These operations are listed and explained as below:
 
@@ -83,7 +83,7 @@ This operation adds the web part to the given page present in the given web site
 
 On selecting this operation, we will be asked for no of parameters as explained below:
 
-![](\images\AddOOTBtoPage.png) 
+![](\images/\AddOOTBtoPage.PNG) 
 
 - **Web Url**
 	* Here we need to provide the Web Url where we need to add the WebPart  
@@ -139,7 +139,7 @@ This operation will read the input file from PreMT-Scan or Discovery output file
 
 On selecting this Operation, we get the following options as shown in the below screenshot:
 
-![](\images\ReplaceFTCWebpart.png) 
+![](\images/\ReplaceFTCWebpart.PNG) 
 
 Before running this function, please run GetWebPartProperties function, so that the XMLs for both source and target WebParts is available, to run delete and add function.  
 
@@ -229,7 +229,7 @@ This operation reads WebUrls from master page reports generated either from PreM
 
 On choosing this option, we would be asked how to proceed for this operation as shown below 
 
-![](\images\ReplaceMasterPage.png)
+![](\images/\ReplaceMasterPage.PNG)
 
 There are two approaches as shown in the figure:
   
@@ -307,7 +307,7 @@ This operation reads a list of setup file definitions from an input file and    
 
 On selecting this Operation, we get the following options as shown in the below screenshot:
 
-![](\images\SetupFileCleanUp.png) 
+![](\images/\SetupFileCleanUp.PNG) 
 
 This operation is helpful in trying to remediate the Missing Setup Files report of the Pre-Migration Scan.  It attempts to remove all specified setup files from the target SharePoint environment.
 
@@ -362,7 +362,7 @@ This operation reads a list of feature definitions from an input file and delete
 
 On selecting this Operation, we get the following options as shown in the below screenshot:
 
-![](\images\FeatureCleanUp.png) 
+![](\images/\FeatureCleanUp.PNG) 
 
 This operation is helpful in trying to remediate the Missing Feature report of the Pre-Migration Scan.  It attempts to remove all specified features from the target SharePoint environment.
 
@@ -397,7 +397,7 @@ This operation reads a list of event receiver definitions from an input file and
 
 On selecting this Operation, we get the following options as shown in the below screenshot:
 
-![](\images\ERCleanUp.png) 
+![](\images/\ERCleanUp.PNG) 
 
 This operation is helpful in trying to remediate the Missing Event Receiver report of the Pre-Migration Scan.  It attempts to remove all specified event receivers from the target SharePoint environment.
 
@@ -430,7 +430,7 @@ This operation reads a list of workflow association files from an input file and
 
 On selecting this Operation, we get the following options as shown in the below screenshot:
 
-![](\images\WFAssociationCleanUp.png) 
+![](\images/\WFAssociationCleanUp.PNG) 
 
 This operation is helpful in trying to remediate the Workflow Associations report of the Pre-Migration Scan.  It attempts to remove all specified files from the target SharePoint environment.
 
@@ -469,7 +469,7 @@ This operation reads a list of list templates having customized elements, from a
 
 On selecting this Operation, we get the following options as shown in the below screenshot:
 
-![](\images\ListTemplateCleanUp.png) 
+![](\images/\ListTemplateCleanUp.PNG) 
 
 This operation is helpful in trying to remediate the Missing List Templates in Gallery report of the Pre-Migration Scan.  It attempts to remove all specified list templates from the target SharePoint environment.
  
@@ -512,7 +512,7 @@ This operation reads PageUrls from web part report generated either from PreMT o
 
 On choosing this option, we would be asked how to proceed for this operation as shown in the below image:
 
-![](\images\WebPartCleanUp.png)
+![](\images/\WebPartCleanUp.PNG)
 
 - **WebPart Type**
 	* Here we need to the give the Web Part Type that we want to delete  
@@ -565,13 +565,13 @@ On choosing this option, we would be asked how to proceed for this operation as 
 ## <span style="color:Blue;">3 - Self Service Report</span> ##
 On selecting 3rd Choice of Operation, we get the following operations as shown in the below screenshot:
 
-![](\images\ChoiceOfOperation3.png) 
+![](\images/\ChoiceOfOperation3.PNG) 
 
 ### 1. Generate List Template Report with FTC Analysis ###
 This operation searches for the Customized elements **(Content Types, Site Columns and Event Receivers)** after extracting the downloaded list templates.
 On choosing this option, we would be asked how to proceed for this operation as shown below 
 
-![](\images\GenerateListTemplateReport.png)
+![](\images/\GenerateListTemplateReport.PNG)
 
 	1)	Process with Auto-generated Site Collection Report  
 	2)	Process with PreMT/Discovery ListTemplate Report  
@@ -627,7 +627,7 @@ This operation searches for the Customized elements **(Content Types, Site Colum
 
 On choosing this option, we would be asked how to proceed for this operation as shown below 
 
-![](\images\GenerateSiteTemplateReport.png)
+![](\images/\GenerateSiteTemplateReport.PNG)
 
 	1)	Process with Auto-generated Site Collection Report  
 	2)	Process with PreMT/Discovery SiteTemplate Report  
@@ -749,7 +749,7 @@ This operation reads a list of site collection URLs from an input file and scans
 
 On choosing this option, we would be asked how to proceed for this operation as shown below 
 
-![](\images\GenerateNonDefaultMasterPageUsageReport.png)
+![](\images/\GenerateNonDefaultMasterPageUsageReport.PNG)
 
 
 #### Input ####
@@ -774,7 +774,7 @@ This operation generates a text file containing a list of all site collections f
 
 On choosing this option, we would be asked how to proceed for this operation as shown below 
 
-![](\images\GenerateSiteCollectionReport.png)
+![](\images/\GenerateSiteCollectionReport.PNG)
 
 
 #### Input ####
@@ -796,7 +796,7 @@ This operation iterates through all the Pages in root folder of the web, “Page
 #### Input ####
 On selecting this operation, we will be asked for no of parameters as explained below:
 
-![](\images\GenerateWebPartUsage.png)
+![](\images/\GenerateWebPartUsage.PNG)
 
 - **Web Url:**
 	* Here we need to provide the Web Url where we need to add the WebPart 
@@ -847,7 +847,7 @@ This operation will Returns the properties of the given Web Part in Xml format.
 #### Input ####
 On selecting this operation, we will be asked for no of parameters as explained below:
 
-![](\images\GenerateWebPartProperties.png)
+![](\images/\GenerateWebPartProperties.PNG)
 
 - **Web Url:**
 	* Here we need to provide the Web Url where we need to add the WebPart 
