@@ -64,7 +64,7 @@ On executing the Console Application, we get 3 choices of Operations, which are 
 
 The same are shown in the Screen shot below:
 
-![](\images/\ChoiceOfOperations.PNG)
+![](\images\ChoiceOfOperations.PNG)
 
 ## <span style="color:blue;">1 - Transformation</span> ##
 
