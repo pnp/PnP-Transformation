@@ -70,7 +70,7 @@ The same are shown in the Screen shot below:
 
 On selecting 1st Choice of Operation, we get the following operations as shown in the below screenshot:
 
-![](\images/\ChoiceOfOperation1.PNG) 
+![](\images/ChoiceOfOperation1.PNG) 
 
 These operations are listed and explained as below:
 
@@ -83,7 +83,7 @@ This operation adds the web part to the given page present in the given web site
 
 On selecting this operation, we will be asked for no of parameters as explained below:
 
-![](\images/\AddOOTBtoPage.PNG) 
+![](\images/AddOOTBtoPage.PNG) 
 
 - **Web Url**
 	* Here we need to provide the Web Url where we need to add the WebPart  
@@ -139,7 +139,7 @@ This operation will read the input file from PreMT-Scan or Discovery output file
 
 On selecting this Operation, we get the following options as shown in the below screenshot:
 
-![](\images/\ReplaceFTCWebpart.PNG) 
+![](\images/ReplaceFTCWebpart.PNG) 
 
 Before running this function, please run GetWebPartProperties function, so that the XMLs for both source and target WebParts is available, to run delete and add function.  
 
@@ -627,7 +627,7 @@ This operation searches for the Customized elements **(Content Types, Site Colum
 
 On choosing this option, we would be asked how to proceed for this operation as shown below 
 
-![](\images/\GenerateSiteTemplateReport.PNG)
+![](\images/GenerateSiteTemplateReport.PNG)
 
 	1)	Process with Auto-generated Site Collection Report  
 	2)	Process with PreMT/Discovery SiteTemplate Report  
