@@ -64,7 +64,7 @@ On executing the Console Application, we get 3 choices of Operations, which are 
 
 The same are shown in the Screen shot below:
 
-![](\images\ChoiceOfOperations.PNG)
+![](\images/\ChoiceOfOperations.PNG)
 
 ## <span style="color:blue;">1 - Transformation</span> ##
 
@@ -83,7 +83,7 @@ This operation adds the web part to the given page present in the given web site
 
 On selecting this operation, we will be asked for no of parameters as explained below:
 
-![](\images/AddOOTBtoPage.PNG) 
+![](\images/\AddOOTBtoPage.PNG) 
 
 - **Web Url**
 	* Here we need to provide the Web Url where we need to add the WebPart  
@@ -296,7 +296,7 @@ Also it asks user for input of the following parameters:
 
 On selecting 2nd Choice of Operation, we get the following operations as shown in the below screenshot:
 
-![](\images\ChoiceOfOperations2.png) 
+![](\images/\ChoiceOfOperations2.png) 
 
 These operations are listed and explained as below:
 
