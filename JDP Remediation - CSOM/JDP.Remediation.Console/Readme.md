@@ -64,13 +64,13 @@ On executing the Console Application, we get 3 choices of Operations, which are 
 
 The same are shown in the Screen shot below:
 
-![](..\images/\ChoiceOfOperations.PNG)
+![](\images/\ChoiceOfOperations.PNG)
 
 ## <span style="color:blue;">1 - Transformation</span> ##
 
 On selecting 1st Choice of Operation, we get the following operations as shown in the below screenshot:
 
-![](..\images/\ChoiceOfOperation1.PNG) 
+![](\images/\ChoiceOfOperation1.PNG) 
 
 These operations are listed and explained as below:
 
