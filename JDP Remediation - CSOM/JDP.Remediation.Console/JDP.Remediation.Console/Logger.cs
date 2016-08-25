@@ -14,8 +14,9 @@ namespace JDP.Remediation.Console
         {
         }
 
-        public static void OpenLog(string operationName)
+        public static void OpenLog(string operationName, string timeStamp = "N/A")
         {
+            string logFileSpecFormat = string.Empty;
             if (logFile == null)
             {
                 if (String.IsNullOrEmpty(operationName))
@@ -23,7 +24,11 @@ namespace JDP.Remediation.Console
                     ConsoleMessage("Task-specific Log File not present; using default Log File instead...");
                     operationName = "TransformationConsole";
                 }
-                string logFileSpecFormat = "{0}-" + DateTime.Now.ToString("yyyyMMdd_hhmmss") + ".log";
+                if (timeStamp.Equals(Constants.NotApplicable))
+                    logFileSpecFormat = "{0}-" + DateTime.Now.ToString("yyyyMMdd_hhmmss") + ".log";
+                else
+                    logFileSpecFormat = "{0}-" + timeStamp + ".log";
+
                 string logFileSpec = String.Format(logFileSpecFormat, operationName);
                 logFile = new System.IO.StreamWriter(logFileSpec);
                 logFile.AutoFlush = true;

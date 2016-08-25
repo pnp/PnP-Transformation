@@ -23,8 +23,10 @@ namespace JDP.Remediation.Console
     {
         public static string filePath = string.Empty;
         public static string outputPath = string.Empty;
+
         public static void DoWork()
         {
+            string timeStamp = DateTime.Now.ToString("yyyyMMdd_hhmmss");
             outputPath = Environment.CurrentDirectory;
             string webUrl = string.Empty;
             string serverRelativePageUrl = string.Empty;
@@ -32,11 +34,15 @@ namespace JDP.Remediation.Console
             string webPartZoneID = string.Empty;
             string webPartFileName = string.Empty;
             string webPartXmlFilePath = string.Empty;
+            bool headerAddWebPart = false;
 
             //Trace Log TXT File Creation Command
-            Logger.OpenLog("AddWebpart");
+            Logger.OpenLog("AddWebPart", timeStamp);
 
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
+            //System.Console.ResetColor();
             System.Console.WriteLine("Please enter Web Url : ");
+            System.Console.ResetColor();
             webUrl = System.Console.ReadLine().ToLower();
             if (string.IsNullOrEmpty(webUrl))
             {
@@ -44,7 +50,9 @@ namespace JDP.Remediation.Console
                 return;
             }
 
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             System.Console.WriteLine("Please enter Server Relative PageUrl (E:g- /sites/DTTesting/SitePages/WebPartPage.aspx): ");
+            System.Console.ResetColor();
             serverRelativePageUrl = System.Console.ReadLine().ToLower();
             if (string.IsNullOrEmpty(serverRelativePageUrl))
             {
@@ -52,7 +60,9 @@ namespace JDP.Remediation.Console
                 return;
             }
 
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             System.Console.WriteLine("Please enter WebPart ZoneIndex : ");
+            System.Console.ResetColor();
             webPartZoneIndex = System.Console.ReadLine().ToLower();
             if (string.IsNullOrEmpty(webPartZoneIndex))
             {
@@ -60,7 +70,9 @@ namespace JDP.Remediation.Console
                 return;
             }
 
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             System.Console.WriteLine("Please enter WebPart ZoneID : ");
+            System.Console.ResetColor();
             webPartZoneID = System.Console.ReadLine().ToLower();
             if (string.IsNullOrEmpty(webPartZoneID))
             {
@@ -68,7 +80,9 @@ namespace JDP.Remediation.Console
                 return;
             }
 
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             System.Console.WriteLine("Please enter WebPart File Name (WebPart must be present in the WebPart gallery) : ");
+            System.Console.ResetColor();
             webPartFileName = System.Console.ReadLine().ToLower();
             if (string.IsNullOrEmpty(webPartFileName))
             {
@@ -76,26 +90,50 @@ namespace JDP.Remediation.Console
                 return;
             }
 
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             System.Console.WriteLine("Please enter WebPart XmlFile Path : ");
+            System.Console.ResetColor();
             webPartXmlFilePath = System.Console.ReadLine().ToLower();
-            if (string.IsNullOrEmpty(webPartXmlFilePath))
+            if (string.IsNullOrEmpty(webPartXmlFilePath) || !System.IO.File.Exists(webPartXmlFilePath))
             {
-                Logger.LogErrorMessage("[AddWebpart: DoWork]WebPart XmlFile Path should not be empty or null. Operation aborted...", true);
+                Logger.LogErrorMessage("[AddWebpart: DoWork]WebPart XmlFile Path is not valid or available. Operation aborted...", true);
                 return;
             }
+            System.Console.ResetColor();
             Logger.LogInfoMessage(String.Format("Process started {0}", DateTime.Now.ToString()), true);
             try
             {
+
+                AddWebPartStatusBase objWPOutputBase = new AddWebPartStatusBase();
+                objWPOutputBase.WebApplication = Constants.NotApplicable;
+                objWPOutputBase.SiteCollection = Constants.NotApplicable;
+                objWPOutputBase.WebUrl = webUrl;
+                objWPOutputBase.WebPartFileName = webPartFileName;
+                objWPOutputBase.ZoneID = webPartZoneID;
+                objWPOutputBase.ZoneIndex = webPartZoneIndex;
+                objWPOutputBase.PageUrl = serverRelativePageUrl;
+
                 if (AddWebPartToPage(webUrl, webPartFileName, webPartXmlFilePath, webPartZoneIndex, webPartZoneID, serverRelativePageUrl, outputPath))
                 {
                     System.Console.ForegroundColor = System.ConsoleColor.Green;
                     Logger.LogSuccessMessage("[AddWebPart: DoWork] Successfully Added WebPart and output file is present in the path: " + outputPath, true);
                     System.Console.ResetColor();
+                    objWPOutputBase.Status = Constants.Success;
                 }
                 else
                 {
                     Logger.LogInfoMessage("Adding WebPart to the page is failed for the site " + webUrl);
+                    objWPOutputBase.Status = Constants.Failure;
                 }
+
+                if (!System.IO.File.Exists(outputPath + @"\" + Constants.AddWebPartStatusFileName + timeStamp + Constants.CSVExtension))
+                {
+                    headerAddWebPart = false;
+                }
+                else
+                    headerAddWebPart = true;
+
+                FileUtility.WriteCsVintoFile(outputPath + @"\" + Constants.AddWebPartStatusFileName + timeStamp + Constants.CSVExtension, objWPOutputBase, ref headerAddWebPart);
 
             }
             catch (Exception ex)
@@ -103,6 +141,7 @@ namespace JDP.Remediation.Console
                 System.Console.ForegroundColor = System.ConsoleColor.Red;
                 Logger.LogErrorMessage("[AddWebPart: DoWork]. Exception Message: " + ex.Message, true);
                 System.Console.ResetColor();
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "AddWebPart", ex.Message, ex.ToString(), "AddWebpart: DoWork()", ex.GetType().ToString());
             }
             Logger.LogInfoMessage(String.Format("Process completed {0}", DateTime.Now.ToString()), true);
             Logger.CloseLog();
@@ -113,8 +152,7 @@ namespace JDP.Remediation.Console
             bool isWebPartAdded = false;
             Web web = null;
             WebPartEntity webPart = new WebPartEntity();
-            webPart.WebPartIndex = Convert.ToInt32(webPartZoneIndex);
-            ClientContext clientContext = new ClientContext(webUrl);
+            ClientContext clientContext = null;
             string webPartXml = string.Empty;
 
             ExceptionCsv.WebUrl = webUrl;
@@ -124,11 +162,12 @@ namespace JDP.Remediation.Console
             {
                 using (ClientContext userContext = Helper.CreateAuthenticatedUserContext(Program.AdminDomain, Program.AdminUsername, Program.AdminPassword, webUrl))
                 {
-
                     web = userContext.Web;
                     userContext.Load(web);
                     userContext.ExecuteQuery();
                     clientContext = userContext;
+
+                    webPart.WebPartIndex = Convert.ToInt32(webPartZoneIndex);
 
                     Logger.LogInfoMessage("[AddWebPartToPage] Successful authentication", false);
 
@@ -209,6 +248,7 @@ namespace JDP.Remediation.Console
                                 System.Console.ForegroundColor = System.ConsoleColor.Red;
                                 Logger.LogErrorMessage("[AddWebPartToPage] Exception Message: " + ex.Message + ", Exception Comment: " + exceptionCommentsInfo1);
                                 System.Console.ResetColor();
+                                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, ExceptionCsv.WebUrl, "AddWebPart", ex.Message, ex.ToString(), "AddWebPartToPage()", ex.GetType().ToString(), exceptionCommentsInfo1);
                             }
                         }
 
@@ -276,8 +316,9 @@ namespace JDP.Remediation.Console
             catch (Exception ex)
             {
                 System.Console.ForegroundColor = System.ConsoleColor.Red;
-                Logger.LogErrorMessage("[AddWebPartToPage] Exception Message: " + ex.Message + ", Exception Comment: " + exceptionCommentsInfo1);
+                Logger.LogErrorMessage("[AddWebPartToPage] Exception Message: " + ex.Message);
                 System.Console.ResetColor();
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, ExceptionCsv.WebUrl, "AddWebPart", ex.Message, ex.ToString(), "AddWebPartToPage()", ex.GetType().ToString());
                 return isWebPartAdded;
             }
             return isWebPartAdded;
@@ -353,6 +394,7 @@ namespace JDP.Remediation.Console
                 System.Console.ForegroundColor = System.ConsoleColor.Red;
                 Logger.LogErrorMessage("[GetPageList] Exception Message: " + ex.Message);
                 System.Console.ResetColor();
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "GetPageList", ex.Message, ex.ToString(), "GetPageList()", ex.GetType().ToString());
             }
             return list;
         }
@@ -393,6 +435,7 @@ namespace JDP.Remediation.Console
                 System.Console.ForegroundColor = System.ConsoleColor.Red;
                 Logger.LogErrorMessage("[IsPublishingWeb] Exception Message: " + ex.Message);
                 System.Console.ResetColor();
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, web.Url, "IsPublishingWeb", ex.Message, ex.ToString(), "IsPublishingWeb()", ex.GetType().ToString());
             }
             return _IsPublished;
         }
@@ -400,21 +443,32 @@ namespace JDP.Remediation.Console
         public static bool AddWebPartt(Web web, string serverRelativePageUrl, WebPartEntity webPartEntity, string sourceWebPartId = "")
         {
             bool isWebPartAdded = false;
-            Microsoft.SharePoint.Client.File webPartPage = web.GetFileByServerRelativeUrl(serverRelativePageUrl);
+            try
+            {
+                Microsoft.SharePoint.Client.File webPartPage = web.GetFileByServerRelativeUrl(serverRelativePageUrl);
 
-            web.Context.Load(webPartPage);
-            web.Context.ExecuteQueryRetry();
+                web.Context.Load(webPartPage);
+                web.Context.ExecuteQueryRetry();
 
-            LimitedWebPartManager webPartManager = webPartPage.GetLimitedWebPartManager(PersonalizationScope.Shared);
+                LimitedWebPartManager webPartManager = webPartPage.GetLimitedWebPartManager(PersonalizationScope.Shared);
 
-            WebPartDefinition importedWebPart = webPartManager.ImportWebPart(webPartEntity.WebPartXml);
-            WebPartDefinition webPart = webPartManager.AddWebPart(importedWebPart.WebPart, webPartEntity.WebPartZone, webPartEntity.WebPartIndex);
-            web.Context.Load(webPart);
-            web.Context.ExecuteQuery();
+                WebPartDefinition importedWebPart = webPartManager.ImportWebPart(webPartEntity.WebPartXml);
+                WebPartDefinition webPart = webPartManager.AddWebPart(importedWebPart.WebPart, webPartEntity.WebPartZone, webPartEntity.WebPartIndex);
+                web.Context.Load(webPart);
+                web.Context.ExecuteQuery();
 
-            CheckForWikiFieldOrPublishingPageContentAndUpdate(webPart, web, webPartPage, sourceWebPartId);
+                CheckForWikiFieldOrPublishingPageContentAndUpdate(webPart, web, webPartPage, sourceWebPartId);
 
-            isWebPartAdded = true;
+                isWebPartAdded = true;
+
+            }
+            catch (Exception ex)
+            {
+                System.Console.ForegroundColor = System.ConsoleColor.Red;
+                Logger.LogErrorMessage("[AddWebPartt] Exception Message: " + ex.Message);
+                System.Console.ResetColor();
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, web.Url, "AddWebPart", ex.Message, ex.ToString(), "AddWebPartt()", ex.GetType().ToString());
+            }
 
             return isWebPartAdded;
         }
@@ -616,6 +670,7 @@ namespace JDP.Remediation.Console
                 System.Console.ForegroundColor = System.ConsoleColor.Red;
                 Logger.LogErrorMessage("[CheckWebPartOrAppPartPresenceInSite] Exception Message: " + ex.Message + ", Exception Comment: " + exceptionCommentsInfo1);
                 System.Console.ResetColor();
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, ExceptionCsv.WebUrl, "AddWebPart", ex.Message, ex.ToString(), "CheckWebPartOrAppPartPresenceInSite()", ex.GetType().ToString(), exceptionCommentsInfo1);
                 return isWebPartInSite;
             }
 
@@ -625,38 +680,57 @@ namespace JDP.Remediation.Console
         public static string GetWebPartShortTypeName(string webPartType)
         {
             string _webPartType = string.Empty;
-
-            string[] tempWebPartTypeName = webPartType.Split(',');
-
-            string[] tempWebPartType = tempWebPartTypeName[0].Split('.');
-            if (tempWebPartType.Length == 1)
+            try
             {
-                _webPartType = tempWebPartType[0];
+                string[] tempWebPartTypeName = webPartType.Split(',');
+
+                string[] tempWebPartType = tempWebPartTypeName[0].Split('.');
+                if (tempWebPartType.Length == 1)
+                {
+                    _webPartType = tempWebPartType[0];
+                }
+                else
+                {
+                    _webPartType = tempWebPartType[tempWebPartType.Length - 1];
+                }
             }
-            else
+            catch (Exception ex)
             {
-                _webPartType = tempWebPartType[tempWebPartType.Length - 1];
+                System.Console.ForegroundColor = System.ConsoleColor.Red;
+                Logger.LogErrorMessage("[GetWebPartShortTypeName] Exception Message: " + ex.Message);
+                System.Console.ResetColor();
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "GetWebPartShortTypeName", ex.Message, ex.ToString(), "GetWebPartShortTypeName()", ex.GetType().ToString());
             }
             return _webPartType;
         }
         private static bool IsFeatureOnWeb(Guid FeatureID, ClientContext clientContext)
         {
             bool isFeatureAvailable = false;
-
-            FeatureCollection features = clientContext.Web.Features;
-            clientContext.Load(features);
-            clientContext.ExecuteQuery();
-
-            Feature feature = features.GetById(FeatureID);
-            if (feature != null)
+            try
             {
-                clientContext.Load(feature);
+                FeatureCollection features = clientContext.Web.Features;
+                clientContext.Load(features);
                 clientContext.ExecuteQuery();
-                if (feature.DefinitionId != null)
+
+                Feature feature = features.GetById(FeatureID);
+                if (feature != null)
                 {
-                    isFeatureAvailable = true;
+                    clientContext.Load(feature);
+                    clientContext.ExecuteQuery();
+                    if (feature.DefinitionId != null)
+                    {
+                        isFeatureAvailable = true;
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                System.Console.ForegroundColor = System.ConsoleColor.Red;
+                Logger.LogErrorMessage("[IsFeatureOnWeb] Exception Message: " + ex.Message);
+                System.Console.ResetColor();
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "AddWebPart", ex.Message, ex.ToString(), "IsFeatureOnWeb()", ex.GetType().ToString());
+            }
+
 
             return isFeatureAvailable;
         }

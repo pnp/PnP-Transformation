@@ -1,5 +1,6 @@
 ﻿using JDP.Remediation.Console.Common.Base;
 using JDP.Remediation.Console.Common.CSV;
+using JDP.Remediation.Console.Common.Utilities;
 using Microsoft.SharePoint.Client;
 using System;
 using System.Collections.Generic;
@@ -14,8 +15,11 @@ namespace JDP.Remediation.Console
     {
         public static string filePath = string.Empty;
         public static string outputPath = string.Empty;
+        public static string timeStamp = string.Empty;
+
         public static void DoWork()
         {
+            timeStamp = DateTime.Now.ToString("yyyyMMdd_hhmmss");
             bool processInputFile = false;
             bool processWebUrl = false;
             bool replaceMasterUrl = false;
@@ -26,7 +30,7 @@ namespace JDP.Remediation.Console
             try
             {
                 outputPath = Environment.CurrentDirectory;
-                Logger.OpenLog("ReplaceMasterPage");
+                Logger.OpenLog("ReplaceMasterPage", timeStamp);
 
                 if (!ReadInputOptions(ref processInputFile, ref processWebUrl))
                 {
@@ -58,7 +62,9 @@ namespace JDP.Remediation.Console
 
                 if (processWebUrl)
                 {
+                    System.Console.ForegroundColor = System.ConsoleColor.Cyan;
                     Logger.LogMessage("Enter WebUrl to replace MasterPage: ");
+                    System.Console.ResetColor();
                     webUrl = System.Console.ReadLine();
                     if (string.IsNullOrEmpty(webUrl))
                     {
@@ -89,6 +95,7 @@ namespace JDP.Remediation.Console
             catch (Exception ex)
             {
                 Logger.LogErrorMessage(String.Format("[ReplceMasterPage: DoWork] failed: Error={0}", ex.Message), true);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, webUrl, "ReplaceMasterPage", ex.Message, ex.ToString(), "ReplaceMasterPage: DoWork()", ex.GetType().ToString());
             }
             Logger.CloseLog();
         }
@@ -170,13 +177,16 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage("[ReplaceMasterpage: ReplaceMasterUrl]. Exception Message: " + ex.Message + ", Exception Comments: ", true);
+                Logger.LogErrorMessage("[ReplaceMasterpage: ReplaceMasterUrl]. Exception Message: " + ex.Message, true);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "ReplaceMasterPage", ex.Message, ex.ToString(), "ReplaceMasterUrl()", ex.GetType().ToString());
             }
             return replaceMasterUrlStatus;
         }
         private static bool ReadInputFile(ref string masterPageInputFile)
         {
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             Logger.LogMessage("Enter Complete Input File Path of MasterPage Report Either Pre-Scan OR Discovery Report.");
+            System.Console.ResetColor();
             masterPageInputFile = System.Console.ReadLine();
             Logger.LogMessage("Entered Input File of MasterPage Data " + masterPageInputFile, false);
             if (string.IsNullOrEmpty(masterPageInputFile) || !System.IO.File.Exists(masterPageInputFile))
@@ -186,9 +196,13 @@ namespace JDP.Remediation.Console
 
         private static void ReadCustomOOBMasterPages(ref string customMasterPage, ref string oobMasterPage)
         {
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             Logger.LogMessage("Enter Custom MasterPage to be replaced with OOB MasterPAge along with extension (E.g, contoso.master):");
+            System.Console.ResetColor();
             customMasterPage = System.Console.ReadLine().ToLower();
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             Logger.LogMessage("Enter OOB MasterPage to replace Custom MasterPage along with extension (E.g, seattle.master):");
+            System.Console.ResetColor();
             oobMasterPage = System.Console.ReadLine().ToLower();
         }
 
@@ -218,7 +232,8 @@ namespace JDP.Remediation.Console
                     }
                     catch (Exception ex)
                     {
-                        Logger.LogErrorMessage("[ReplaceMasterPage: ProcessInputFile]. Exception Message: " + ex.Message + ", Exception Comments: ", true);
+                        Logger.LogErrorMessage("[ReplaceMasterPage: ProcessInputFile]. Exception Message: " + ex.Message, true);
+                        ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "ReplaceMasterPage", ex.Message, ex.ToString(), "ProcessInputFile()", ex.GetType().ToString());
                     }
                 }
                 System.Console.ForegroundColor = System.ConsoleColor.Green;
@@ -228,13 +243,15 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage("[ReplaceMasterpage: ProcessInputFile]. Exception Message: " + ex.Message + ", Exception Comments: ", true);
+                Logger.LogErrorMessage("[ReplaceMasterpage: ProcessInputFile]. Exception Message: " + ex.Message, true);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "ReplaceMasterPage", ex.Message, ex.ToString(), "ProcessInputFile()", ex.GetType().ToString());
             }
             finally
             {
                 dtMasterPagesInput.Dispose();
             }
         }
+
         public static bool ProcessWebUrl(string webUrl, DataRow drMasterPage, bool replaceMasterUrl, bool replaceCustomMasterUrl, bool replaceBothMaserUrls)
         {
             bool result = false;
@@ -243,6 +260,8 @@ namespace JDP.Remediation.Console
             string serverRelativeUrl = string.Empty;
             Site site;
             Web web;
+            bool header = false;
+
             try
             {
                 ReadCustomOOBMasterPages(ref customMasterPage, ref oobMasterPage);
@@ -266,23 +285,63 @@ namespace JDP.Remediation.Console
                 {
                     using (ClientContext userContext = Helper.CreateAuthenticatedUserContext(Program.AdminDomain, Program.AdminUsername, Program.AdminPassword, webUrl))
                     {
-                        site = userContext.Site;
-                        web = userContext.Web;
-                        userContext.Load(site);
-                        userContext.Load(web);
-                        userContext.ExecuteQuery();
-                        serverRelativeUrl = site.ServerRelativeUrl;
-
-                        if (web.MasterUrl.ToLower().Contains(customMasterPage) || web.CustomMasterUrl.ToLower().Contains(customMasterPage))
+                        try
                         {
-                            result = ReplaceMasterUrl(userContext, oobMasterPage, serverRelativeUrl, replaceMasterUrl, replaceCustomMasterUrl, replaceBothMaserUrls);
+                            site = userContext.Site;
+                            web = userContext.Web;
+                            userContext.Load(site);
+                            userContext.Load(web);
+                            userContext.ExecuteQuery();
+                            serverRelativeUrl = site.ServerRelativeUrl;
+
+                            if (web.MasterUrl.ToLower().Contains(customMasterPage) || web.CustomMasterUrl.ToLower().Contains(customMasterPage))
+                            {
+                                result = ReplaceMasterUrl(userContext, oobMasterPage, serverRelativeUrl, replaceMasterUrl, replaceCustomMasterUrl, replaceBothMaserUrls);
+                            }
                         }
+                        catch (Exception ex)
+                        {
+                            Logger.LogErrorMessage("[ReplaceMasterpage: ProcessWebUrl]. Exception Message: " + ex.Message, true);
+                            ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, webUrl, "ReplaceMasterPage", ex.Message, ex.ToString(), "ProcessWebUrl()", ex.GetType().ToString());
+                        }
+
                     }
+
                 }
+                ReplaceMasterPageStatusBase objOutputBase = new ReplaceMasterPageStatusBase();
+                objOutputBase.WebApplication = Constants.NotApplicable;
+                objOutputBase.SiteCollection = Constants.NotApplicable;
+                objOutputBase.WebUrl = webUrl;
+
+                if (!string.IsNullOrEmpty(customMasterPage))
+                    objOutputBase.CustomMasterPageUrl = customMasterPage;
+                else
+                    objOutputBase.CustomMasterPageUrl = Constants.NotApplicable;
+
+                if (!string.IsNullOrEmpty(oobMasterPage))
+                    objOutputBase.OOTBMasterPageUrl = oobMasterPage;
+                else
+                    objOutputBase.OOTBMasterPageUrl = Constants.NotApplicable;
+
+                if (result)
+                {
+                    objOutputBase.Status = Constants.Success;
+                }
+                else
+                    objOutputBase.Status = Constants.Failure;
+
+                if (!System.IO.File.Exists(outputPath + @"\" + Constants.ReplaceMasterPageFileName + timeStamp + Constants.CSVExtension))
+                {
+                    header = false;
+                }
+                else
+                    header = true;
+                FileUtility.WriteCsVintoFile(outputPath + @"\" + Constants.ReplaceMasterPageFileName + timeStamp + Constants.CSVExtension, objOutputBase, ref header);
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage("[ReplaceMasterpage: ProcessWebUrl]. Exception Message: " + ex.Message + ", Exception Comments: ", true);
+                Logger.LogErrorMessage("[ReplaceMasterpage: ProcessWebUrl]. Exception Message: " + ex.Message, true);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, webUrl, "ReplaceMasterPage", ex.Message, ex.ToString(), "ProcessWebUrl()", ex.GetType().ToString());
             }
             finally
             {
@@ -291,5 +350,6 @@ namespace JDP.Remediation.Console
             }
             return result;
         }
+
     }
 }

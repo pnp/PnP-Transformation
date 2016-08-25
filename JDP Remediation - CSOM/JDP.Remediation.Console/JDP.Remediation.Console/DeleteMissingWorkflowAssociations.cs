@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.SharePoint.Client;
 using JDP.Remediation.Console.Common.CSV;
 using JDP.Remediation.Console.Common.Base;
+using JDP.Remediation.Console.Common.Utilities;
 
 namespace JDP.Remediation.Console
 {
@@ -17,59 +18,64 @@ namespace JDP.Remediation.Console
         {
             try
             {
-                Logger.OpenLog("DeleteMissingWorkflowAssociations");
-                System.Console.WriteLine("Enter the path of input file PreMT_MissingWorkflowAssociations.csv");
-                string filePath = System.Console.ReadLine();
-                if (string.IsNullOrEmpty(filePath) || !System.IO.Directory.Exists(filePath))
-                {
-                    Logger.LogWarningMessage("Input FilePath '" + filePath + "' is not valid", true);
-                    filePath = Environment.CurrentDirectory;
-                    Logger.LogInfoMessage("Correct Input FilePath is not provided so it changed to current environment '" + filePath + "'", true);
-                }
+                string timeStamp = DateTime.Now.ToString("yyyyMMdd_hhmmss");
+                Logger.OpenLog("DeleteWorkflowAssociations", timeStamp);
 
-                Logger.LogInfoMessage(String.Format("Scan starting {0}", DateTime.Now.ToString()), true);
-                string inputFileSpec = filePath + "\\" + Constants.MissingWorkflowAssociationsInputFileName;
+                if (!ShowInformation())
+                    return;
+
+
+                string inputFileSpec = Environment.CurrentDirectory + @"\" + Constants.MissingWorkflowAssociationsInputFileName;
                 if (System.IO.File.Exists(inputFileSpec))
                 {
+                    Logger.LogInfoMessage(String.Format("Scan starting {0}", DateTime.Now.ToString()), true);
                     IEnumerable<MissingWorkflowAssociationsInput> objInputMissingWorkflowAssociations = ImportCSV.ReadMatchingColumns<MissingWorkflowAssociationsInput>(inputFileSpec, Constants.CsvDelimeter);
-                    if (objInputMissingWorkflowAssociations != null)
+                    if (objInputMissingWorkflowAssociations != null && objInputMissingWorkflowAssociations.Any())
                     {
                         try
                         {
-                            Logger.LogInfoMessage(String.Format("\nPreparing to delete a total of {0} files ...", objInputMissingWorkflowAssociations.Cast<Object>().Count()), true);
+                            string csvFile = Environment.CurrentDirectory + @"/" + Constants.DeleteWorkflowAssociationsStatus + timeStamp + Constants.CSVExtension;
+                            if (System.IO.File.Exists(csvFile))
+                                System.IO.File.Delete(csvFile);
+                            Logger.LogInfoMessage(String.Format("\n[DeleteMissingWorkflowAssociations: DoWork] Preparing to delete a total of {0} files ...", objInputMissingWorkflowAssociations.Cast<Object>().Count()), true);
 
                             foreach (MissingWorkflowAssociationsInput missingFile in objInputMissingWorkflowAssociations)
                             {
-                                DeleteMissingFile(missingFile);
+                                DeleteMissingFile(missingFile, csvFile);
                             }
                         }
                         catch (Exception ex)
                         {
-                            Logger.LogErrorMessage(String.Format("DeleteMissingWorkflowAssociationFiles() failed: Error={0}", ex.Message), true);
+                            Logger.LogErrorMessage(String.Format("[DeleteMissingWorkflowAssociations: DoWork] failed: Error={0}", ex.Message), true);
+                            ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "WorkflowAssociations", ex.Message,
+                                ex.ToString(), "DoWork", ex.GetType().ToString(), "Exception occured while reading input file");
                         }
                     }
                     else
                     {
-                        Logger.LogInfoMessage("There is nothing to delete from the '" + inputFileSpec + "' File ", true);
+                        Logger.LogInfoMessage("[DeleteMissingWorkflowAssociations: DoWork] There is nothing to delete from the '" + inputFileSpec + "' File ", true);
                     }
+                    Logger.LogInfoMessage(String.Format("Scan completed {0}", DateTime.Now.ToString()), true);
                 }
                 else
                 {
-                    Logger.LogErrorMessage("The input file " + inputFileSpec + " is not present", true);
+                    Logger.LogErrorMessage("[DeleteMissingWorkflowAssociations: DoWork] The input file " + inputFileSpec + " is not present", true);
                 }
 
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage(String.Format("DeleteMissingWorkflowAssociationFiles() failed: Error={0}", ex.Message), true);
+                Logger.LogErrorMessage(String.Format("[DeleteMissingWorkflowAssociations: DoWork] failed: Error={0}", ex.Message), true);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "WorkflowAssociations", ex.Message,
+                    ex.ToString(), "DoWork", ex.GetType().ToString(), "Exception occured while reading input file");
             }
-            Logger.LogInfoMessage(String.Format("Scan completed {0}", DateTime.Now.ToString()), true);
             Logger.CloseLog();
         }
 
-        private static void DeleteMissingFile(MissingWorkflowAssociationsInput missingFile)
+        private static void DeleteMissingFile(MissingWorkflowAssociationsInput missingFile, string csvFile)
         {
-
+            bool headerWAOP = false;
+            MissingWorkflowAssociationsOutput objWFOP = new MissingWorkflowAssociationsOutput();
             if (missingFile == null)
             {
                 return;
@@ -79,6 +85,12 @@ namespace JDP.Remediation.Console
             string wfFileName = missingFile.LeafName;
             string webAppUrl = missingFile.WebApplication;
             string webUrl = missingFile.WebUrl;
+
+            objWFOP.DirName = wfFileDirName;
+            objWFOP.LeafName = wfFileName;
+            objWFOP.WebApplication = webAppUrl;
+            objWFOP.WebUrl = webUrl;
+            objWFOP.SiteCollection = missingFile.SiteCollection;
 
             if (webUrl.IndexOf("http", StringComparison.InvariantCultureIgnoreCase) < 0)
             {
@@ -113,7 +125,7 @@ namespace JDP.Remediation.Console
 
             try
             {
-                Logger.LogInfoMessage(String.Format("\n\nProcessing Workflow Association File: {0} ...", webAppUrl + serverRelativeFilePath), true);
+                Logger.LogInfoMessage(String.Format("\n\n[DeleteMissingWorkflowAssociations: DeleteMissingFile] Processing Workflow Association File: {0} ...", webAppUrl + serverRelativeFilePath), true);
 
                 // we have to open the web because Helper.DeleteFileByServerRelativeUrl() needs to update the web in order to commit the change
                 using (ClientContext userContext = Helper.CreateAuthenticatedUserContext(Program.AdminDomain, Program.AdminUsername, Program.AdminPassword, webUrl))
@@ -122,13 +134,24 @@ namespace JDP.Remediation.Console
                     userContext.Load(web);
                     userContext.ExecuteQuery();
 
-                    Helper.DeleteFileByServerRelativeUrl(web, serverRelativeFilePath);
+                    if (Helper.DeleteFileByServerRelativeUrl(web, serverRelativeFilePath))
+                        objWFOP.Status = Constants.Success;
+                    else
+                        objWFOP.Status = Constants.Failure;
                     //Logger.LogInfoMessage(targetFile.Name + " deleted successfully");
                 }
+
+                if (System.IO.File.Exists(csvFile))
+                {
+                    headerWAOP = true;
+                }
+                FileUtility.WriteCsVintoFile(csvFile, objWFOP, ref headerWAOP);
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage(String.Format("DeleteMissingWorkflowAssociationFile() failed for {0}: Error={1}", serverRelativeFilePath, ex.Message), false);
+                Logger.LogErrorMessage(String.Format("[DeleteMissingWorkflowAssociations: DeleteMissingFile] failed for {0}: Error={1}", serverRelativeFilePath, ex.Message), true);
+                ExceptionCsv.WriteException(webAppUrl, Constants.NotApplicable, webUrl, "WorkflowAssociations", ex.Message, ex.ToString(), "DeleteMissingFile",
+                    ex.GetType().ToString(), String.Format("DeleteMissingWorkflowAssociationFile() failed for {0}: Error={1}", serverRelativeFilePath, ex.Message));
             }
         }
 

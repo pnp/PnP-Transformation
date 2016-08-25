@@ -72,7 +72,7 @@ This operation adds the web part to the given page present in the given web site
  
 This functionality does not use any input file, but asks user for input of the following parameters: WebUrl, ServerRelative PageUrl, WebPart ZoneIndex, WebPart ZoneID, WebPart FileName, WebPart XmlFile Path. 
 
-Then it generates output log. If at any time the user needs to add web part to any page, using this functionality, it will give the desired output - ***AddWebpart-yyyyMMdd_hhmmss.log*** (verbose log file).
+Then it generates output log. If at any time the user needs to add web part to any page, using this functionality, it will give the desired output - ***AddWebPart-yyyyMMdd_hhmmss.log*** (verbose log file) and **AddWebPart_SuccessFailure-yyyyMMdd_hhmmss.csv**.
 
 ### 2. Replace FTC Web Part with OOTB Web Part or App on a page ###
 
@@ -83,23 +83,22 @@ This operation will read the input file from PreMT-Scan or Discovery output file
 `PreMT_MissingWebPart.csv` file of the Pre-Migration scan. 
 
 A header row is expected with the following format:
-*ContentDatabase, FeatureId, FeatureTitle, PageType, PageUrl, SiteCollection, Source, StorageKey, UpgradeStatus, WebApplication, WebPartAssembly, WebPartClass, WebPartId, WebPartTitle, WebPartType, WebUrl, ZoneID, ZoneIndex*
+*WebPartId, WebPartType, PageUrl, StorageKey, ZoneID, ZoneIndex, WebUrl*
 
 ***OR***
 
 `WebPartsUsage_Usage.csv` file of the Discovery scan. 
 
 A header row is expected with the following format:
-*ContentDatabase, DirName, Extension, ExtensionForFile, Id, LeafName, ListId, SetupPath, SiteCollection, WebApplication, WebUrl, WFSVC_ListFile,SetupPath, SiteCollection, WebApplication, WebUrl, WFSVC_ListFile*
+*WebPartId, WebPartType, PageUrl, StorageKey, ZoneID, ZoneIndex, WebUrl*
 
 Also it asks user for input of the following parameters: Input File Path, WebPart Type, Target WebPart File Name, WebPart XmlFilePath.
 
 **Output**
 
 - ReplaceWebPart-yyyyMMdd_hhmmss.log
-- PreMT\_MissingWebPart\_ReplaceOperationStatus.csv (if input file provided is PreMT_MissingWebPart.csv)
-OR
-- WebParts\_Usage\_ReplaceOperationStatus.csv (if input file provided is WebParts_Usage.csv)
+- ReplaceWebPart_SuccessFailure-yyyyMMdd_hhmmss.csv 
+
 
 ### 3. Replace MasterPage ###
 
@@ -117,11 +116,15 @@ On choosing this option, we would be asked how to proceed for these operations a
 - PreMT\_MasterPage\_Usage.csv  `(Mandatory for Option 1, not for others)`
 OR  MasterPage_Usage.csv`(Mandatory for Option 1, not for others)`
 
+A header row is expected to have following columns:
+*PageUrl, SiteCollection, WebUrl, MasterUrl, CustomMasterUrl*
+
 Also it asks user for input of the following parameters: whether to replace the master Url or custom Url or both, and names of master pages to replace and to be replaced.
 
 **Output**
 
 - ReplaceMasterPage-yyyyMMdd_hhmmss.log 
+- ReplaceMasterPage_SuccessFailure- yyyyMMdd_hhmmss.csv
 
 ## <span style="color:Blue;">2 - Clean-Up</span> ##
 On selecting 2nd Choice of Operation, we get the following operations as shown in the below screenshot:
@@ -149,7 +152,7 @@ On selecting this Operation, we get the following options as shown in the below 
 
 ![](\images/SetupFileCleanUp.PNG) 
 
-This functionality reads an input file in CSV format, which should contain header columns like - *ContentDatabase, SetupFileDirName, SetupFileExtension, SetupFileName, SetupFilePath, SiteCollection, UpgradeStatus, WebApplication, WebUrl*. Generates result in output file - ***DeleteMissingSetupFiles-yyyyMMdd_hhmmss.log*** (verbose log file).
+This functionality reads an input file (PreMT_MissingSetupFile.csv) in CSV format, which should contain header columns like - *ContentDatabase, SetupFileDirName, SetupFileExtension, SetupFileName, SetupFilePath, SiteCollection, UpgradeStatus, WebApplication, WebUrl*. Generates result in output file - ***DeleteSetupFiles-yyyyMMdd_hhmmss.log*** (verbose log file) and ***DeleteSetupFiles_SuccessFailure-yyyyMMdd_hhmmss.csv***.
 
 ### 2. Delete Missing Features ###
 This operation reads a list of feature definitions from an input file and deletes the associated feature from the webs and sites of the target SharePoint environment.  
@@ -160,7 +163,7 @@ On selecting this Operation, we get the following options as shown in the below 
 
 ![](\images/FeatureCleanUp.PNG) 
 
-This functionality reads an input file in CSV format, which should contain header columns like - *ContentDatabase, FeatureId, FeatureTitle, SiteCollection, Source, UpgradeStatus, WebApplication, WebUrl*. Generates result in output file - ***DeleteMissingFeatures-yyyyMMdd_hhmmss.log*** (verbose log file).
+This functionality reads an input file (PreMT_MissingFeature.csv OR Features_Usage.csv) in CSV format, which should contain header columns like - *ContentDatabase, FeatureId, FeatureTitle, SiteCollection, Source, UpgradeStatus, WebApplication, WebUrl*. Generates result in output file - ***DeleteFeatures-yyyyMMdd_hhmmss.log*** (verbose log file) and  ***DeleteFeatures_SuccessFailure-yyyyMMdd_hhmmss.csv***.
 
 ### 3. Delete Missing Event Receivers ###
 This operation reads a list of event receiver definitions from an input file and deletes the associated event receiver from the sites, webs, and lists of the target SharePoint environment.  
@@ -171,7 +174,7 @@ On selecting this Operation, we get the following options as shown in the below 
 
 ![](\images/ERCleanUp.PNG) 
 
-This functionality reads an input file in CSV format, which should contain header columns like - *Assembly, ContentDatabase, EventName, HostId, HostType, SiteCollection, WebApplication, WebUrl*. Generates result in output file - ***DeleteMissingEventReceivers-yyyyMMdd_hhmmss.log*** (verbose log file).
+This functionality reads an input file (PreMT_MissingEventReceiver.csv OR EventReceivers_Usage.csv) in CSV format, which should contain header columns like - *Assembly, ContentDatabase, EventName, HostId, HostType, SiteCollection, WebApplication, WebUrl*. Generates result in output file - ***DeleteEventReceivers-yyyyMMdd_hhmmss.log*** (verbose log file) and ***DeleteEventReceivers_SuccessFailure-yyyyMMdd_hhmmss.csv***.
 
 ### 4. Delete Missing Workflow Associations ###
 
@@ -190,7 +193,8 @@ On selecting this Operation, we get the following options as shown in the below 
 
 **Output**
 
-- DeleteMissingWorkflowAssociations-yyyyMMdd_hhmmss.log
+- DeleteWorkflowAssociations-yyyyMMdd_hhmmss.log
+- DeleteWorkflowAssociations_SuccessFailure-yyyyMMdd_hhmmss.csv
 
 ### 5. Delete All List Template based on Pre-Scan OR Discovery Output OR Output generated by (Self Service > Operation 1) ###
 
@@ -200,7 +204,7 @@ On selecting this Operation, we get the following options as shown in the below 
 
 [](\images/ListTemplateCleanUp.PNG) 
 
-This operation is helpful in trying to remediate the Missing List Templates in Gallery report of the Pre-Migration Scan.  It attempts to remove all specified list templates from the target SharePoint environment.
+This operation is helpful in trying to remediate the All List Templates in Gallery report of the Pre-Migration or Discovery Scan.  It attempts to remove all specified list templates from the target SharePoint environment.
 
 **Input**
 
@@ -214,9 +218,10 @@ OR
 **Output**
 
 - DeleteListTemplates-yyyyMMdd_hhmmss.log
+- DeleteListTemplates_SucessFailure-yyyyMMdd_hhmmss.csv
 
 ### 6. Delete Missing WebParts ###
-This operation reads a list of webparts from an input file () and deletes the associated type of web parts from the sites, webs, and lists of the target SharePoint environment, which is provided by the user to enter. 
+This operation reads a list of webparts from an input file (PreMT_MissingWebParts.csv OR WebParts_Usage.csv) and deletes the associated type of web parts from the sites, webs, and lists of the target SharePoint environment, which is provided by the user to enter. 
 
 On selecting this Operation, we get the following options as shown in the below screenshot:
 
@@ -233,9 +238,12 @@ This operation is helpful in trying to remediate the Missing Web Parts reports. 
 OR
 - WebParts_Usage.csv `(from Discovery Tool) `  
 
+A header row is expected to have following columns:
+*PageUrl, WebUrl, StorageKey, WebPartType*
+
 **Output**
 
-- DeleteWebpartStatus.csv
+- DeleteWebparts_SuccessFailure-yyyyMMdd_hhmmss.csv
 - DeleteWebparts-yyyyMMdd_hhmmss.log
 
 
@@ -246,8 +254,8 @@ On selecting 3rd Choice of Operation, we get the following operations as shown i
 
 These operations are listed and explained as below:
 
-<span style="color:red;font-weight:bold">1</span> <span style="color:green;">Generate List Tempalte Report with FTC Analysis</span>  
-<span style="color:red;font-weight:bold">2</span> <span style="color:green">Generate Site Tempalte Report with FTC Analysis</span>  
+<span style="color:red;font-weight:bold">1</span> <span style="color:green;">Generate List Template Report with FTC Analysis</span>  
+<span style="color:red;font-weight:bold">2</span> <span style="color:green">Generate Site Template Report with FTC Analysis</span>  
 <span style="color:red;font-weight:bold;">3</span> 
 <span style="color:green;">Generate Site Column and Content Type Usage Report</span>  
 <span style="color:red;font-weight:bold;">4</span> 
@@ -338,7 +346,7 @@ This functionality reads an input file (Sites.txt), which contains a fully-quali
 ### 5. Generate Site Collection Report (PPE Only) ###
 This operation generates a text file containing a list of all site collections found across all web applications in the target farm.  
  
-This functionality does not use any input file and generates result in output text format. If at any time the details/report of all the Site Collection of any farm are required, using this functionality will give the desired output - ***GenerateSiteCollectionReport-yyyyMMdd_hhmmss.txt*** (verbose log file).
+This functionality does not use any input file and generates result in output text format. If at any time the details/report of all the Site Collection of any farm are required, using this functionality will give the desired output - ***GenerateSiteCollectionReport-yyyyMMdd_hhmmss.txt*** (verbose log file) and ***siteCollectionReport- yyyyMMdd_hhmmss.txt***.
 
 ### 6. Get Web Part Usage Report ###
 

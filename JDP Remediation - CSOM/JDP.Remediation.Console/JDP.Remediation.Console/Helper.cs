@@ -11,6 +11,7 @@ using OfficeDevPnP.Core;
 
 using Microsoft.SharePoint.Client;
 using Microsoft.SharePoint.Client.WebParts;
+using JDP.Remediation.Console.Common.Utilities;
 
 namespace JDP.Remediation.Console
 {
@@ -347,8 +348,9 @@ namespace JDP.Remediation.Console
         /// </summary>
         /// <param name="web">this MUST be the web that contains the file to delete</param>
         /// <param name="serverRelativeFilePath">the SERVER-relative path to the file ("/sites/site/web/lib/folder/file.ext")</param>
-        public static void DeleteFileByServerRelativeUrl(Web web, string serverRelativeFilePath)
+        public static bool DeleteFileByServerRelativeUrl(Web web, string serverRelativeFilePath)
         {
+            bool result = false;
             try
             {
                 Logger.LogInfoMessage(String.Format("Deleting File: {0} ...", serverRelativeFilePath), false);
@@ -361,7 +363,7 @@ namespace JDP.Remediation.Console
                 {
                     targetFile.DeleteObject();
                     web.Context.ExecuteQuery();
-
+                    result = true;
                     Logger.LogSuccessMessage(String.Format("Deleted File: {0}", serverRelativeFilePath), false);
                 }
                 else
@@ -371,12 +373,17 @@ namespace JDP.Remediation.Console
             }
             catch (ServerException ex)
             {
-                Logger.LogErrorMessage(String.Format("DeleteFileByServerRelativeUrl() failed for {0}: Error={1}", serverRelativeFilePath, ex.Message), false);
+                Logger.LogErrorMessage(String.Format("[Helper: DeleteFileByServerRelativeUrl] failed for {0}: Error={1}", serverRelativeFilePath, ex.Message), true);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, web.Url, "N/A", ex.Message, ex.ToString(), "DeleteFileByServerRelativeUrl",
+                    ex.GetType().ToString(), String.Format("DeleteFileByServerRelativeUrl() failed for {0}: Error={1}", serverRelativeFilePath, ex.Message));
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage(String.Format("DeleteFileByServerRelativeUrl() failed for {0}: Error={1}", serverRelativeFilePath, ex.Message), false);
+                Logger.LogErrorMessage(String.Format("[Helper: DeleteFileByServerRelativeUrl] failed for {0}: Error={1}", serverRelativeFilePath, ex.Message), true);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, web.Url, "N/A", ex.Message, ex.ToString(), "DeleteFileByServerRelativeUrl",
+                    ex.GetType().ToString(), String.Format("DeleteFileByServerRelativeUrl() failed for {0}: Error={1}", serverRelativeFilePath, ex.Message));
             }
+            return result;
         }
 
         public static void AddWebPartToPage(Web web, string webPartFile, Microsoft.SharePoint.Client.File page, string zoneId)

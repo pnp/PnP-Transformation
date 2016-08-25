@@ -23,17 +23,20 @@ namespace JDP.Remediation.Console
     {
         public static string filePath = string.Empty;
         public static string outputPath = string.Empty;
+        public static string timeStamp = string.Empty;
 
         public static void DoWork()
         {
+            timeStamp = DateTime.Now.ToString("yyyyMMdd_hhmmss");
             outputPath = Environment.CurrentDirectory;
             string webPartsInputFile = string.Empty;
             string webpartType = string.Empty;
             string targetWebPartFileName = string.Empty;
             string targetWebPartXmlFilePath = string.Empty;
 
+
             //Trace Log TXT File Creation Command
-            Logger.OpenLog("ReplaceWebPart");
+            Logger.OpenLog("ReplaceWebPart", timeStamp);
 
             if (!ReadInputFile(ref webPartsInputFile))
             {
@@ -44,7 +47,9 @@ namespace JDP.Remediation.Console
                 return;
             }
 
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             System.Console.WriteLine("Please enter Source Webpart Type :");
+            System.Console.ResetColor();
             webpartType = System.Console.ReadLine().ToLower();
             if (string.IsNullOrEmpty(webpartType))
             {
@@ -52,7 +57,9 @@ namespace JDP.Remediation.Console
                 return;
             }
 
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             System.Console.WriteLine("Please enter Target WebPart File Name :");
+            System.Console.ResetColor();
             targetWebPartFileName = System.Console.ReadLine().ToLower();
             if (string.IsNullOrEmpty(targetWebPartFileName))
             {
@@ -60,11 +67,14 @@ namespace JDP.Remediation.Console
                 return;
             }
 
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             System.Console.WriteLine("Please enter Target WebPart Xml File Path :");
+            System.Console.ResetColor();
             targetWebPartXmlFilePath = System.Console.ReadLine().ToLower();
-            if (string.IsNullOrEmpty(targetWebPartXmlFilePath))
+
+            if (string.IsNullOrEmpty(targetWebPartXmlFilePath) || !System.IO.File.Exists(targetWebPartXmlFilePath))
             {
-                Logger.LogErrorMessage("[ReplaceWebPart: DoWork]Target WebPart Xml File Path should not be empty or null. Operation aborted...", true);
+                Logger.LogErrorMessage("[ReplaceWebPart: DoWork]Target WebPart Xml File Path is not valid or available. Operation aborted...", true);
                 return;
             }
             Logger.LogInfoMessage(String.Format("Process started {0}", DateTime.Now.ToString()), true);
@@ -77,8 +87,9 @@ namespace JDP.Remediation.Console
                 System.Console.ForegroundColor = System.ConsoleColor.Red;
                 Logger.LogErrorMessage("[ReplaceWebPart: DoWork]. Exception Message: " + ex.Message, true);
                 System.Console.ResetColor();
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "ReplaceWebPart", ex.Message, ex.ToString(), "ReplaceWebPart: DoWork()", ex.GetType().ToString());
             }
-            Logger.LogInfoMessage(String.Format("Process started {0}", DateTime.Now.ToString()), true);
+            Logger.LogInfoMessage(String.Format("Process completed {0}", DateTime.Now.ToString()), true);
             Logger.CloseLog();
         }
         public static void TransformWebPart_UsingCSV(string usageFileName, string sourceWebPartType, string targetWebPartFileName, string targetWebPartXmlFilePath, string outPutDirectory)
@@ -88,8 +99,6 @@ namespace JDP.Remediation.Console
             try
             {
                 WebPart_Initialization(outputPath);
-                //Delete Replace OutPut File
-                FileUtility.DeleteFiles(outPutDirectory + @"\" + System.IO.Path.GetFileNameWithoutExtension(usageFileName) + "_ReplaceOperationStatus.csv");
 
                 string sourceWebPartXmlFilesDir = outPutDirectory + @"\" + Constants.SOURCE_WEBPART_XML_DIR;
 
@@ -106,14 +115,17 @@ namespace JDP.Remediation.Console
             catch (Exception ex)
             {
                 System.Console.ForegroundColor = System.ConsoleColor.Red;
-                Logger.LogErrorMessage("[EXCEPTION][TransformWebPart_UsingCSV] Exception Message: " + ex.Message + ", Exception Comment: " + exceptionCommentsInfo1);
+                Logger.LogErrorMessage("[TransformWebPart_UsingCSV] Exception Message: " + ex.Message);
                 System.Console.ResetColor();
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "ReplaceWebPart", ex.Message, ex.ToString(), "TransformWebPart_UsingCSV()", ex.GetType().ToString(), exceptionCommentsInfo1);
             }
         }
 
         public static bool ReadInputFile(ref string webPartsInputFile)
         {
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             Logger.LogMessage("Enter Complete Input File Path of Webparts Report Either Pre-Scan OR Discovery Report:");
+            System.Console.ResetColor();
             webPartsInputFile = System.Console.ReadLine();
             System.Console.WriteLine("[ReadInputFile] Entered Input File of Webpart " + webPartsInputFile, false);
             if (string.IsNullOrEmpty(webPartsInputFile) || !System.IO.File.Exists(webPartsInputFile))
@@ -199,14 +211,20 @@ namespace JDP.Remediation.Console
 
                             if (status)
                             {
-                                objWPOutputBase.Status = "Successfully Replaced WebPart";
+                                objWPOutputBase.Status = Constants.Success;
                             }
                             else
                             {
-                                objWPOutputBase.Status = "Failed to Replace WebPart";
+                                objWPOutputBase.Status = Constants.Failure;
                             }
+                            if (!System.IO.File.Exists(outputPath + @"\" + Constants.ReplaceWebPartStatusFileName + timeStamp + Constants.CSVExtension))
+                            {
+                                headerTransformWebPart = false;
+                            }
+                            else
+                                headerTransformWebPart = true;
 
-                            FileUtility.WriteCsVintoFile(outPutFolder + @"\" + System.IO.Path.GetFileNameWithoutExtension(usageFileName) + "_ReplaceOperationStatus.csv", objWPOutputBase, ref headerTransformWebPart);
+                            FileUtility.WriteCsVintoFile(outPutFolder + @"\" + Constants.ReplaceWebPartStatusFileName + timeStamp + Constants.CSVExtension, objWPOutputBase, ref headerTransformWebPart);
 
                         }
                         catch (Exception ex)
@@ -214,15 +232,21 @@ namespace JDP.Remediation.Console
                             System.Console.ForegroundColor = ConsoleColor.Red;
                             Logger.LogErrorMessage("Error in Processing Web:" + ExceptionCsv.WebUrl + " `\r\nError Details:" + ex.Message + " `\r\nExceptionComments:" + exceptionCommentsInfo1);
                             System.Console.ResetColor();
+                            ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "ReplaceWebPart", ex.Message, ex.ToString(), "ReplaceWebPart_UsingCSV()", ex.GetType().ToString(), exceptionCommentsInfo1);
                         }
                     }
 
+                }
+                else
+                {
+                    Logger.LogInfoMessage("Source WebPart Type: " + sourceWebPartType + " does not exist in the Input file: " + usageFileName, true);
                 }
 
             }
             catch (Exception ex)
             {
                 Logger.LogErrorMessage("[ReplaceWebPart_UsingCSV] Exception Message: " + ex.Message);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "ReplaceWebPart", ex.Message, ex.ToString(), "ReplaceWebPart_UsingCSV()", ex.GetType().ToString(), exceptionCommentsInfo1);
             }
         }
 
@@ -253,11 +277,10 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                ExceptionCsv.WriteException(ExceptionCsv.WebApplication, ExceptionCsv.SiteCollection, ExceptionCsv.WebUrl, "Web Part", ex.Message, ex.ToString(), "ReadWebPartUsageCSV", ex.GetType().ToString(), exceptionCommentsInfo1);
-
                 System.Console.ForegroundColor = System.ConsoleColor.Red;
                 Logger.LogErrorMessage("[ReadWebPartUsageCSV] Exception Message: " + ex.Message + ", Exception Comments:" + exceptionCommentsInfo1);
                 System.Console.ResetColor();
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "ReplaceWebPart", ex.Message, ex.ToString(), "ReadWebPartUsageCSV()", ex.GetType().ToString(), exceptionCommentsInfo1);
             }
         }
 
@@ -266,35 +289,44 @@ namespace JDP.Remediation.Console
             ClientContext clientContext = null;
             string _relativePageUrl = string.Empty;
             Web web = null;
-
-            if (WebUrl != "" || PageUrl != "")
+            try
             {
-
-                using (ClientContext userContext = Helper.CreateAuthenticatedUserContext(Program.AdminDomain, Program.AdminUsername, Program.AdminPassword, WebUrl))
+                if (WebUrl != "" || PageUrl != "")
                 {
-                    web = userContext.Web;
-                    userContext.Load(web);
-                    userContext.ExecuteQuery();
-                    clientContext = userContext;
 
-                    Logger.LogInfoMessage("[GetPageRelativeURL] Web.ServerRelativeUrl: " + web.ServerRelativeUrl + " And PageUrl: " + PageUrl);
+                    using (ClientContext userContext = Helper.CreateAuthenticatedUserContext(Program.AdminDomain, Program.AdminUsername, Program.AdminPassword, WebUrl))
+                    {
+                        web = userContext.Web;
+                        userContext.Load(web);
+                        userContext.ExecuteQuery();
+                        clientContext = userContext;
 
-                    //Issue: Found in MARS Retraction Process, the root web ServerRelativeUrl would result "/" only
-                    //Hence appending "/" would throw exception for ServerRelativeUrl parameter
-                    if (web.ServerRelativeUrl.ToString().Equals("/"))
-                    {
-                        _relativePageUrl = web.ServerRelativeUrl.ToString() + PageUrl;
+                        Logger.LogInfoMessage("[GetPageRelativeURL] Web.ServerRelativeUrl: " + web.ServerRelativeUrl + " And PageUrl: " + PageUrl);
+
+                        //Issue: Found in MARS Retraction Process, the root web ServerRelativeUrl would result "/" only
+                        //Hence appending "/" would throw exception for ServerRelativeUrl parameter
+                        if (web.ServerRelativeUrl.ToString().Equals("/"))
+                        {
+                            _relativePageUrl = web.ServerRelativeUrl.ToString() + PageUrl;
+                        }
+                        else if (!PageUrl.Contains(web.ServerRelativeUrl))
+                        {
+                            _relativePageUrl = web.ServerRelativeUrl.ToString() + "/" + PageUrl;
+                        }
+                        else
+                        {
+                            _relativePageUrl = PageUrl;
+                        }
+                        Logger.LogInfoMessage("[GetPageRelativeURL] RelativePageUrl Framed: " + _relativePageUrl);
                     }
-                    else if (!PageUrl.Contains(web.ServerRelativeUrl))
-                    {
-                        _relativePageUrl = web.ServerRelativeUrl.ToString() + "/" + PageUrl;
-                    }
-                    else
-                    {
-                        _relativePageUrl = PageUrl;
-                    }
-                    Logger.LogInfoMessage("[GetPageRelativeURL] RelativePageUrl Framed: " + _relativePageUrl);
                 }
+            }
+            catch (Exception ex)
+            {
+                System.Console.ForegroundColor = System.ConsoleColor.Red;
+                Logger.LogErrorMessage("[GetPageRelativeURL] Exception Message: " + ex.Message);
+                System.Console.ResetColor();
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, WebUrl, "ReplaceWebPart", ex.Message, ex.ToString(), "GetPageRelativeURL()", ex.GetType().ToString());
             }
 
             return _relativePageUrl;
@@ -452,6 +484,7 @@ namespace JDP.Remediation.Console
                 System.Console.ForegroundColor = System.ConsoleColor.Red;
                 Logger.LogErrorMessage("[ConfigureNewWebPartXmlFile] Exception Message: " + ex.Message + ", Exception Comment: " + exceptionCommentsInfo1);
                 System.Console.ResetColor();
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "ReplaceWebPart", ex.Message, ex.ToString(), "ConfigureNewWebPartXmlFile()", ex.GetType().ToString());
             }
         }
 

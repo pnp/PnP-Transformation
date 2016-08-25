@@ -16,10 +16,13 @@ namespace JDP.Remediation.Console
         public static char[] CharactersThatMustBeQuoted = { ',', '"', '\n' };
         public static readonly string CsvDelimeter = ",";
         public static readonly string NotApplicable = "N/A";
+        public static readonly string CSVExtension = ".csv";
         public static readonly long ExceptionFileSizeinKb = 4096; //4 MB
         public static readonly bool Logging = true;
-        public static readonly string Exception = "Exception.csv";
+        public static readonly string Exception = "Exception-" + DateTime.Now.ToString("yyyyMMdd_hhmmss") + CSVExtension;
         public static readonly string TraceLogFileSuffix = "TraceLog";
+
+
         /// <summary>
         // Excel/CSV Cell CharacterLimit. According to Microsoft's documentation: 
         // https://support.office.com/en-us/article/Excel-specifications-and-limits-1672b34d-7043-467e-8e27-269d656771c3
@@ -46,26 +49,17 @@ namespace JDP.Remediation.Console
         public static readonly string UsageReport_ContentTypesInputFileName = "contentTypes.csv";
         public static readonly string UsageReport_SiteColumnsInputFileName = "siteColumns.csv";
 
-        public static readonly string MissingEventReceiversInputFileName = "PreMT_MissingEventReceiver.csv";
-        public static readonly string MissingEventReceiversInputFileHeaders = "Assembly,ContentDatabase,EventName,HostId,HostType,SiteCollection,WebApplication,WebUrl";
-        public static readonly int MissingEventReceiversInputFileHeaderCount = 8;
+        public static readonly string AddWebPartStatusFileName = "AddWebPart_SuccessFailure-";
+        public static readonly string ReplaceWebPartStatusFileName = "ReplaceWebPart_SuccessFailure-";
+        public static readonly string ReplaceMasterPageFileName = "ReplaceMasterPage_SuccessFailure-";
 
-        public static readonly string MissingFeaturesInputFileName = "PreMT_MissingFeature.csv";
-        public static readonly string MissingFeaturesInputFileHeaders = "ContentDatabase,FeatureId,FeatureTitle,SiteCollection,Source,UpgradeStatus,WebApplication,WebUrl";
-        public static readonly int MissingFeaturesInputFileHeaderCount = 8;
+        public static readonly string Success = "Success";
+        public static readonly string Failure = "Failure";
 
         public static readonly string MissingSetupFilesInputFileName = "PreMT_MissingSetupFile.csv";
-        public static readonly string MissingSetupFilesInputFileHeaders = "ContentDatabase,SetupFileDirName,SetupFileExtension,SetupFileName,SetupFilePath,SiteCollection,UpgradeStatus,WebApplication,WebUrl";
-        public static readonly int MissingSetupFilesInputFileHeaderCount = 9;
-
         public static readonly string MissingWorkflowAssociationsInputFileName = "PreMT_MissingWorkflowAssociations.csv";
-        public static readonly string MissingWorkflowAssociationsInputFileHeaders = "ContentDatabase,DirName,Extension,ExtensionForFile,Id,LeafName,ListId,SetupPath,SiteCollection,WebApplication,WebUrl";
-        public static readonly int MissingWorkflowAssociationsInputFileHeaderCount = 11;
-
-        public static readonly string MissingWebpartInputFileName = "PreMT_MissingWorkflowAssociations.csv";
-        public static readonly string MissingWebpartInputFileHeaders = "ContentDatabase,DirName,Extension,ExtensionForFile,Id,LeafName,ListId,SetupPath,SiteCollection,WebApplication,WebUrl";
-        public static readonly int MissingWebpartInputFileHeaderCount = 11;
-        public static readonly string WEBPART_USAGE_ENTITY_FILENAME = "WebPartUsage.csv";
+        
+        public static readonly string WEBPART_USAGE_ENTITY_FILENAME = "WebPartUsage-";
         public static readonly string TARGET_WEBPART_XML_DIR = "TargetConfiguredWebPartXmls";
         // OOB Site-level Features IDs of interest...
         public static readonly Guid SharePointEnterpriseFeatures_SiteFeatureID = new Guid("8581a8a7-cf16-4770-ac54-260265ddb0b2");
@@ -74,13 +68,18 @@ namespace JDP.Remediation.Console
         public static readonly Guid SitePolicy_SiteFeatureID = new Guid("2fcd5f8a-26b7-4a6a-9755-918566dba90a");
 
         //Webpart Deletion
-        public static readonly string TEAMSITE_PAGES_LIBRARY = "Site Pages";
         public static readonly string WebpartType_All = "all";
-        public static readonly string DeleteWebpartStatus = "DeleteWebpartStatus.csv";
+
+        //SucessFailure .csv files
+        public static readonly string DeleteEventReceiversStatus = "DeleteEventReceivers_SuccessFailure-";
+        public static readonly string DeleteFeatureStatus = "DeleteFeatures_SuccessFailure-";
+        public static readonly string DeleteSetupFileStatus = "DeleteSetupFiles_SuccessFailure-";
+        public static readonly string DeleteWorkflowAssociationsStatus = "DeleteWorkflowAssociations_SuccessFailure-";
+        public static readonly string DeleteListTemplateStatus = "DeleteListTemplates_SucessFailure-";
+        public static readonly string DeleteWebpartStatus = "DeleteWebparts_SuccessFailure-";
+
         #region ListTemplate and SiteTemplate
-
         public static readonly string NoInputFile = "No Input File";
-
         //Input files for ListTemplateIntermediate Report & SiteTemplate Intermediate Report
         public static readonly string ContentTypeInput = "ContentTypes.csv";
         public static readonly string CustomFieldsInput = "CustomFields.csv";
@@ -104,6 +103,5 @@ namespace JDP.Remediation.Console
         { 
             "Sample.master"
         };
-
     }
 }

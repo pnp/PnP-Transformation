@@ -64,13 +64,13 @@ On executing the Console Application, we get 3 choices of Operations, which are 
 
 The same are shown in the Screen shot below:
 
-![](\images/\ChoiceOfOperations.PNG)
+![](\images/ChoiceOfOperations.PNG)
 
 ## <span style="color:blue;">1 - Transformation</span> ##
 
 On selecting 1st Choice of Operation, we get the following operations as shown in the below screenshot:
 
-![](\images/\ChoiceOfOperation1.PNG) 
+![](\images/\ChoiceOfOperation1.png) 
 
 These operations are listed and explained as below:
 
@@ -110,7 +110,7 @@ On selecting this operation, we will be asked for no of parameters as explained 
 
 **Output**
 
-- **AddWebpart-yyyyMMdd_hhmmss.log**
+- **AddWebPart-yyyyMMdd_hhmmss.log**
   * This is the verbose log file of the scan.
   * Success messages of interest:
       * SUCCESS: Added File: {0}
@@ -132,6 +132,19 @@ On selecting this operation, we will be asked for no of parameters as explained 
       * Cannot contact site at the specified URL
           * Cause: The specified web (subweb, subsite, etc.) does not exist
           * Remediation: none; the web does not exist
+- **AddWebPart\_SuccessFailure-yyyyMMdd_hhmmss.csv**
+	* In this report, details of newly added web part will be present.
+	* This output file would contain the below mentioned columns and the entries corresponding to webpart.
+		*	**PageUrl:** Specifies the Url of the page where the web part is added.
+		*	**SiteCollection:** Specifies the Site Collection where in the web part is present.
+		*	**Status:** Specifies whether the status of adding of web part. It contains one of the following values
+			*	**Success:** If value of this column is “Success” it implies that the adding of the web part was successful
+			*	**Failure:** If value of this column is “Failure” it implies that the adding of the web part was not successful due to some error. 
+		*	**WebApplication:** Specifies the Web Application of the Site Collection where in the web part is present.
+		*	**WebPartFileName:** Specifies the web part name
+		*	**WebUrl:** Specifies the Web Url for the Site Collection where in the web part is present
+		*	**ZoneID:** Specifies the zone ID of the web part
+		*	**ZoneIndex:** Specifies the Zone Index of the web part
 
 
 ### 2. Replace FTC Web Part with OOTB Web Part or App on a page ###
@@ -139,9 +152,10 @@ This operation will read the input file from PreMT-Scan or Discovery output file
 
 On selecting this Operation, we get the following options as shown in the below screenshot:
 
-![](\images/ReplaceFTCWebpart.PNG) 
+![](\images/\ReplaceFTCWebpart.PNG) 
 
 Before running this function, please run GetWebPartProperties function, so that the XMLs for both source and target WebParts is available, to run delete and add function.  
+
 **Note:** Web Part should be present in the Web Part Gallery.
  
 
@@ -150,18 +164,16 @@ Before running this function, please run GetWebPartProperties function, so that 
 - **`PreMT_MissingWebPart.csv`** file of the Pre-Migration scan. 
 
  * A header row is expected with the following format:  
-		* *ContentDatabase, FeatureId, FeatureTitle, PageType, PageUrl, SiteCollection, Source, StorageKey, UpgradeStatus, WebApplication, WebPartAssembly, WebPartClass, WebPartId, WebPartTitle, WebPartType, WebUrl, ZoneID, ZoneIndex*
+		* *WebPartId, WebPartType, PageUrl, StorageKey, ZoneID, ZoneIndex, WebUrl*
 
 ***OR***
 
 - **`WebPartsUsage_Usage.csv`** file of the Discovery scan. 
 
 	* A header row is expected with the following format:
-		* *ContentDatabase, DirName, Extension, ExtensionForFile, Id, LeafName, ListId, SetupPath, SiteCollection, WebApplication, WebUrl, WFSVC_ListFile,SetupPath, SiteCollection, WebApplication, WebUrl, WFSVC_ListFile*
+		* *WebPartId, WebPartType, PageUrl, StorageKey, ZoneID, ZoneIndex, WebUrl*
 
 Also it asks user for input of the following parameters:
-
-
 
 - **Input File Path:**
 	* Here we need to the file path of the above mentioned input file  
@@ -181,9 +193,7 @@ Also it asks user for input of the following parameters:
 
 **Output**
 
-- **PreMT\_MissingWebPart\_ReplaceOperationStatus.csv** (if input file provided is PreMT_MissingWebPart.csv)
-**OR**
-- **WebParts\_Usage\_ReplaceOperationStatus.csv** (if input file provided is WebParts_Usage.csv)
+-	**ReplaceWebPart\_SuccessFailure-yyyyMMdd_hhmmss.csv** 
   * In this report, all the web parts replaced will be present.
   * This output file would contain the below mentioned columns and the entries corresponding to webaprts.
       * **PageUrl:** Specifies the Url of the page where the web part is replaced
@@ -197,9 +207,8 @@ Also it asks user for input of the following parameters:
 		* **WebPartType:** Specifies the Web Part Type of the web part
 		* **ZoneID:** Specifies the zone ID of the web part
 		* **ZoneIndex:** Specifies the Zone Index of the web part  
-		
 - **ReplaceWebPart-yyyyMMdd_hhmmss.log**
-* This is the verbose log file of the scan.
+	* This is the verbose log file of the scan.
   * Success messages of interest:
       * SUCCESS: Added File: {0}
   * Informational messages of interest:
@@ -247,10 +256,11 @@ On selecting above option, console prompts to select another options as describe
 		Select this option if wanted to replace both Master Url & Custom Master Url 
 
 Also it asks user for input of the following parameters: 
+
 - **Custom master page:**
 	* Here we need to the file path of the above mentioned input file  
-	**Example:**    “contoso.master"
-- **OOB master page:**
+		**Example:**    “contoso.master"
+- **OOTB master page:**
 	* Here we need to provide the WebPart Type which we need to be replaced  
 	**Example:**    “seattle.master”
 
@@ -258,7 +268,7 @@ Also it asks user for input of the following parameters:
 
 - **Web Url** `(Mandatory for Option 2, not required for other Options)`
 - **PreMT\_MasterPage\_Usage.csv**  `(Mandatory for Option 1, not for others)`
-	* This is a CSV that follows the format and content of the PreMT_MasterPage_Usage.csv file of the Pre-Migration scan. A header row is expected to have following columns:
+	* This is a CSV that follows the format and content of the PreMT\_MasterPage\_Usage.csv file of the Pre-Migration scan. A header row is expected to have following columns:
 		* PageUrl, SiteCollection, WebUrl, MasterUrl, CustomMasterUrl
 
 		**OR**  
@@ -270,7 +280,7 @@ Also it asks user for input of the following parameters:
 **Output**
 
 - **ReplaceMasterPage-yyyyMMdd_hhmmss.log** 
-* This is the verbose log file of the scan.
+	* This is the verbose log file of the scan.
   * Success messages of interest:
       * SUCCESS: Added File: {0}
   * Informational messages of interest:
@@ -291,12 +301,24 @@ Also it asks user for input of the following parameters:
       * Cannot contact site at the specified URL
           * Cause: The specified web (subweb, subsite, etc.) does not exist
           * Remediation: none; the web does not exist.
+- **ReplaceMasterPage\_SuccessFailure-yyyyMMdd_hhmmss.csv** 
+	* In this report, all the master pages replaced will be present.
+	* This output file would contain the below mentioned columns and the entries corresponding to master page.
+		* **CustomMasterPageUrl:** Specifies the Url of the custom master page replaced.
+		* **OOTBMasterPageUrl:** Specifies the Url of the OOTB master page 
+		* **WebApplication:** Specifies the Web Application of the Site Collection where in the master page is present.
+		* **SiteCollection:** Specifies the Site Collection where in the master page is present.
+		* **WebUrl:** Specifies the Web Url for the Site Collection where in the master page is present.
+		* **Status:** Specifies whether the status of replacement of master page. It contains one of the following values
+			* **Success:** If value of this column is “Success” it implies that the replacement of the master page was successful
+			* **Failure:** If value of this column is “Failure” it implies that the replacement of the master page was not successful due to some error. 
+
 
 ## <span style="color:Blue;">2 - Clean-Up</span> ##
 
 On selecting 2nd Choice of Operation, we get the following operations as shown in the below screenshot:
 
-![](\images/\ChoiceOfOperations2.PNG) 
+![](\images\ChoiceOfOperations2.png) 
 
 These operations are listed and explained as below:
 
@@ -316,7 +338,7 @@ This operation is helpful in trying to remediate the Missing Setup Files report 
       * ContentDatabase, SetupFileDirName, SetupFileExtension, SetupFileName, SetupFilePath, SiteCollection, UpgradeStatus, WebApplication, WebUrl
 
 #### Output ####
-- **DeleteMissingSetupFiles-yyyyMMdd_hhmmss.log**
+- **DeleteSetupFiles-yyyyMMdd_hhmmss.log**
   * This is the verbose log file of the scan.
   * Success messages of interest:
       * SUCCESS: Deleted File: {0}
@@ -353,6 +375,16 @@ This operation is helpful in trying to remediate the Missing Setup Files report 
       * Cannot contact site at the specified URL
           * Cause: The specified web (subweb, subsite, etc.) does not exist
           * Remediation: none; the web does not exist
+- **DeleteSetupFiles\_SuccessFailure-yyyyMMdd_hhmmss.csv**
+	* In this report, details of the deleted setup files will be present.
+	* This output file would contain the below mentioned columns and the entries corresponding to deleted setup file.
+		* **SetupFileDirName:** Specifies the directory of the setup file.
+		* **SetupFileName:** Specifies the name of the setup file.
+		* **WebApplication:** Specifies the Web Application of the Site Collection where in the setup file is present.
+		* **WebUrl:** Specifies the Web Url for the Site Collection where in the setup file is present.
+		* **Status:** Specifies whether the status of deletion of setup file. It contains one of the following values
+			* **Success:** If value of this column is “Success” it implies that the deletion of the setup file was successful
+			* **Failure:** If value of this column is “Failure” it implies that the deletion of the setup file was not successful due to some error. 
 
 
 ### 2. Delete Missing Features ###
@@ -369,10 +401,17 @@ This operation is helpful in trying to remediate the Missing Feature report of t
 #### Input ####
 - **PreMT_MissingFeature.csv**
 	* This is a CSV that follows the format and content of the PreMT_MissingFeature.csv file of the Pre-Migration scan. A header row is expected with the following format:
-    	* ContentDatabase, FeatureId, FeatureTitle, SiteCollection, Source, UpgradeStatus, WebApplication, WebUrl
+    	* FeatureId, Scope, ContentDatabase, WebApplication, SiteCollection, WebUrl
+
+OR
+
+- **Features_Usage.csv**
+	* This is a CSV that follows the format and content of the Features_Usage.csv file of the Discovery scan. A header row is expected with the following format:
+    	* FeatureId, Scope, ContentDatabase, WebApplication, SiteCollection, WebUrl
+    	
 
 #### Output ####
-- **DeleteMissingFeatures-yyyyMMdd_hhmmss.log**
+- **DeleteFeatures-yyyyMMdd_hhmmss.log**
   * This is the verbose log file of the scan.
   * Success messages of interest:
       * SUCCESS: Deleted Feature {0} from web {1}
@@ -389,6 +428,17 @@ This operation is helpful in trying to remediate the Missing Feature report of t
       * Cannot contact site at the specified URL
           * Cause: The specified web (subweb, subsite, etc.) does not exist
           * Remediation: none; the web does not exist
+- **DeleteFeatures\_SuccessFailure-yyyyMMdd_hhmmss.csv**
+	* In this report, details of the deleted features will be present.
+	* This output file would contain the below mentioned columns and the entries corresponding to deleted features.
+		* **FeatuerId:** Specifies the Id of the feature.
+		* **Scope:** Specifies the scope of the feature.
+		* **SiteCollection:** Specifies the Site Collection where in the feature is present.
+		* **WebApplication:** Specifies the Web Application of the Site Collection where in the feature is present.
+		* **WebUrl:** Specifies the Web Url for the Site Collection where in the feature is present.
+		* **Status:** Specifies whether the status of deletion of feature. It contains one of the following values
+			* **Success:** If value of this column is “Success” it implies that the deletion of the feature was successful
+			* **Failure:** If value of this column is “Failure” it implies that the deletion of the feature was not successful due to some error. 
 
 
 ### 3. Delete Missing Event Receivers ###
@@ -406,8 +456,14 @@ This operation is helpful in trying to remediate the Missing Event Receiver repo
   * This is a CSV that follows the format and content of the **PreMT_MissingEventReceiver.csv** file of the Pre-Migration scan. A header row is expected with the following format:
       * Assembly, ContentDatabase, HostId, HostType, SiteCollection, WebApplication, WebUrl
 
+OR
+
+- **EventReceivers_Usage.csv**
+  * This is a CSV that follows the format and content of the **EventReceivers_Usage.csv** file of the Discovery scan. A header row is expected with the following format:
+      * Assembly, ContentDatabase, HostId, HostType, SiteCollection, WebApplication, WebUrl
+      
 #### Output ####
-- **DeleteMissingEventReceivers-yyyyMMdd_hhmmss.log**
+- **DeleteEventReceivers-yyyyMMdd_hhmmss.log**
   * This is the verbose log file of the scan.
   * Search the log for instances of the following significant entries:
       * SUCCESS: Deleted SITE Event Receiver [{0}] from site {1}
@@ -422,6 +478,19 @@ This operation is helpful in trying to remediate the Missing Event Receiver repo
       * Cannot contact site at the specified URL
           * Cause: The specified web (subweb, subsite, etc.) does not exist
           * Remediation: none; the web does not exist
+- **DeleteEventReceivers\_SuccessFailure-yyyyMMdd_hhmmss.csv**
+	* In this report, details of the deleted event receivers will be present.
+	* This output file would contain the below mentioned columns and the entries corresponding to deleted event receiver.
+		* **Assembly:** Specifies the Assembly of the event receiver.
+		* **EventName:** Specifies the name of the event receiver.
+		* **HostId:** Specifies the HostId of the event receiver.
+		* **HostType:** Specifies the HostType of the event receiver.
+		* **SiteCollection:** Specifies the Site Collection where in the event receiver is present.
+		* **WebApplication:** Specifies the Web Application of the Site Collection where in the event receiver is present.
+		* **WebUrl:** Specifies the Web Url for the Site Collection where in the event receiver is present.
+		* **Status:** Specifies whether the status of deletion of event receiver. It contains one of the following values
+			* **Success:** If value of this column is “Success” it implies that the deletion of the event receiver was successful
+			* **Failure:** If value of this column is “Failure” it implies that the deletion of the event receiver was not successful due to some error. 
 
 ### 4. Delete Missing Workflow Associations ###
 This operation reads a list of workflow association files from an input file and deletes them from the sites, webs, and lists of the target SharePoint environment.
@@ -440,7 +509,7 @@ This operation is helpful in trying to remediate the Workflow Associations repor
       * ContentDatabase, DirName, Extension, ExtensionForFile, Id, LeafName, ListId, SetupPath, SiteCollection, WebApplication, WebUrl, WFSVC_ListFile, SetupPath, SiteCollection, WebApplication, WebUrl, WFSVC_ListFile
 
 #### Output ####
-- **DeleteMissingWorkflowAssociations-yyyyMMdd_hhmmss.log**
+- **DeleteWorkflowAssociations-yyyyMMdd_hhmmss.log**
 	* This is the verbose log file of the scan.  
 	* Success messages of interest:
 		* SUCCESS: Deleted File: {0}
@@ -462,7 +531,19 @@ This operation is helpful in trying to remediate the Workflow Associations repor
 		* Cannot contact site at the specified URL
 			* Cause: The specified web (subweb, subsite, etc.) does not exist
 			* Remediation: none; the web does not exist
-			
+- **DeleteWorkflowAssociations\_SuccessFailure-yyyyMMdd_hhmmss.csv**
+	* In this report, details of the deleted workflow associations will be present.
+	* This output file would contain the below mentioned columns and the entries corresponding to deleted workflow associations.
+		* **DirName:** Specifies the directory name of the workflow associations.
+		* **LeafName:** Specifies the leaf name of the workflow associations.
+		* **SiteCollection:** Specifies the Site Collection where in the workflow associations is present.
+		* **WebApplication:** Specifies the Web Application of the Site Collection where in the workflow associations is present.
+		* **WebUrl:** Specifies the Web Url for the Site Collection where in the workflow associations is present.
+		* **Status:** Specifies whether the status of deletion of workflow associations. It contains one of the following values
+			* **Success:** If value of this column is “Success” it implies that the deletion of the workflow associations was successful
+			* **Failure:** If value of this column is “Failure” it implies that the deletion of the workflow associations was not successful due to some error. 
+
+		
 ### 5. Delete All List Template based on Pre-Scan OR Discovery Output OR Output generated by (Self Service > Operation 1) ###
 This operation reads a list of list templates having customized elements, from an input file generated by **Operation-Generate List Template Report with FTC Analysis**, or from the list templates in gallery reports generated either from PreMT or Discovery, and deletes them from the sites, webs, and lists of the target SharePoint environment.
 
@@ -475,7 +556,7 @@ This operation is helpful in trying to remediate the Missing List Templates in G
 
 #### Input ####
 
-- PreMT_AllListTemplatesInGallery_Usage.csv `(from PreMT Tool)`  
+- PreMT\_AllListTemplatesInGallery_Usage.csv `(from PreMT Tool)`  
 OR
 - AllListTemplatesInGallery_Usage.csv `(from Discovery Tool) `  
 OR
@@ -525,19 +606,20 @@ On choosing this option, we would be asked how to proceed for this operation as 
 **OR**
 - **WebParts_Usage.csv** `(from Discovery Tool) `
 	* This is a CSV that follows the format and content of the WebParts_Usage.csv file of the Discovery. A header row is expected to have following columns
-		* PageUrl, SiteCollection, WebUrl, MasterUrl, CustomMasterUrl 
+		* PageUrl, WebUrl, StorageKey, WebPartType 
 
 #### Output ####
 
-- **DeleteWebpartStatus.csv**
-	* This file contains status of webpart deletion with following values:
-	PageUrl, Status, StorageKey, WebpartType & WebUrl.
-		* **PageUrl:** Contains path of the page from list which contains the page and page name in which page webpart type is present.
-		* **Status:** contains status (Success or Failed) of web part deletion.
+- **DeleteWebparts\_SuccessFailure-yyyyMMdd_hhmmss.csv**
+	* In this report, details of the deleted webpart will be present.
+	* This output file would contain the below mentioned columns and the entries corresponding to deleted webpart.
+		* **PageUrl:** Contains path of the page from list which contains the page and page name in which page webpart type is present 
 		* **StorageKey:** contains storage key of webpart on which deletion operation is performed
 		* **WebpartType:** contains type of webpart on which deletion operation is performed.
-		* **WebUrl:** contains web url of webpart on which site the webpart is present.
-
+		* **WebUrl:** Specifies the Web Url for the Site Collection where in webpart is present.
+		* **Status:** Specifies whether the status of deletion of webpart. It contains one of the following values
+			* **Success:** If value of this column is “Success” it implies that the deletion of the webpart was successful
+			* **Failure:** If value of this column is “Failure” it implies that the deletion of the webpart was not successful due to some error.
 - **DeleteWebparts-yyyyMMdd_hhmmss.log**
 	* This is the verbose log file of the scan.  
 	* Success messages of interest:
@@ -581,7 +663,7 @@ On choosing this option, we would be asked how to proceed for this operation as 
 
 - Web Application Url `(Mandatory for Option 1, not for other Options)`
 - Single or Multiple Site Collection Urls `(Mandatory for Option 3, not for other Options)`
-- PreMT_AllListTemplatesInGallery_Usage.csv `(Mandatory for Option 2, not for others)`
+- PreMT\_AllListTemplatesInGallery_Usage.csv `(Mandatory for Option 2, not for others)`
 	OR  AllListTemplatesInGallery_Usage.csv`(Mandatory for Option 2, not for others)`
 - CustomFields.csv `(Mandatory for all Options)`
 - EventReceivers.csv `(Mandatory for all Options)`
@@ -626,7 +708,7 @@ This operation searches for the Customized elements **(Content Types, Site Colum
 
 On choosing this option, we would be asked how to proceed for this operation as shown below 
 
-![](\images/GenerateSiteTemplateReport.PNG)
+![](\images/\GenerateSiteTemplateReport.PNG)
 
 	1)	Process with Auto-generated Site Collection Report  
 	2)	Process with PreMT/Discovery SiteTemplate Report  
@@ -637,7 +719,7 @@ On choosing this option, we would be asked how to proceed for this operation as 
 
 - Web Application Url `(Mandatory for Option 1, not for other Options)`
 - Single or Multiple Site Collection Urls `(Mandatory for Option 3, not for other Options)`
-- PreMT_AllSiteTemplatesInGallery_Usage.csv `(Mandatory for Option 2, not for other Options)`	
+- PreMT\_AllSiteTemplatesInGallery_Usage.csv `(Mandatory for Option 2, not for other Options)`	
 	OR    
 AllSiteTemplatesInGallery_Usage.csv `(Mandatory for Option 2, not for other Options)`
 - ContentTypes.csv `(Mandatory for all Options)`
@@ -711,7 +793,7 @@ SiteColumnID, SiteColumnName
   
 	- **SiteColumnID:**
       * This column should contain the GUID of the site column,
-          * Take this value from the** PreMT_MissingSiteColumn.csv** file
+          * Take this value from the **PreMT_MissingSiteColumn.csv** file
 	- **SiteColumnName**
       * This column should contain the display name of the site column
           * Take this value from the **PreMT_MissingSiteColumn.csv** file
@@ -758,7 +840,7 @@ On choosing this option, we would be asked how to proceed for this operation as 
   * Avoid duplicate entries
 
 #### Output ####
-- **GenerateNonDefaultMasterPageUsageReport -yyyyMMdd_hhmmss.log**
+- **GenerateNonDefaultMasterPageUsageReport-yyyyMMdd_hhmmss.log**
   * This is the verbose log file of the scan.
   * Success messages of interest:
       * FOUND: System Master Page setting (Prop=MasterUrl) of web {0} is {1}

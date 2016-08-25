@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.SharePoint.Client;
+using JDP.Remediation.Console.Common.Utilities;
 
 namespace JDP.Remediation.Console
 {
@@ -23,9 +24,11 @@ namespace JDP.Remediation.Console
         /// -  disable web features: custom Master Pages (6)
         /// -  delete custom master page files
         /// </summary>
+
         public static void DoWork()
         {
-            Logger.OpenLog("GenerateNonDefaultMasterPageUsageReport");
+            string timeStamp = DateTime.Now.ToString("yyyyMMdd_hhmmss");
+            Logger.OpenLog("GenerateNonDefaultMasterPageUsageReport", timeStamp);
             if (!ShowInformation())
                 return;
             Logger.LogInfoMessage(String.Format("Scan starting {0}", DateTime.Now.ToString()), true);
@@ -70,7 +73,8 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage(String.Format("ProcessSite() failed for {0}: Error={1}", siteUrl, ex.Message), false);
+                Logger.LogErrorMessage(String.Format("[GenerateNonDefaultMasterPageUsageReport: ProcessSite] ProcessSite() failed for {0}: Error={1}", siteUrl, ex.Message), false);
+                ExceptionCsv.WriteException(Constants.NotApplicable, siteUrl, Constants.NotApplicable, "NonDefaultMastePageUsageReport", ex.Message, ex.ToString(), "ProcessSite()", ex.GetType().ToString(), String.Format("ProcessSite() failed for {0}: Error={1}", siteUrl, ex.Message));
             }
         }
 
@@ -113,7 +117,8 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage(String.Format("ProcessWeb() failed for {0}: Error={1}", webUrl, ex.Message), false);
+                Logger.LogErrorMessage(String.Format("[GenerateNonDefaultMasterPageUsageReport: ProcessWeb]ProcessWeb() failed for {0}: Error={1}", webUrl, ex.Message), false);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, webUrl, "NonDefaultMastePageUsageReport", ex.Message, ex.ToString(), "ProcessWeb()", ex.GetType().ToString(), String.Format("ProcessWeb() failed for {0}: Error={1}", webUrl, ex.Message));
             }
         }
 
@@ -122,7 +127,9 @@ namespace JDP.Remediation.Console
             bool doContinue = false;
             string option = string.Empty;
             System.Console.WriteLine(Constants.UsageReport_SitesInputFileName + " file needs to be present in current working directory (where JDP.Remediation.Console.exe is present) to generate usage report. ");
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             System.Console.WriteLine("Press 'y' to proceed further. Press any key to go for Self Service Report Menu.");
+            System.Console.ResetColor();
             option = System.Console.ReadLine().ToLower();
             if (option.Equals("y", StringComparison.OrdinalIgnoreCase))
                 doContinue = true;

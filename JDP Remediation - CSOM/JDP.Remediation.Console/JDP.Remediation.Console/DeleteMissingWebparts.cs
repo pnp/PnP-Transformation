@@ -22,9 +22,9 @@ namespace JDP.Remediation.Console
             string webPartsInputFile = string.Empty;
             string webpartType = string.Empty;
             IEnumerable<WebpartInput> objWPDInput;
-
+            string timeStamp = DateTime.Now.ToString("yyyyMMdd_hhmmss");
             //Trace Log TXT File Creation Command
-            Logger.OpenLog("DeleteWebparts");
+            Logger.OpenLog("DeleteWebparts", timeStamp);
 
             if (!ReadInputFile(ref webPartsInputFile))
             {
@@ -35,55 +35,71 @@ namespace JDP.Remediation.Console
                 return;
             }
 
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             Logger.LogMessage("Please enter Webpart Type (enter 'all' to delete all webparts):");
+            System.Console.ResetColor();
             webpartType = System.Console.ReadLine().ToLower();
 
             try
             {
-                string csvFile = outputPath + @"/" + Constants.DeleteWebpartStatus;
+                string csvFile = outputPath + @"/" + Constants.DeleteWebpartStatus + timeStamp + Constants.CSVExtension;
                 if (System.IO.File.Exists(csvFile))
                     System.IO.File.Delete(csvFile);
-                if (String.Equals(Constants.WebpartType_All, webpartType, StringComparison.CurrentCultureIgnoreCase))
+
+                if (System.IO.File.Exists(webPartsInputFile))
                 {
-                    //Reading Input File
-                    objWPDInput = ImportCSV.ReadMatchingColumns<WebpartInput>(webPartsInputFile, Constants.CsvDelimeter);
-
-                    if (objWPDInput.Any())
+                    if (String.Equals(Constants.WebpartType_All, webpartType, StringComparison.CurrentCultureIgnoreCase))
                     {
-                        IEnumerable<string> webPartTypes = objWPDInput.Select(x => x.WebPartType);
+                        //Reading Input File
+                        objWPDInput = ImportCSV.ReadMatchingColumns<WebpartInput>(webPartsInputFile, Constants.CsvDelimeter);
 
-                        webPartTypes = webPartTypes.Distinct();
-
-                        foreach (string webPartType in webPartTypes)
+                        if (objWPDInput.Any())
                         {
-                            try
+                            IEnumerable<string> webPartTypes = objWPDInput.Select(x => x.WebPartType);
+
+                            webPartTypes = webPartTypes.Distinct();
+                            Logger.LogInfoMessage(String.Format("Preparing to delete a total of {0} webparts ...", webPartTypes.Count()), true);
+
+                            foreach (string webPartType in webPartTypes)
                             {
-                                DeleteWebPart_UsingCSV(webPartType, webPartsInputFile, csvFile);
+                                try
+                                {
+                                    DeleteWebPart_UsingCSV(webPartType, webPartsInputFile, csvFile);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Logger.LogErrorMessage("[DeleteMissingWebparts: DoWork]. Exception Message: " + ex.Message, true);
+                                    ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "Webpart", ex.Message,
+                                        ex.ToString(), "DoWork", ex.GetType().ToString(), Constants.NotApplicable);
+                                }
                             }
-                            catch (Exception ex)
-                            {
-                                Logger.LogErrorMessage("[DeleteMissingWebparts: DoWork]. Exception Message: " + ex.Message + ", Exception Comments: ", true);
-                            }
+                            webPartTypes = null;
                         }
-                        webPartTypes = null;
+                        else
+                            Logger.LogInfoMessage("There is nothing to delete from the '" + webPartsInputFile + "' File ", true);
                     }
+                    else
+                    {
+                        DeleteWebPart_UsingCSV(webpartType, webPartsInputFile, csvFile);
+                    }
+                    Logger.LogInfoMessage("Processing input file has been comepleted...");
                 }
                 else
                 {
-                    DeleteWebPart_UsingCSV(webpartType, webPartsInputFile, csvFile);
+                    Logger.LogErrorMessage("[DeleteMissingWebparts: DoWork]The input file " + webPartsInputFile + " is not present", true);
                 }
             }
             catch (Exception ex)
             {
                 Logger.LogErrorMessage("[DeleteMissingWebparts: DoWork]. Exception Message: " + ex.Message, true);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "Webpart", ex.Message,
+                    ex.ToString(), "DoWork", ex.GetType().ToString(), Constants.NotApplicable);
             }
             finally
             {
                 objWPDInput = null;
             }
-            System.Console.ForegroundColor = System.ConsoleColor.Yellow;
-            Logger.LogSuccessMessage("Processing Webparts input file is processed...");
-            System.Console.ResetColor();
+
             Logger.CloseLog();
         }
 
@@ -101,6 +117,7 @@ namespace JDP.Remediation.Console
 
                 if (objWPDInput.Any())
                 {
+                    Logger.LogInfoMessage(String.Format("Preparing to delete a total of {0} webparts with webpart type {1} ...", objWPDInput.Count(), webPartType), true);
                     for (int i = 0; i < objWPDInput.Count(); i++)
                     {
                         WebpartInput objInput = objWPDInput.ElementAt(i);
@@ -112,23 +129,25 @@ namespace JDP.Remediation.Console
 
                             if (status)
                             {
-                                objWPOutputBase.Status = "Success";
+                                objWPOutputBase.Status = Constants.Success;
                                 System.Console.ForegroundColor = System.ConsoleColor.Green;
-                                Logger.LogInfoMessage("[DeleteMissingWebparts: DeleteWebPart_UsingCSV]Successfully Deleted WebPart with Webpart Type " + objInput.WebPartType + " and with StorageKey " + objInput.StorageKey);
+                                Logger.LogInfoMessage("Successfully Deleted WebPart with Webpart Type " + objInput.WebPartType + " and with StorageKey " + objInput.StorageKey);
                                 System.Console.ResetColor();
                             }
                             else
                             {
-                                objWPOutputBase.Status = "Failed";
+                                objWPOutputBase.Status = Constants.Failure;
                                 System.Console.ForegroundColor = System.ConsoleColor.Gray;
-                                Logger.LogInfoMessage("[DeleteMissingWebparts: DeleteWebPart_UsingCSV]Failed to Delete WebPart with Webpart Type " + objInput.WebPartType + " and with StorageKey " + objInput.StorageKey);
+                                Logger.LogInfoMessage("Failed to Delete WebPart with Webpart Type " + objInput.WebPartType + " and with StorageKey " + objInput.StorageKey);
                                 System.Console.ResetColor();
                             }
                         }
                         catch (Exception ex)
                         {
-                            Logger.LogInfoMessage("[DeleteMissingWebparts: DeleteWebPart_UsingCSV]Failed to Deleted WebPart with Webpart Type " + objInput.WebPartType + " and with StorageKey " + objInput.StorageKey);
+                            Logger.LogInfoMessage("Failed to Deleted WebPart with Webpart Type " + objInput.WebPartType + " and with StorageKey " + objInput.StorageKey);
                             Logger.LogErrorMessage("[DeleteMissingWebparts: DeleteWebPart_UsingCSV]. Exception Message: " + ex.Message, true);
+                            ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "Webpart", ex.Message,
+                                ex.ToString(), "DeleteWebPart_UsingCSV", ex.GetType().ToString(), "Failed to Deleted WebPart with Webpart Type");
                         }
 
                         objWPOutputBase.WebPartType = objInput.WebPartType;
@@ -146,7 +165,7 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage("[DeleteMissingWebparts: DeleteWebPart_UsingCSV]. Exception Message: " + ex.Message + ", Exception Comments: ", true);
+                Logger.LogErrorMessage("[DeleteMissingWebparts: DeleteWebPart_UsingCSV]. Exception Message: " + ex.Message, true);
             }
         }
 
@@ -164,15 +183,17 @@ namespace JDP.Remediation.Console
                                   select p;
 
                     if (objWPDInput.Any())
-                        Logger.LogInfoMessage("[DeleteMissingWebparts: ReadWebPartUsageCSV]Number of Webparts found with WebpartType '" + sourceWebPartType + "' are " + objWPDInput.Count());
+                        Logger.LogInfoMessage("Number of Webparts found with WebpartType '" + sourceWebPartType + "' are " + objWPDInput.Count());
                     else
-                        Logger.LogInfoMessage("[DeleteMissingWebparts: ReadWebPartUsageCSV]No Webparts found with WebpartType '" + sourceWebPartType + "'");
+                        Logger.LogInfoMessage("No Webparts found with WebpartType '" + sourceWebPartType + "'");
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage("[DeleteMissingWebparts: DoWork]. Exception Message: " + ex.Message
+                Logger.LogErrorMessage("[DeleteMissingWebparts: ReadWebPartUsageCSV]. Exception Message: " + ex.Message
                     + ", Exception Comments: Exception occured while rading input file ", true);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "Webpart", ex.Message,
+                                ex.ToString(), "ReadWebPartUsageCSV", ex.GetType().ToString(), "Exception occured while rading input file");
             }
         }
 
@@ -198,9 +219,9 @@ namespace JDP.Remediation.Console
                     userContext.Load(web);
                     userContext.ExecuteQuery();
 
-                    Logger.LogInfoMessage("[DeleteMissingWebparts:DeleteWebPart] Successful authentication", false);
+                    Logger.LogInfoMessage("Successful authentication", false);
 
-                    Logger.LogInfoMessage("[DeleteMissingWebparts:DeleteWebPart] Checking Out File ...", false);
+                    Logger.LogInfoMessage("Checking Out File ...", false);
 
                     list = GetPageList(userContext);
 
@@ -233,7 +254,7 @@ namespace JDP.Remediation.Console
                             enableModeration = list.EnableModeration;
                             dVisibility = list.DraftVersionVisibility;
 
-                            Logger.LogInfoMessage("[DeleteMissingWebparts:DeleteWebpart] Removing Versioning", false);
+                            Logger.LogInfoMessage("Removing Versioning", false);
                             //Boolean to check if a call to Update method is required
                             needsUpdate = false;
 
@@ -262,8 +283,10 @@ namespace JDP.Remediation.Console
                         }
                         catch (Exception ex)
                         {
-                            Logger.LogErrorMessage("[DeleteMissingWebparts: DoWork]. Exception Message: " + ex.Message
+                            Logger.LogErrorMessage("[DeleteMissingWebparts: DeleteWebPart]. Exception Message: " + ex.Message
                                 + ", Exception Comments: Exception while removing Version to the list", true);
+                            ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, webUrl, "Webpart", ex.Message,
+                                ex.ToString(), "DeleteWebPart", ex.GetType().ToString(), "Exception while removing Version to the list");
                         }
                     }
 
@@ -272,16 +295,18 @@ namespace JDP.Remediation.Console
                         if (DeleteWebPart(userContext.Web, ServerRelativePageUrl, storageKey))
                         {
                             isWebPartDeleted = true;
-                            Logger.LogInfoMessage("[DeleteMissingWebparts:DeleteWebPart] Successfully Deleted the WebPart", false);
+                            Logger.LogInfoMessage("Successfully Deleted the WebPart", false);
                         }
                         else
                         {
-                            Logger.LogInfoMessage("[DeleteMissingWebparts:DeleteWebPart] WebPart with StorageKey: " + storageKey + " does not exist in the Page: " + ServerRelativePageUrl, false);
+                            Logger.LogInfoMessage("WebPart with StorageKey: " + storageKey + " does not exist in the Page: " + ServerRelativePageUrl, false);
                         }
                     }
                     catch (Exception ex)
                     {
-                        Logger.LogErrorMessage("[DeleteMissingWebparts: DoWork]. Exception Message: " + ex.Message + ", Exception Comments: ", true);
+                        Logger.LogErrorMessage("[DeleteMissingWebparts: DeleteWebPart]. Exception Message: " + ex.Message, true);
+                        ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, webUrl, "Webpart", ex.Message,
+                            ex.ToString(), "DeleteWebPart", ex.GetType().ToString(), Constants.NotApplicable);
                     }
                     finally
                     {
@@ -325,13 +350,15 @@ namespace JDP.Remediation.Console
                         web = null;
                         list = null;
                     }
-                    Logger.LogInfoMessage("[DeleteMissingWebparts:DeleteWebPart]  File Checked in after successfully deleting the webpart.", false);
+                    Logger.LogInfoMessage("File Checked in after successfully deleting the webpart.", false);
                 }
 
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage("[DeleteMissingWebparts: DoWork]. Exception Message: ", true);
+                Logger.LogErrorMessage("[DeleteMissingWebparts: DeleteWebPart]. Exception Message: " + ex.Message, true);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, webUrl, "Webpart", ex.Message,
+                    ex.ToString(), "DeleteWebPart", ex.GetType().ToString(), Constants.NotApplicable);
             }
             return isWebPartDeleted;
         }
@@ -369,8 +396,10 @@ namespace JDP.Remediation.Console
                         }
                         catch (Exception ex)
                         {
-                            Logger.LogErrorMessage("[DeleteMissingWebparts: DoWork]. Exception Message: " + ex.Message
+                            Logger.LogErrorMessage("[DeleteMissingWebparts: DeleteWebPart]. Exception Message: " + ex.Message
                                 + ", Exception Comments: Exception occured while deleting the webpart", true);
+                            ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, web.Url, "Webpart", ex.Message,
+                                ex.ToString(), "DeleteWebPart", ex.GetType().ToString(), Constants.NotApplicable);
                         }
                         finally
                         {
@@ -381,8 +410,10 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage("[DeleteMissingWebparts: DoWork]. Exception Message: "
+                Logger.LogErrorMessage("[DeleteMissingWebparts: DeleteWebPart]. Exception Message: "
                     + ex.Message + ", Exception Comments: Exception occure while fetching webparts using LimitedWebPartManager", true);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, web.Url, "Webpart", ex.Message,
+                    ex.ToString(), "DeleteWebPart", ex.GetType().ToString(), Constants.NotApplicable);
             }
             finally
             {
@@ -404,7 +435,7 @@ namespace JDP.Remediation.Console
                         userContext.Load(_Web);
                         userContext.ExecuteQuery();
 
-                        Logger.LogInfoMessage("[DeleteMissingWebparts: GetPageRelativeURL] Web.ServerRelativeUrl: " + _Web.ServerRelativeUrl + " And PageUrl: " + PageUrl, true);
+                        Logger.LogInfoMessage("Web.ServerRelativeUrl: " + _Web.ServerRelativeUrl + " And PageUrl: " + PageUrl, true);
 
                         //Issue: Found in MARS Retraction Process, the root web ServerRelativeUrl would result "/" only
                         //Hence appending "/" would throw exception for ServerRelativeUrl parameter
@@ -420,7 +451,7 @@ namespace JDP.Remediation.Console
                         {
                             _relativePageUrl = PageUrl;
                         }
-                        Logger.LogInfoMessage("[DeleteMissingWebparts: GetPageRelativeURL] RelativePageUrl Framed: " + _relativePageUrl, false);
+                        Logger.LogInfoMessage("RelativePageUrl Framed: " + _relativePageUrl, false);
                     }
                 }
             }
@@ -428,6 +459,8 @@ namespace JDP.Remediation.Console
             {
                 Logger.LogErrorMessage("[DeleteMissingWebparts: GetPageRelativeURL]. Exception Message: " + ex.Message
                     + ", Exception Comments: Exception occured while reading page relive url", true);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, WebUrl, "Webpart", ex.Message,
+                    ex.ToString(), "GetPageRelativeURL", ex.GetType().ToString(), Constants.NotApplicable);
             }
 
             return _relativePageUrl;
@@ -452,7 +485,9 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage("[DeleteMissingWebparts: DoWork]. Exception Message: " + ex.Message, true);
+                Logger.LogErrorMessage("[DeleteMissingWebparts: GetWebPartID]. Exception Message: " + ex.Message, true);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "Webpart", ex.Message,
+                    ex.ToString(), "GetWebPartID", ex.GetType().ToString(), Constants.NotApplicable);
             }
             return _webPartID;
         }
@@ -479,7 +514,7 @@ namespace JDP.Remediation.Console
 
                 if (_IsPublishingWeb)
                 {
-                    Logger.LogInfoMessage("[DeleteMissingWebparts:GetPageList]Web: " + web.Url + "is a publishing web", false);
+                    Logger.LogInfoMessage("Web: " + web.Url + "is a publishing web", false);
                     pagesListID = web.AllProperties["__PagesListId"] as string;
                     list = web.Lists.GetById(new Guid(pagesListID));
 
@@ -497,7 +532,7 @@ namespace JDP.Remediation.Console
                 }
                 else
                 {
-                    Logger.LogInfoMessage("[DeleteMissingWebparts:GetPageList]Web: " + web.Url + "is not a publishing web", false);
+                    Logger.LogInfoMessage("Web: " + web.Url + "is not a publishing web", false);
                     clientContext.Load(web.Lists);
 
                     clientContext.ExecuteQueryRetry();
@@ -527,6 +562,8 @@ namespace JDP.Remediation.Console
             {
                 Logger.LogErrorMessage("[DeleteMissingWebparts: GetPageList]. Exception Message: " + ex.Message
                     + ", Exception Comments: Exception occured while finding page list", true);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "Webpart", ex.Message,
+                    ex.ToString(), "GetPageList", ex.GetType().ToString(), "Exception occured while finding page list");
             }
             finally
             {
@@ -538,7 +575,7 @@ namespace JDP.Remediation.Console
 
         private static bool IsPublishingWeb(ClientContext clientContext, Web web)
         {
-            Logger.LogInfoMessage("[DeleteMissingWebparts:IsPublishingWeb] Checking if the current web is a publishing web", false);
+            Logger.LogInfoMessage("Checking if the current web is a publishing web", false);
 
             var _IsPublished = false;
             var propName = "__PublishingFeatureActivated";
@@ -563,8 +600,10 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage("[DeleteMissingWebparts: DoWork]. Exception Message: "
+                Logger.LogErrorMessage("[DeleteMissingWebparts: IsPublishingWeb]. Exception Message: "
                     + ex.Message + ", Exception Comments: Exception occured while finding publishing page", true);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, web.Url, "Webpart", ex.Message,
+                    ex.ToString(), "IsPublishingWeb", ex.GetType().ToString(), "Exception occured while finding publishing page");
             }
             finally
             {
@@ -576,7 +615,9 @@ namespace JDP.Remediation.Console
 
         private static bool ReadInputFile(ref string webPartsInputFile)
         {
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             Logger.LogMessage("Enter Complete Input File Path of Webparts Report Either Pre-Scan OR Discovery Report:");
+            System.Console.ResetColor();
             webPartsInputFile = System.Console.ReadLine();
             Logger.LogMessage("[DownloadAndModifyListTemplate: ReadInputFile] Entered Input File of List Template Data " + webPartsInputFile, false);
             if (string.IsNullOrEmpty(webPartsInputFile) || !System.IO.File.Exists(webPartsInputFile))

@@ -30,11 +30,14 @@ namespace JDP.Remediation.Console
             string webUrl = string.Empty;
             string serverRelativePageUrl = string.Empty;
             string webPartID = string.Empty;
+            string timeStamp = DateTime.Now.ToString("yyyyMMdd_hhmmss");
 
             //Trace Log TXT File Creation Command
-            Logger.OpenLog("WebpartProperties");
+            Logger.OpenLog("WebpartProperties", timeStamp);
 
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             System.Console.WriteLine("Please enter Web Url : ");
+            System.Console.ResetColor();
             webUrl = System.Console.ReadLine().ToLower();
             if (string.IsNullOrEmpty(webUrl))
             {
@@ -42,7 +45,9 @@ namespace JDP.Remediation.Console
                 return;
             }
 
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             System.Console.WriteLine("Please enter Server Relative PageUrl (E:g- /sites/DTTesting/SitePages/WebPartPage.aspx): ");
+            System.Console.ResetColor();
             serverRelativePageUrl = System.Console.ReadLine().ToLower();
             if (string.IsNullOrEmpty(serverRelativePageUrl))
             {
@@ -50,7 +55,9 @@ namespace JDP.Remediation.Console
                 return;
             }
 
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             System.Console.WriteLine("Please enter WebPart ID : ");
+            System.Console.ResetColor();
             webPartID = System.Console.ReadLine().ToLower();
             if (string.IsNullOrEmpty(webPartID))
             {
@@ -64,6 +71,7 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "WebPartProperties", ex.Message, ex.ToString(), "WebPartProperties: DoWork()", ex.GetType().ToString());
                 System.Console.ForegroundColor = System.ConsoleColor.Red;
                 Logger.LogErrorMessage("[WebpartProperties: DoWork]. Exception Message: " + ex.Message, true);
                 System.Console.ResetColor();
@@ -140,6 +148,7 @@ namespace JDP.Remediation.Console
                 System.Console.ForegroundColor = System.ConsoleColor.Red;
                 Logger.LogErrorMessage("[GetWebPartProperties] Exception Message: " + ex.Message + ", Exception Comment: " + exceptionCommentsInfo1);
                 System.Console.ResetColor();
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, ExceptionCsv.WebUrl, "WebPartProperties", ex.Message, ex.ToString(), "GetWebPartProperties()", ex.GetType().ToString());
             }
 
             return webPartPropertiesFileName;
