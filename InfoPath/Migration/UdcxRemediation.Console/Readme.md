@@ -119,5 +119,5 @@ This CSV that follows the header format and columns as mentioned below: Status, 
 
 See [UDCXStatusReport_28_12_2015_10_24_59.csv](/InfoPath/Migration/UdcxRemediation.Console/UDCXStatusReport_28_12_2015_10_24_59.csv) for an status report sample.
 
-
+<img src="https://telemetry.sharepointpnp.com/pnp-transformation/infopath/migration/UdcxRemediation.Console" /> 
 

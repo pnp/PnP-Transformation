@@ -442,3 +442,6 @@ OR
 		* Cannot contact site at the specified URL
 			* Cause: The specified web (subweb, subsite, etc.) does not exist
 			* Remediation: none; the web does not exist
+
+
+<img src="https://telemetry.sharepointpnp.com/pnp-transformation/jdpremediation/jdp.remediation.console" /> 

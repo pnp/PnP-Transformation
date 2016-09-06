@@ -35,3 +35,5 @@ Following scripts are used to obtain a list of potentially problematic InfoPath 
 
 **Important:**
 These scripts have only been tested against SharePoint 2013. 
+
+<img src="https://telemetry.sharepointpnp.com/pnp-transformation/infopath/scanning/scripts" /> 

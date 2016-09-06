@@ -36,3 +36,4 @@ Common (code) patterns used in this form are:
 
 ![](http://i.imgur.com/H5i8fhV.png)
 
+<img src="https://telemetry.sharepointpnp.com/pnp-transformation/infopath/reference/EmployeeRegistration" /> 

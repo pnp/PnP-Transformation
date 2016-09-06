@@ -57,3 +57,4 @@ Rollback steps:
 </ol>
 
 
+<img src="https://telemetry.sharepointpnp.com/pnp-transformation/feature-activation-blocker" /> 

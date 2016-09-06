@@ -92,3 +92,4 @@ using (ClientContext clientContext = new ClientContext(sharePointSiteUrl))
 
 If you're migrating from an Office 365 list with InfoPath XML files or in case you want to specify a different user please checkout the [AuthenticationManager class](https://github.com/OfficeDev/PnP-Sites-Core/blob/dev/Core/OfficeDevPnP.Core/AuthenticationManager.cs) and [documentation](https://github.com/OfficeDev/PnP-Sites-Core/blob/dev/Core/README.md#authenticationmanagercs) from the [PnP-Sites-Core repository](https://github.com/OfficeDev/PnP-Sites-Core/tree/dev).
 
+<img src="https://telemetry.sharepointpnp.com/pnp-transformation/infopath/migration/empregconsole" /> 

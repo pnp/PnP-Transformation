@@ -248,3 +248,5 @@ ProvisionLists(ctx);
 // Provision the employee registration application
 ProvisionEmployeeRegistrationApplication(ctx);
 ```
+
+<img src="https://telemetry.sharepointpnp.com/pnp-transformation/infopath/samples/EmployeeRegistration.KnockOut.SinglePageApp" /> 

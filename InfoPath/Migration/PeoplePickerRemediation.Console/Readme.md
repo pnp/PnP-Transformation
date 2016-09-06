@@ -114,5 +114,7 @@ This CSV that follows the header format and columns as mentioned below: WebUrl, 
 
 See [PeoplePickerDataFix_14_03_2016_12_26_50.csv](/InfoPath/Migration/PeoplePickerRemediation.Console/PeoplePickerDataFix_14_03_2016_12_26_50.csv) for an status report sample.
 
+<img src="https://telemetry.sharepointpnp.com/pnp-transformation/infopath/Migration/peoplepickerRemediation.Console" /> 
+
 
 

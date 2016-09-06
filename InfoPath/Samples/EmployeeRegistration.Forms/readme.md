@@ -206,4 +206,5 @@ if (!Page.IsPostBack)
 } 
 ```
 
+<img src="https://telemetry.sharepointpnp.com/pnp-transformation/infopath/samples/EmployeeRegistration.Forms" /> 
 

@@ -15,4 +15,4 @@ To use the InfoPath scanning components you'll need to follow these steps:
 6. Execute the PowerShell script **04_Parse-InfoPathReport.ps1**: the data exported in step 4 (scraper output) is analyzed and all forms which potentially are problematic will be listed in a CSV report
 7. **[Optional]** Execute the PowerShell script **05_Get-InfoPathUsageInformation.ps1**: you can use this script to acquire usage Information of the forms which are listed in the previous step. This information can be helpful to guide your customer in determining which forms are still business relevant as you most likely only want to spent effort on those
 
-
+<img src="https://telemetry.sharepointpnp.com/pnp-transformation/infopath/scanning" /> 

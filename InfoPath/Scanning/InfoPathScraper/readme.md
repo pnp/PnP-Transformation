@@ -23,3 +23,5 @@ Version  | Date | Comments
 
 ----------
 
+<img src="https://telemetry.sharepointpnp.com/pnp-transformation/infopath/scanning/InfoPathScraper" /> 
+

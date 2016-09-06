@@ -138,3 +138,5 @@ The proxy must support anonymous access and be internet accessible. It is import
 
 Furthermore, the validation key model allows one to enhance the client validation logic to implement a form-specific, or site-specific, validation keys if necessary.
 
+
+<img src="https://telemetry.sharepointpnp.com/pnp-transformation/infopath/samples/Proxy.InfoPath" /> 

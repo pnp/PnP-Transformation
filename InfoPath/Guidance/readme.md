@@ -28,3 +28,4 @@ Common pattern | SPA using Knockout | ASP.Net MVC | ASP.Net Forms
 # InfoPath transformation and remediation steps #
 The **decks** folder contains PowerPoint presentations that describe the approach you can follow to help your customer with InfoPath form remediation/transformation. 
 
+<img src="https://telemetry.sharepointpnp.com/pnp-transformation/infopath/guidance" /> 

@@ -8,3 +8,5 @@ Forms calling into OOB ASMX services work differently in SharePoint Online versu
 
 # PeoplePickerRemediation.Console #
 Migrated InfoPath form's people picker control contains On-Prem user information. The People Picker remediation tool will help to automatically fix data of People Picker control in your environment.
+
+<img src="https://telemetry.sharepointpnp.com/pnp-transformation/infopath/migration" /> 

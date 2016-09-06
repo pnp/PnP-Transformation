@@ -605,3 +605,5 @@ Iterates csv for the given custom field type and retrieves the sites collections
 
 ----------
 
+<img src="https://telemetry.sharepointpnp.com/pnp-transformation/transformationtool-csom" /> 
+

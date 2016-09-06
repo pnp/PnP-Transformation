@@ -17,3 +17,5 @@ New-SPSite -url http://dev.contoso.com/sites/test011 -owneralias contoso\adminis
 New-SPSite -url http://dev.contoso.com/sites/test017 -owneralias contoso\administrator -template "{53a719c7-6766-4bba-bf89-a5789ea2360a}#WTContosoPublishing" -name Test
 
 ```
+
+<img src="https://telemetry.sharepointpnp.com/pnp-transformation/referencematerial/contoso.intranet" /> 

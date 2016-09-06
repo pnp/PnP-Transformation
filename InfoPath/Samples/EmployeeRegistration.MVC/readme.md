@@ -144,4 +144,4 @@ public ActionResult EmployeeForm()
 }
 ```
 
-
+<img src="https://telemetry.sharepointpnp.com/pnp-transformation/infopath/samples/EmployeeRegistration.MVC" /> 
