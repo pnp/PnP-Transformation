@@ -70,7 +70,7 @@ The same are shown in the Screen shot below:
 
 On selecting 1st Choice of Operation, we get the following operations as shown in the below screenshot:
 
-![](\images/\ChoiceOfOperation1.png) 
+![](\images/ChoiceOfOperation1.png) 
 
 These operations are listed and explained as below:
 
