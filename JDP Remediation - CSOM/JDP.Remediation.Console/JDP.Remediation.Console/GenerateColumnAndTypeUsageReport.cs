@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.SharePoint.Client;
+using JDP.Remediation.Console.Common.Utilities;
 
 namespace JDP.Remediation.Console
 {
@@ -27,7 +28,7 @@ namespace JDP.Remediation.Console
             public Guid Id;
             public string Name;
 
-             public SiteColumnSpec(string id, string name)
+            public SiteColumnSpec(string id, string name)
             {
                 this.Id = new Guid(id.Trim());
                 this.Name = name.Trim();
@@ -36,7 +37,11 @@ namespace JDP.Remediation.Console
 
         public static void DoWork()
         {
-            Logger.OpenLog("GenerateColumnAndTypeUsageReport");
+            string timeStamp = DateTime.Now.ToString("yyyyMMdd_hhmmss");
+
+            Logger.OpenLog("GenerateColumnAndTypeUsageReport", timeStamp);
+            if (!ShowInformation())
+                return;
             Logger.LogInfoMessage(String.Format("Scan starting {0}", DateTime.Now.ToString()), true);
 
             string contentTypesInputFileSpec = Environment.CurrentDirectory + "\\" + Constants.UsageReport_ContentTypesInputFileName;
@@ -47,7 +52,7 @@ namespace JDP.Remediation.Console
             {
                 string[] arr = s.Split(',');
                 contentTypes.Add(new ContentTypeSpec(arr[0], arr[1]));
-            }            
+            }
 
             string siteColumnsInputFileSpec = Environment.CurrentDirectory + "\\" + Constants.UsageReport_SiteColumnsInputFileName;
             string[] siteColumnRows = Helper.ReadInputFile(siteColumnsInputFileSpec, true);
@@ -97,7 +102,8 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage(String.Format("ProcessSite() failed for {0}: Error={1}", siteUrl, ex.Message), false);
+                Logger.LogErrorMessage(String.Format("[GenerateColumnAndTypeUsageReport: ProcessSite] ProcessSite() failed for {0}: Error={1}", siteUrl, ex.Message), false);
+                ExceptionCsv.WriteException(Constants.NotApplicable, siteUrl, Constants.NotApplicable, "ColumnAndTypeUsageReport", ex.Message, ex.ToString(), "ProcessSite()", ex.GetType().ToString(), String.Format("ProcessSite() failed for {0}: Error={1}", siteUrl, ex.Message));
             }
         }
 
@@ -134,14 +140,15 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage(String.Format("ProcessWeb() failed for {0}: Error={1}", webUrl, ex.Message), false);
+                Logger.LogErrorMessage(String.Format("[GenerateColumnAndTypeUsageReport: ProcessWeb] ProcessWeb() failed for {0}: Error={1}", webUrl, ex.Message), false);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, webUrl, "ColumnAndTypeUsageReport", ex.Message, ex.ToString(), "ProcessWeb()", ex.GetType().ToString(), String.Format("ProcessWeb() failed for {0}: Error={1}", webUrl, ex.Message));
             }
         }
 
         private static void ScanWeb(Web web, List<ContentTypeSpec> contentTypes, List<SiteColumnSpec> siteColumns)
         {
             try
-            { 
+            {
                 // scan the web for our custom site columns
                 foreach (SiteColumnSpec sc in siteColumns)
                 {
@@ -156,7 +163,8 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage(String.Format("ScanWeb() failed on {0}: Error={1}", web.Url, ex.Message), false);
+                Logger.LogErrorMessage(String.Format("[GenerateColumnAndTypeUsageReport: ScanWeb]ScanWeb() failed on {0}: Error={1}", web.Url, ex.Message), false);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, web.Url, "ColumnAndTypeUsageReport", ex.Message, ex.ToString(), "ScanWeb()", ex.GetType().ToString(), String.Format("ScanWeb() failed on {0}: Error={1}", web.Url, ex.Message));
             }
         }
 
@@ -187,13 +195,15 @@ namespace JDP.Remediation.Console
                     }
                     catch (Exception ex)
                     {
-                        Logger.LogErrorMessage(String.Format("ScanLists() failed on a list of {0}: Error={1}", web.Url, ex.Message), false);
+                        Logger.LogErrorMessage(String.Format("[GenerateColumnAndTypeUsageReport: ScanLists] ScanLists() failed on a list of {0}: Error={1}", web.Url, ex.Message), false);
+                        ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, web.Url, "ColumnAndTypeUsageReport", ex.Message, ex.ToString(), "ScanLists()", ex.GetType().ToString(), String.Format("ScanLists() failed on a list of {0}: Error={1}", web.Url, ex.Message));
                     }
                 }
             }
             catch (Exception ex)
             {
                 Logger.LogErrorMessage(String.Format("ScanLists() failed for {0}: Error={1}", web.Url, ex.Message), false);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, web.Url, "ColumnAndTypeUsageReport", ex.Message, ex.ToString(), "ScanLists()", ex.GetType().ToString(), String.Format("ScanLists() failed for {0}: Error={1}", web.Url, ex.Message));
             }
         }
 
@@ -241,12 +251,14 @@ namespace JDP.Remediation.Console
                     catch (Exception ex)
                     {
                         Logger.LogErrorMessage(String.Format("ReportContentTypeUsage() failed on a Content Type of WEB {0}: Error={1}", web.Url, ex.Message), false);
+                        ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, web.Url, "ColumnAndTypeUsageReport", ex.Message, ex.ToString(), "ReportContentTypeUsage()", ex.GetType().ToString(), String.Format("ReportContentTypeUsage() failed on a Content Type of WEB {0}: Error={1}", web.Url, ex.Message));
                     }
                 }
             }
             catch (Exception ex)
             {
                 Logger.LogErrorMessage(String.Format("ReportContentTypeUsage() failed for WEB {0}: Error={1}", web.Url, ex.Message), false);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, web.Url, "ColumnAndTypeUsageReport", ex.Message, ex.ToString(), "ReportContentTypeUsage()", ex.GetType().ToString(), String.Format("ReportContentTypeUsage() failed for WEB {0}: Error={1}", web.Url, ex.Message));
             }
         }
         private static void ReportContentTypeUsage(Web web, List list, string targetContentTypeId, string targetContentTypeName)
@@ -285,13 +297,29 @@ namespace JDP.Remediation.Console
                     catch (Exception ex)
                     {
                         Logger.LogErrorMessage(String.Format("ReportContentTypeUsage() failed on a Content Type of LIST [{0}] of WEB {1}: Error={2}", list.Title, web.Url, ex.Message), false);
+                        ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, web.Url, "ColumnAndTypeUsageReport", ex.Message, ex.ToString(), "ReportContentTypeUsage()", ex.GetType().ToString(), String.Format("ReportContentTypeUsage() failed on a Content Type of LIST [{0}] of WEB {1}: Error={2}", list.Title, web.Url, ex.Message));
                     }
                 }
             }
             catch (Exception ex)
             {
                 Logger.LogErrorMessage(String.Format("ReportContentTypeUsage() failed for LIST [{0}] of WEB {1}: Error={2}", list.Title, web.Url, ex.Message), false);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, web.Url, "ColumnAndTypeUsageReport", ex.Message, ex.ToString(), "ReportContentTypeUsage()", ex.GetType().ToString(), String.Format("ReportContentTypeUsage() failed for LIST [{0}] of WEB {1}: Error={2}", list.Title, web.Url, ex.Message));
             }
+        }
+
+        private static bool ShowInformation()
+        {
+            bool doContinue = false;
+            string option = string.Empty;
+            System.Console.WriteLine("Input file needs to be present in current working directory (where JDP.Remediation.Console.exe is present) to generate usage report. ");
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
+            System.Console.WriteLine("Press 'y' to proceed further. Press any key to go for Self Service Report Menu.");
+            System.Console.ResetColor();
+            option = System.Console.ReadLine().ToLower();
+            if (option.Equals("y", StringComparison.OrdinalIgnoreCase))
+                doContinue = true;
+            return doContinue;
         }
     }
 }
