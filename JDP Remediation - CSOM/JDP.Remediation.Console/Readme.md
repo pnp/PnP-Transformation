@@ -318,7 +318,7 @@ Also it asks user for input of the following parameters:
 
 On selecting 2nd Choice of Operation, we get the following operations as shown in the below screenshot:
 
-![](\images\ChoiceOfOperations2.png) 
+![](\images/\ChoiceOfOperations2.PNG) 
 
 These operations are listed and explained as below:
 
