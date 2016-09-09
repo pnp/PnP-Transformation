@@ -13,6 +13,39 @@ namespace JDP.Remediation.Console.Common.Base
         public string SiteCollection { get; set; }
         public string WebUrl { get; set; }
     }
+   
+    public class ReplaceMasterPageStatusBase
+    {
+        public string CustomMasterPageUrl { get; set; }
+        public string OOTBMasterPageUrl { get; set; }
+        public string Status { get; set; }
+        public string WebApplication { get; set; }
+        public string SiteCollection { get; set; }
+        public string WebUrl { get; set; }
+    }
+    public class AddWebPartStatusBase
+    {
+        public string ZoneID { get; set; }
+        public string ZoneIndex { get; set; }
+        public string PageUrl { get; set; }
+        public string WebPartFileName { get; set; }
+        public string Status { get; set; }
+        public string WebApplication { get; set; }
+        public string SiteCollection { get; set; }
+        public string WebUrl { get; set; }
+    }
+    public class TranformWebPartStatusBase
+    {
+        public string WebPartId { get; set; }
+        public string ZoneID { get; set; }
+        public string ZoneIndex { get; set; }
+        public string PageUrl { get; set; }
+        public string WebPartType { get; set; }
+        public string Status { get; set; }
+        public string WebApplication { get; set; }
+        public string SiteCollection { get; set; }
+        public string WebUrl { get; set; }
+    }
     public class MissingEventReceiversInput : Elementbase
     {
         public string Assembly { get; set; }
@@ -23,6 +56,36 @@ namespace JDP.Remediation.Console.Common.Base
         //public string Scope { get; set; }
 
     }
+    public class MissingEventReceiversOutput
+    {
+        public string Assembly { get; set; }
+        public string EventName { get; set; }
+        public string HostId { get; set; }
+        public string HostType { get; set; }
+        public string Status { get; set; }
+        public string WebApplication { get; set; }
+        public string SiteCollection { get; set; }
+        public string WebUrl { get; set; }
+    }
+    public class WebPartUsageEntity
+    {
+        public string WebURL { get; set; }
+        public string WebPartID { get; set; }
+        public string WebPartTitle { get; set; }
+        public string PageUrl { get; set; }
+        public string ZoneIndex { get; set; }
+        public string WebPartType { get; set; }
+    }
+    public class WebPartDiscoveryInput
+    {
+        public string WebUrl { get; set; }
+        public string WebPartId { get; set; }
+        public string ZoneID { get; set; }
+        public string ZoneIndex { get; set; }
+        public string PageUrl { get; set; }
+        public string WebPartType { get; set; }
+        public string StorageKey { get; set; }
+    }
     public class MissingFeaturesInput : Elementbase
     {
         public string FeatureId { get; set; }
@@ -32,6 +95,15 @@ namespace JDP.Remediation.Console.Common.Base
         //public string UpgradeStatus { get; set; }
 
     }
+    public class MissingFeatureOutput
+    {
+        public string FeatureId { get; set; }
+        public string Scope { get; set; }
+        public string WebApplication { get; set; }
+        public string WebUrl { get; set; }
+        public string SiteCollection { get; set; }
+        public string Status { get; set; }
+    }
     public class MissingSetupFilesInput : Elementbase
     {
         public string SetupFileDirName { get; set; }
@@ -40,10 +112,28 @@ namespace JDP.Remediation.Console.Common.Base
         public string SetupFileName { get; set; }
         //public string SetupFilePath { get; set; }
     }
+    public class MissingSetupFilesOutput
+    {
+        public string SetupFileDirName { get; set; }
+        public string SetupFileName { get; set; }
+        public string Status { get; set; }
+        public string WebUrl { get; set; }
+        public string WebApplication { get; set; }
+    }
+
     public class MissingWorkflowAssociationsInput : Elementbase
     {
         public string DirName { get; set; }
         public string LeafName { get; set; }
+    }
+    public class MissingWorkflowAssociationsOutput
+    {
+        public string DirName { get; set; }
+        public string LeafName { get; set; }
+        public string Status { get; set; }
+        public string WebApplication { get; set; }
+        public string SiteCollection { get; set; }
+        public string WebUrl { get; set; }
     }
     public class ContentTypeBase
     {
@@ -122,7 +212,15 @@ namespace JDP.Remediation.Console.Common.Base
         public string ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
     }
-
+    public class ListTemplateDeleteOutput
+    {
+        public string ListTemplateName { get; set; }
+        public string ListGalleryPath { get; set; }
+        public string WebApplication { get; set; }
+        public string SiteCollection { get; set; }
+        public string WebUrl { get; set; }
+        public string Status { get; set; }
+    }
     public class SiteTemplateFTCAnalysisOutputBase : SiteCustomizationHeader
     {
         public string SiteTemplateName { get; set; }
@@ -142,10 +240,32 @@ namespace JDP.Remediation.Console.Common.Base
         public string IsCustomizedContentType { get; set; }
         public string IsCustomizedEventReceiver { get; set; }
         public string IsCustomizedSiteColumn { get; set; }
+        public string CTHavingCustomEventReceiver { get; set; }
     }
 
     public class SiteCustomizationHeader : ListCustomizationHeader
     {
         public string IsCustomizedFeature { get; set; }
+    }
+    public class MissingMasterPageInput
+    {
+        public string PageUrl { get; set; }
+        public string SiteCollection { get; set; }
+        public string WebUrl { get; set; }
+        public string MasterUrl { get; set; }
+        public string CustomMasterUrl { get; set; }
+    }
+
+    public class WebpartInput
+    {
+        public string PageUrl { get; set; }
+        public string WebUrl { get; set; }
+        public string StorageKey { get; set; }
+        public string WebPartType { get; set; }
+    }
+
+    public class WebpartDeleteOutputBase : WebpartInput
+    {
+        public string Status { get; set; }
     }
 }
