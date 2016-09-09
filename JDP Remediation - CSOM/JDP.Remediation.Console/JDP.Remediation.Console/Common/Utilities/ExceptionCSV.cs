@@ -26,7 +26,8 @@ namespace JDP.Remediation.Console.Common.Utilities
             }
         }
 
-        public static string WebApplication { get; set; }        
+        public static string WebApplication { get; set; }
+        public static string ContentDatabase { get; set; }
         public static string SiteCollection { get; set; }
         public static string WebUrl { get; set; }
         public static string Exceptionfilename { get; set; }
@@ -43,12 +44,13 @@ namespace JDP.Remediation.Console.Common.Utilities
             return CreateExceptionFile(strLogFolderPath);
         }
 
-        public static void WriteException(string webapplication = "N/A", string sitecollection = "N/A",
+        public static void WriteException(string webapplication = "N/A", string ContentDatabase = "N/A", string sitecollection = "N/A",
             string weburl = "N/A", string elementType = "N/A", string exceptionmessage = "N/A",
             string exceptiondetail = "N/A", string methodname = "N/A", string exceptionType = "N/A",
             string exceptionComments = "N/A")
         {
             string strCsv = StringUtility.Escape(webapplication) + Constants.CsvDelimeter;
+            strCsv = strCsv + StringUtility.Escape(ContentDatabase) + Constants.CsvDelimeter;
             strCsv = strCsv + StringUtility.Escape(sitecollection) + Constants.CsvDelimeter;
             strCsv = strCsv + StringUtility.Escape(weburl) + Constants.CsvDelimeter;
             strCsv = strCsv + StringUtility.Escape(elementType) + Constants.CsvDelimeter;
@@ -126,7 +128,7 @@ namespace JDP.Remediation.Console.Common.Utilities
                     }
                     Exceptionfilename = strFileNameWithPath;
                 }
-                WriteException("WebApplication", "SiteCollection", "WebURL", "ElementType", "ExceptionMessage",
+                WriteException("WebApplication","ContentDatabase", "SiteCollection", "WebURL", "ElementType", "ExceptionMessage",
                     "ExceptionDetail", "MethodName", "ExceptionType", "ExceptionComments");
                 return true;
             }

@@ -12,7 +12,6 @@ using OfficeDevPnP.Core;
 using Microsoft.SharePoint.Client;
 using JDP.Remediation.Console.Common.Base;
 using JDP.Remediation.Console.Common.CSV;
-using JDP.Remediation.Console.Common.Utilities;
 
 namespace JDP.Remediation.Console
 {
@@ -20,66 +19,41 @@ namespace JDP.Remediation.Console
     {
         public static void DoWork()
         {
-            string timeStamp = DateTime.Now.ToString("yyyyMMdd_hhmmss");
-            string eventReceiverInputFile = string.Empty;
-            Logger.OpenLog("DeleteEventReceivers", timeStamp);
-            if (!ShowInformation())
-                return;
+            Logger.OpenLog("DeleteMissingEventReceivers");
+            Logger.LogInfoMessage(String.Format("Scan starting {0}", DateTime.Now.ToString()), true);
 
-            if (!ReadInputFile(ref eventReceiverInputFile))
+            string inputFileSpec = Environment.CurrentDirectory + "\\" + Constants.MissingEventReceiversInputFileName;
+            //Read Input file
+            IEnumerable<MissingEventReceiversInput> objInputMissingEventReceivers = ImportCSV.ReadMatchingColumns<MissingEventReceiversInput>(inputFileSpec, Constants.CsvDelimeter);
+            if (objInputMissingEventReceivers != null)
             {
-                System.Console.ForegroundColor = System.ConsoleColor.Red;
-                Logger.LogErrorMessage("Event Receivers input file is not valid or available. So, Operation aborted!");
-                Logger.LogErrorMessage("Please enter path like: E.g. C:\\<Working Directory>\\<InputFile>.csv");
-                System.Console.ResetColor();
-                return;
-            }
-
-            string inputFileSpec = eventReceiverInputFile;
-
-            if (System.IO.File.Exists(inputFileSpec))
-            {
-                Logger.LogInfoMessage(String.Format("Scan starting {0}", DateTime.Now.ToString()), true);
-                //Read Input file
-                IEnumerable<MissingEventReceiversInput> objInputMissingEventReceivers = ImportCSV.ReadMatchingColumns<MissingEventReceiversInput>(inputFileSpec, Constants.CsvDelimeter);
-                if (objInputMissingEventReceivers != null && objInputMissingEventReceivers.Any())
+                try
                 {
-                    try
-                    {
-                        string csvFile = Environment.CurrentDirectory + @"/" + Constants.DeleteEventReceiversStatus + timeStamp + Constants.CSVExtension;
-                        if (System.IO.File.Exists(csvFile))
-                            System.IO.File.Delete(csvFile);
-                        Logger.LogInfoMessage(String.Format("Preparing to delete a total of {0} event receivers ...", objInputMissingEventReceivers.Cast<Object>().Count()), true);
+                    Logger.LogInfoMessage(String.Format("Preparing to delete a total of {0} event receivers ...", objInputMissingEventReceivers.Cast<Object>().Count()), true);
 
-                        foreach (MissingEventReceiversInput MissingEventReceiver in objInputMissingEventReceivers)
-                        {
-                            DeleteMissingEventReceiver(MissingEventReceiver, csvFile);
-                        }
-                    }
-                    catch (Exception ex)
+                    foreach (MissingEventReceiversInput MissingEventReceiver in objInputMissingEventReceivers)
                     {
-                        Logger.LogErrorMessage(String.Format("[DeleteMissingEventReceivers: DoWork] failed: Error={0}", ex.Message), true);
-                        ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "EventReceiver", ex.Message,
-                            ex.ToString(), "DoWork", ex.GetType().ToString(), "Exception occured while reading input file");
+                        DeleteMissingEventReceiver(MissingEventReceiver);
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    Logger.LogInfoMessage("There is nothing to delete from the '" + inputFileSpec + "' File ", true);
-
+                    Logger.LogErrorMessage(String.Format("DeleteMissingEventReceivers() failed: Error={0}", ex.Message), true);
                 }
+
                 Logger.LogInfoMessage(String.Format("Scan completed {0}", DateTime.Now.ToString()), true);
             }
             else
-                Logger.LogErrorMessage(String.Format("[DeleteMissingEventReceivers: DoWork]: Input file {0} is not available", inputFileSpec), true);
+            {
+                Logger.LogInfoMessage("There is nothing to delete from the '"+inputFileSpec+"' File ", true);
 
+            }
             Logger.CloseLog();
+
         }
 
-        private static void DeleteMissingEventReceiver(MissingEventReceiversInput MissingEventReceiver, string csvFile)
+        private static void DeleteMissingEventReceiver(MissingEventReceiversInput MissingEventReceiver)
         {
-            bool headerEROP = false;
-            MissingEventReceiversOutput objEROP = new MissingEventReceiversOutput();
             if (MissingEventReceiver == null)
             {
                 return;
@@ -91,13 +65,6 @@ namespace JDP.Remediation.Console
             string hostTypeInfo = MissingEventReceiver.HostType;
             string siteUrl = MissingEventReceiver.SiteCollection;
             string webUrl = MissingEventReceiver.WebUrl;
-            objEROP.Assembly = assemblyName;
-            objEROP.EventName = eventName;
-            objEROP.HostId = hostId;
-            objEROP.HostType = hostTypeInfo;
-            objEROP.SiteCollection = siteUrl;
-            objEROP.WebUrl = webUrl;
-            objEROP.WebApplication = MissingEventReceiver.WebApplication;
 
             if (webUrl.IndexOf("http", StringComparison.InvariantCultureIgnoreCase) < 0)
             {
@@ -107,7 +74,7 @@ namespace JDP.Remediation.Console
 
             try
             {
-                Logger.LogInfoMessage(String.Format(" Processing Event Receiver [{0}] of Assembly [{1}] ...", eventName, assemblyName), true);
+                Logger.LogInfoMessage(String.Format("Processing Event Receiver [{0}] of Assembly [{1}] ...", eventName, assemblyName), true);
 
                 //Logger.LogInfoMessage(String.Format("-assemblyName= {0}", assemblyName), false);
                 //Logger.LogInfoMessage(String.Format("-eventName= {0}", eventName), false);
@@ -119,52 +86,34 @@ namespace JDP.Remediation.Console
                 int hostType = -1;
                 if (Int32.TryParse(hostTypeInfo, out hostType) == false)
                 {
-                    Logger.LogErrorMessage(String.Format("[DeleteMissingEventReceivers: DeleteMissingEventReceiver] failed for Event Receiver [{0}]: Error= Unknown HostType value [{1}] ", eventName, hostTypeInfo), false);
+                    Logger.LogErrorMessage(String.Format("DeleteMissingEventReceiver() failed for Event Receiver [{0}]: Error= Unknown HostType value [{1}] ", eventName, hostTypeInfo), false);
                     return;
                 }
 
                 switch (hostType)
                 {
                     case 0:
-                        if (DeleteSiteEventReceiver(siteUrl, eventName, assemblyName))
-                            objEROP.Status = Constants.Success;
-                        else
-                            objEROP.Status = Constants.Failure;
+                        DeleteSiteEventReceiver(siteUrl, eventName, assemblyName);
                         break;
                     case 1:
-                        if (DeleteWebEventReceiver(webUrl, eventName, assemblyName))
-                            objEROP.Status = Constants.Success;
-                        else
-                            objEROP.Status = Constants.Failure;
+                        DeleteWebEventReceiver(webUrl, eventName, assemblyName);
                         break;
                     case 2:
-                        if (DeleteListEventReceiver(webUrl, hostId, eventName, assemblyName))
-                            objEROP.Status = Constants.Success;
-                        else
-                            objEROP.Status = Constants.Failure;
+                        DeleteListEventReceiver(webUrl, hostId, eventName, assemblyName);
                         break;
 
                     default:
-                        Logger.LogErrorMessage(String.Format("[DeleteMissingEventReceivers: DeleteMissingEventReceiver] failed for Event Receiver [{0}] of Assembly [{1}]: Error= Unknown HostType value [{2}] ", eventName, assemblyName, hostTypeInfo), false);
-                        objEROP.Status = Constants.Failure;
+                        Logger.LogErrorMessage(String.Format("DeleteMissingEventReceiver() failed for Event Receiver [{0}] of Assembly [{1}]: Error= Unknown HostType value [{2}] ", eventName, assemblyName, hostTypeInfo), false);
                         return;
                 }
-
-                if (System.IO.File.Exists(csvFile))
-                {
-                    headerEROP = true;
-                }
-                FileUtility.WriteCsVintoFile(csvFile, objEROP, ref headerEROP);
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage(String.Format("[DeleteMissingEventReceivers: DeleteMissingEventReceiver] failed for Event Receiver [{0}] of Assembly [{1}]: Error={2}", eventName, assemblyName, ex.Message), true);
-                ExceptionCsv.WriteException(MissingEventReceiver.WebApplication, siteUrl, webUrl, "EventReceiver", ex.Message, ex.ToString(), "DeleteMissingEventReceiver",
-                    ex.GetType().ToString(), String.Format("[DeleteMissingEventReceivers: DeleteMissingEventReceiver] failed for Event Receiver [{0}] of Assembly [{1}]: Error={2}", eventName, assemblyName, ex.Message));
+                Logger.LogErrorMessage(String.Format("DeleteMissingEventReceiver() failed for Event Receiver [{0}] of Assembly [{1}]: Error={2}", eventName, assemblyName, ex.Message), false);
             }
         }
 
-        private static bool DeleteSiteEventReceiver(string siteUrl, string eventName, string assemblyName)
+        private static void DeleteSiteEventReceiver(string siteUrl, string eventName, string assemblyName)
         {
             try
             {
@@ -186,23 +135,19 @@ namespace JDP.Remediation.Console
                         {
                             receiver.DeleteObject();
                             userContext.ExecuteQuery();
-                            Logger.LogSuccessMessage(String.Format("[DeleteMissingEventReceivers: DeleteSiteEventReceiver] Deleted SITE Event Receiver [{0}] from site {1}", eventName, siteUrl), false);
-                            return true;
+                            Logger.LogSuccessMessage(String.Format("Deleted SITE Event Receiver [{0}] from site {1}", eventName, siteUrl), false);
+                            return;
                         }
                     }
-                    Logger.LogErrorMessage(String.Format("[DeleteMissingEventReceivers: DeleteSiteEventReceiver] DeleteSiteEventReceiver() failed for Event Receiver [{0}] on site {1}; Error=Event Receiver not Found.", eventName, siteUrl), false);
+                    Logger.LogErrorMessage(String.Format("DeleteSiteEventReceiver() failed for Event Receiver [{0}] on site {1}; Error=Event Receiver not Found.", eventName, siteUrl), false);
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage(String.Format("[DeleteMissingEventReceivers: DeleteSiteEventReceiver] failed for Event Receiver [{0}] on site {1}; Error={2}", eventName, siteUrl, ex.Message), true);
-                ExceptionCsv.WriteException(Constants.NotApplicable, siteUrl, Constants.NotApplicable, "EventReceiver", ex.Message, ex.ToString(), "DeleteSiteEventReceiver",
-                    ex.GetType().ToString(), String.Format("[DeleteMissingEventReceivers: DeleteSiteEventReceiver] failed for Event Receiver [{0}] on site {1}", eventName, siteUrl));
-                return false;
+                Logger.LogErrorMessage(String.Format("DeleteSiteEventReceiver() failed for Event Receiver [{0}] on site {1}; Error={2}", eventName, siteUrl, ex.Message), false);
             }
-            return false;
         }
-        private static bool DeleteWebEventReceiver(string webUrl, string eventName, string assemblyName)
+        private static void DeleteWebEventReceiver(string webUrl, string eventName, string assemblyName)
         {
             try
             {
@@ -224,22 +169,19 @@ namespace JDP.Remediation.Console
                         {
                             receiver.DeleteObject();
                             userContext.ExecuteQuery();
-                            Logger.LogSuccessMessage(String.Format("[DeleteMissingEventReceivers: DeleteWebEventReceiver] Deleted WEB Event Receiver [{0}] from web {1}", eventName, webUrl), false);
-                            return true;
+                            Logger.LogSuccessMessage(String.Format("Deleted WEB Event Receiver [{0}] from web {1}", eventName, webUrl), false);
+                            return;
                         }
                     }
-                    Logger.LogErrorMessage(String.Format("[DeleteMissingEventReceivers: DeleteWebEventReceiver] DeleteWebEventReceiver() failed for Event Receiver [{0}] on web {1}; Error=Event Receiver not Found.", eventName, webUrl), false);
+                    Logger.LogErrorMessage(String.Format("DeleteWebEventReceiver() failed for Event Receiver [{0}] on web {1}; Error=Event Receiver not Found.", eventName, webUrl), false);
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage(String.Format("[DeleteMissingEventReceivers: DeleteWebEventReceiver] failed for Event Receiver [{0}] on web {1}; Error={2}", eventName, webUrl, ex.Message), true);
-                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, webUrl, "EventReceiver", ex.Message, ex.ToString(), "DeleteWebEventReceiver",
-                    ex.GetType().ToString(), String.Format("DeleteWebEventReceiver() failed for Event Receiver [{0}] on web {1}", eventName, webUrl));
+                Logger.LogErrorMessage(String.Format("DeleteWebEventReceiver() failed for Event Receiver [{0}] on web {1}; Error={2}", eventName, webUrl, ex.Message), false);
             }
-            return false;
         }
-        private static bool DeleteListEventReceiver(string webUrl, string hostId, string eventName, string assemblyName)
+        private static void DeleteListEventReceiver(string webUrl, string hostId, string eventName, string assemblyName)
         {
             try
             {
@@ -260,8 +202,8 @@ namespace JDP.Remediation.Console
                     userContext.ExecuteQuery();
                     if (list == null)
                     {
-                        Logger.LogErrorMessage(String.Format("[DeleteMissingEventReceivers: DeleteListEventReceiver] failed for Event Receiver [{0}] on list [{1}] of web {2}; Error=List not Found.", eventName, hostId, webUrl), false);
-                        return false;
+                        Logger.LogErrorMessage(String.Format("DeleteListEventReceiver() failed for Event Receiver [{0}] on list [{1}] of web {2}; Error=List not Found.", eventName, hostId, webUrl), false);
+                        return;
                     }
 
                     EventReceiverDefinitionCollection receivers = list.EventReceivers;
@@ -276,53 +218,23 @@ namespace JDP.Remediation.Console
                         {
                             receiver.DeleteObject();
                             userContext.ExecuteQuery();
-                            Logger.LogSuccessMessage(String.Format("[DeleteMissingEventReceivers: DeleteListEventReceiver] Deleted LIST Event Receiver [{0}] from list [{1}] on web {2}", eventName, list.Title, webUrl), false);
-                            return true;
+                            Logger.LogSuccessMessage(String.Format("Deleted LIST Event Receiver [{0}] from list [{1}] on web {2}", eventName, list.Title, webUrl), false);
+                            return;
                         }
                     }
-                    Logger.LogErrorMessage(String.Format("[DeleteMissingEventReceivers: DeleteListEventReceiver] failed for Event Receiver [{0}] on list [{1}] of web {2}; Error=Event Receiver not Found.", eventName, list.Title, webUrl), false);
+                    Logger.LogErrorMessage(String.Format("DeleteListEventReceiver() failed for Event Receiver [{0}] on list [{1}] of web {2}; Error=Event Receiver not Found.", eventName, list.Title, webUrl), false);
                 }
             }
             catch (Exception ex)
             {
                 if (ex.Message.ToLower().Contains("list does not exist"))
                 {
-                    Logger.LogErrorMessage(String.Format("[DeleteMissingEventReceivers: DeleteListEventReceiver] failed for Event Receiver [{0}] on list [{1}] of web {2}; Error=List not Found.", eventName, hostId, webUrl), true);
-                    ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, webUrl, "EventReceiver", ex.Message, ex.ToString(), "DeleteListEventReceiver",
-                    ex.GetType().ToString(), String.Format("DeleteListEventReceiver() failed for Event Receiver [{0}] on list [{1}] of web {2}; Error=List not Found.", eventName, hostId, webUrl));
-                    return false;
+                    Logger.LogErrorMessage(String.Format("DeleteListEventReceiver() failed for Event Receiver [{0}] on list [{1}] of web {2}; Error=List not Found.", eventName, hostId, webUrl), false);
+                    return;
                 }
-                Logger.LogErrorMessage(String.Format("[DeleteMissingEventReceivers: DeleteListEventReceiver] failed for Event Receiver [{0}] on list [{1}] of web {2}; Error={3}", eventName, hostId, webUrl, ex.Message), true);
-                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, webUrl, "EventReceiver", ex.Message, ex.ToString(), "DeleteListEventReceiver",
-                    ex.GetType().ToString(), String.Format("DeleteListEventReceiver() failed for Event Receiver [{0}] on list [{1}] of web {2}; Error={3}", eventName, hostId, webUrl, ex.Message));
+                Logger.LogErrorMessage(String.Format("DeleteListEventReceiver() failed for Event Receiver [{0}] on list [{1}] of web {2}; Error={3}", eventName, hostId, webUrl, ex.Message), false);
             }
-            return false;
-        }
-        private static bool ShowInformation()
-        {
-            bool doContinue = false;
-            string option = string.Empty;
-            System.Console.WriteLine(Constants.EventReceiversInput + " file needs to be present in current working directory (where JDP.Remediation.Console.exe is present) for EventReceivers cleanup ");
-            System.Console.WriteLine("Please make sure you verify the data before executing Clean-up option as cleaned EventReceivers can't be rollback.");
-            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
-            System.Console.WriteLine("Press 'y' to proceed further. Press any key to go for Clean-Up Menu.");
-            System.Console.ResetColor();
-            option = System.Console.ReadLine().ToLower();
-            if (option.Equals("y", StringComparison.OrdinalIgnoreCase))
-                doContinue = true;
-            return doContinue;
         }
 
-        private static bool ReadInputFile(ref string eventReceiverInputFile)
-        {
-            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
-            Logger.LogMessage("Enter Complete Input File Path of Event Receivers Report Either Pre-Scan OR Discovery Report:");
-            System.Console.ResetColor();
-            eventReceiverInputFile = System.Console.ReadLine();
-            Logger.LogMessage("[DeleteMissingEventReceivers.csv : ReadInputFile] Entered Input File of Event Receiver Data " + eventReceiverInputFile, false);
-            if (string.IsNullOrEmpty(eventReceiverInputFile) || !System.IO.File.Exists(eventReceiverInputFile))
-                return false;
-            return true;
-        }
     }
 }
