@@ -32,8 +32,10 @@ c2f9c992-99b0-4ee7-8e48-5d9949e77d3d,Contoso.Intranet - Web Default,0x010100C32D
 825bf18e-0efe-4b70-946b-a06bcef1dff3,CreateCustomPolicies - Declaratively create content types with Policies,0x010060C34C5995B20A45BB7B90E7829B53BC,ItemWithPolicies,False,createcustompolicies.wsp
 825bf18e-0efe-4b70-946b-a06bcef1dff3,CreateCustomPolicies - Declaratively create content types with Policies,0x0100C1B4F77D0FCBD34B8CFC8AC9C4841818,ItemWithPolicySchedule,False,createcustompolicies.wsp
 154b106b-c811-4595-b3cf-245060b884f7,CTDemo Feature1,0x010022419777AE944B2EB219E1B6E0D75C62,CTDemo,False,ctdemo.wsp
+3b046173-8ed3-4a32-ab47-f69d94204284,CTER Feature1,0x0100E73BF04F1EDB4E8CB0C67DB3BA51BFC2,SunCT,False,cter.wsp
 5d6bc4d7-16bf-4e9a-9006-cfd14b9f27fb,CTFromFTC Feature1,0x010098E8FFD18F1D4129AF413611213EDECC,CTFTC1,False,ctfromftc.wsp
 fb154ba8-16ec-40f6-b77b-905d9d5d9cbc,CTSCAnalysisForPMT Feature1,0x01007A0607C4D80641D1A8C5EAC20E87DF43,CTName,False,ctscanalysisforpmt.wsp
+22a32747-dde1-4814-8b1d-e23709d17c83,CustomCTVS Feature1,0x010076B2573409FB422AB323091BA84FA2CA,CustomCTVS,False,customctvs.wsp
 2135e033-71b2-40d6-a53f-2ce916c7ab67,CustomField Feature1,0x010089EC8861D2E04CD0A8E875B2F8A809D3,WSP_SiteCT1,False,customfield.wsp
 2135e033-71b2-40d6-a53f-2ce916c7ab67,CustomField Feature1,0x0100B08DD966F8B44D0D9FE18B79CA282F74,WSP_SiteCT2,False,customfield.wsp
 48e86892-0ec3-4710-b061-26c21702ec21,CustomNewField Feature1,0x01008ED6AA250E7544DFA9C8E61A1ED27695,ContentType1,False,customnewfield.wsp
@@ -58,6 +60,9 @@ ad1e0c96-2b90-4ab8-8acd-98e3075a0c23,FTCDocumentSet Feature1,0x0120D520000373842
 34726d5b-e047-49dd-a56f-64a59f824683,FTCMasterPageOne RashCustomMasterPage,0x010047ED55D4AD71454E9AC8A01B2691E64C,FTCScanContentType,False,ftcmasterpageone.wsp
 4204894e-cdb0-4a95-b8ae-3c110b63675e,FTCSCCTList Feature1,0x0100804CD67B32CE40BABB6D3B051836E27C,EvalCT,False,ftcscctlist.wsp
 91c431c2-6ca5-44c2-9b7c-f5ffc41b4554,ISBN_Field_Type Feature1,0x0100B9786769468A4BA69F9F83BD4043A819,BookContentType,False,isbn_field_type.wsp
+32a1e101-e77e-4951-9d34-8bb8fbc21025,"$Resources:kiewit.changeorder.core,KiewitChangeOrderSite_Name;",0x0101009148F5A04DDD49CBA7127AADA5FB792B00AADE34325A8B49CDA8BB4DB53328F2140112007aaa1434109d40d1837f6e2bb2d3b025,"$Resources:kiewit.changeorder.core,ChangeOrderImagesCtype_Name;",False,kiewit.changeorder.core.wsp
+32a1e101-e77e-4951-9d34-8bb8fbc21025,"$Resources:kiewit.changeorder.core,KiewitChangeOrderSite_Name;",0x010100F67935030963E344B2D6443E349B383100ACA36AB8BF27FF47B510A67CC0E21B2E0A006000968ae1034110a9d922a44f45b22b,"$Resources:kiewit.changeorder.core,ChangeOrderDocumentsCtype_Name;",False,kiewit.changeorder.core.wsp
+32a1e101-e77e-4951-9d34-8bb8fbc21025,"$Resources:kiewit.changeorder.core,KiewitChangeOrderSite_Name;",0x010100F67935030963E344B2D6443E349B383100ACA36AB8BF27FF47B510A67CC0E21B2E0A0098EB1278E68D435298E0D22A8F20289F,"$Resources:kiewit.changeorder.core,ChangeOrderCtype_Name;",False,kiewit.changeorder.core.wsp
 80BF3218-7353-11DF-AF9F-058BDFD72085,"$Resources:NWResource,InfoPathFeature_Title;",0x0108010079DBDE612F7B46928C6A2516BA2CAE3700E0B65C5281234030AA8CA4D8F8910E72,"$Resources:NWResource,InfoPathFeature_ContentType_NintexWorkflow_Name;",False,nintexworkflow2013.wsp
 80BF3218-7353-11DF-AF9F-058BDFD72085,"$Resources:NWResource,InfoPathFeature_Title;",0x0108010064E42B14ADA442c78E98D686760A8493006EBD0FA4731041d9804386A7FEA568DC,"$Resources:NWResource,InfoPathFeature_ContentType_NintexWorkflowMultiOutcome_Name;",False,nintexworkflow2013.wsp
 86C83D16-605D-41b4-BFDD-C75947899AC7,Nintex Workflow Content Type Upgrade,0x0108010064E42B14ADA442c78E98D686760A8493,"$Resources:NWResource,_ContentType_MultiOutcomeTask_Name;",False,nintexworkflow2013.wsp

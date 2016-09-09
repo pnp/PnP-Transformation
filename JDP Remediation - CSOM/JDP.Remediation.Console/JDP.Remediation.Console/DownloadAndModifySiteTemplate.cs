@@ -40,16 +40,16 @@ namespace JDP.Remediation.Console
             {
                 //Output files
                 outputPath = Environment.CurrentDirectory;
-
+                string timeStamp = DateTime.Now.ToString("yyyyMMdd_hhmmss");
                 //Trace Log TXT File Creation Command
-                Logger.OpenLog("DownloadAndModifySiteTemplate");
-                Logger.LogInfoMessage("[DownloadAndModifySiteTemplate: DoWork] Logger and Exception file will be available in path: " + outputPath);
+                Logger.OpenLog("DownloadAndModifySiteTemplate", timeStamp);
+                Logger.LogInfoMessage("[DownloadAndModifySiteTemplate: DoWork] Logger and Exception file will be available in path: " + outputPath, false);
 
                 //User Options
                 if (!ReadInputOptions(ref processInputFile, ref processFarm, ref processSiteCollections))
                 {
                     System.Console.ForegroundColor = System.ConsoleColor.Red;
-                    Logger.LogMessage("Invalid option selected. Operation aborted!");
+                    Logger.LogMessage("Operation aborted by User.");
                     System.Console.ResetColor();
                     return;
                 }
@@ -131,10 +131,11 @@ namespace JDP.Remediation.Console
                         //Process SiteTemplateInputFile
                         ProcessSiteTemplateInputFile(siteTemplateInputFile, ref lstMissingSiteTempaltesInGalleryBase);
                         WriteOutputReport(lstMissingSiteTempaltesInGalleryBase, csvFileName, ref headerOfCsv);
+                        DeleteDownloadedSiteTemplates();
                     }
                     else
                     {
-                        Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: DoWork]. Exception Message: Site Template: " + filePath + @"\" + Constants.SiteTemplateCustomizationUsage + " is not present", true);
+                        Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: DoWork]. Exception Message: Site Template: " + filePath + @"\" + csvFileName + " is not present", true);
                     }
                 }
                 #endregion
@@ -147,6 +148,7 @@ namespace JDP.Remediation.Console
                     //Process WebApplicationUrl
                     ProcessWebApplicationUrl(webApplicationUrl, ref lstMissingSiteTempaltesInGalleryBase);
                     WriteOutputReport(lstMissingSiteTempaltesInGalleryBase, csvFileName, ref headerOfCsv);
+                    DeleteDownloadedSiteTemplates();
                 }
                 #endregion
 
@@ -158,6 +160,7 @@ namespace JDP.Remediation.Console
                     //Process SiteCollection Urls
                     ProcessSiteCollectionUrlsList(siteCollectionUrls, ref lstMissingSiteTempaltesInGalleryBase);
                     WriteOutputReport(lstMissingSiteTempaltesInGalleryBase, csvFileName, ref headerOfCsv);
+                    DeleteDownloadedSiteTemplates();
                 }
                 #endregion
 
@@ -174,7 +177,9 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: DoWork]. Exception Message: " + ex.Message + ", Exception Comments: ", true);
+                Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: DoWork]. Exception Message: " + ex.Message, true);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(), "DoWork",
+                    ex.GetType().ToString(), Constants.NotApplicable);
             }
             finally
             {
@@ -201,8 +206,7 @@ namespace JDP.Remediation.Console
             {
                 using (ClientContext userContext = Helper.CreateAuthenticatedUserContext(Program.AdminDomain, Program.AdminUsername, Program.AdminPassword, SiteCollection))
                 {
-                    userContext.ExecuteQuery();
-
+                    //userContext.ExecuteQuery()
                     Site site = userContext.Site;
                     Web web = userContext.Web;
                     userContext.Load(site);
@@ -224,7 +228,7 @@ namespace JDP.Remediation.Console
                         FileInformation info = Microsoft.SharePoint.Client.File.OpenBinaryDirect(userContext, fileUrl);
                         string fileName = fileUrl.Substring(fileUrl.LastIndexOf("/") + 1);
 
-                        var fileNamePath = Path.Combine(filePath, fileName);
+                        var fileNamePath = Path.Combine(filePath, fileName.ToLower());
                         using (var fileStream = System.IO.File.Create(fileNamePath))
                         {
                             info.Stream.CopyTo(fileStream);
@@ -240,7 +244,21 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage("[DownloadSiteTemplate]. Exception Message: " + ex.Message + ", Exception Comments: SiteGalleryPath is not present in the current Site Collection", true);
+
+                if ((ex.Message.ToLower()).Contains("access denied") || (ex.Message.ToLower()).Contains("unauthorized"))
+                {
+                    System.Console.ForegroundColor = ConsoleColor.Yellow;
+                    Logger.LogMessage("[DownloadAndModifySiteTemplate: DownloadSiteTemplate]. Error recorded for Site Collection Url: " + SiteCollection + " and File: " + SiteTemplateName + " Exception Message: " + ex.Message + ", Exception Comments: SiteGalleryPath is not present in the current Site Collection", true);
+                    System.Console.ResetColor();
+                    ExceptionCsv.WriteException(Constants.NotApplicable, SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                       "DownloadSiteTemplate", ex.GetType().ToString(), "Error recorded for Site Collection Url: " + SiteCollection + " and File: " + SiteTemplateName);
+                }
+                else
+                {
+                    Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: DownloadSiteTemplate]. Error recorded for Site Collection Url: " + SiteCollection + " and File: " + SiteTemplateName + " Exception Message: " + ex.Message + ", Exception Comments: SiteGalleryPath is not present in the current Site Collection", true);
+                    ExceptionCsv.WriteException(Constants.NotApplicable, SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                       "DownloadSiteTemplate", ex.GetType().ToString(), "Error recorded for Site Collection Url: " + SiteCollection + " and File: " + SiteTemplateName);
+                }
             }
             return isDownloaded;
         }
@@ -255,6 +273,7 @@ namespace JDP.Remediation.Console
             bool isCustomEventReceiver = false;
             bool isCustomSiteColumn = false;
             bool isCustomFeature = false;
+            StringBuilder cTHavingCustomER = new StringBuilder();
 
             string fileName = objSiteCustOutput.SiteTemplateName;
             string downloadPath = filePath + @"\" + Constants.DownloadPathSiteTemplates;
@@ -275,6 +294,7 @@ namespace JDP.Remediation.Console
                 Logger.LogInfoMessage("[DownloadAndModifySiteTemplate: ProcessWspFile] Extracting the Site Template: " + objSiteCustOutput.SiteTemplateName, true);
                 string cmd = "/e /a /y /L \"" + newFileName.Replace(".", "_") + "\" \"" + newFileName + "\"";
                 ProcessStartInfo pI = new ProcessStartInfo("extrac32.exe", cmd);
+                pI.WindowStyle = ProcessWindowStyle.Hidden;
                 Process p = Process.Start(pI);
                 p.WaitForExit();
                 string cabDir = newFilePath.Replace(".", "_");
@@ -308,6 +328,8 @@ namespace JDP.Remediation.Console
                             catch (Exception ex)
                             {
                                 Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading Custom Site Features tag", true);
+                                ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                                    "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Custom Site Features tag");
                             }
                             #endregion
 
@@ -321,6 +343,8 @@ namespace JDP.Remediation.Console
                                 catch (Exception ex)
                                 {
                                     Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading Custom Web Features tag", true);
+                                    ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                                        "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Custom Web Features tag");
                                 }
                             }
                             #endregion
@@ -339,6 +363,8 @@ namespace JDP.Remediation.Console
                                 catch (Exception ex)
                                 {
                                     Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading Features tag", true);
+                                    ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                                        "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Features tag");
                                 }
                             }
                         }
@@ -401,7 +427,7 @@ namespace JDP.Remediation.Console
                             XmlNodeList xmlDocReceivers = doc2.SelectNodes("/Elements/ContentType");
 
                             #region Custom ContentType Event Receviers
-                            if (lstCustomErs != null && lstCustomErs.Count > 0 && !isCustomEventReceiver)
+                            if (lstCustomErs != null && lstCustomErs.Count > 0)
                             {
                                 for (int i = 0; i < xmlDocReceivers.Count; i++)
                                 {
@@ -439,7 +465,8 @@ namespace JDP.Remediation.Console
                                                                                     string ctAssemblyValue = receiverChilds[y]["Assembly"].InnerText;
                                                                                     if (lstCustomErs.Where(c => ctAssemblyValue.Equals(c, StringComparison.CurrentCultureIgnoreCase)).Any())
                                                                                     {
-                                                                                        isCustomEventReceiver = true;
+                                                                                        //isCustomEventReceiver = true;
+                                                                                        cTHavingCustomER.Append(xmlDocReceivers[i].Attributes["Name"].Value + ";");
                                                                                         Logger.LogInfoMessage("[DownloadAndModifySiteTemplate: ProcessWspFile] Customized Event Receiver in Content Type Found for: " + objSiteCustOutput.SiteTemplateName, true);
                                                                                         break;
                                                                                     }
@@ -448,6 +475,8 @@ namespace JDP.Remediation.Console
                                                                             catch (Exception ex)
                                                                             {
                                                                                 Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading Receivers tag in content types", true);
+                                                                                ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                                                                                    "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Receivers tag in content types");
                                                                             }
                                                                         }
                                                                     }
@@ -458,6 +487,8 @@ namespace JDP.Remediation.Console
                                                     catch (Exception ex)
                                                     {
                                                         Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading Receivers tag in content types", true);
+                                                        ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                                                                                    "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Receivers tag in content types");
                                                     }
                                                 }
                                             }
@@ -466,6 +497,8 @@ namespace JDP.Remediation.Console
                                     catch (Exception ex)
                                     {
                                         Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.ToString() + ", " + ex.Message, true);
+                                        ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                                            "ProcessWspFile", ex.GetType().ToString(), Constants.NotApplicable);
                                     }
                                 }
                             }
@@ -493,6 +526,8 @@ namespace JDP.Remediation.Console
                                     catch (Exception ex)
                                     {
                                         Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading content types", true);
+                                        ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                                            "ProcessWspFile", ex.GetType().ToString(), "Exception while reading content types");
                                     }
                                 }
                             }
@@ -526,6 +561,8 @@ namespace JDP.Remediation.Console
                                                 catch (Exception ex)
                                                 {
                                                     Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading Site Columns tag in content types", true);
+                                                    ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                                                        "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Site Columns tag in content types");
                                                 }
                                             }
                                         }
@@ -533,6 +570,8 @@ namespace JDP.Remediation.Console
                                     catch (Exception ex)
                                     {
                                         Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading Site Columns tag in content types", true);
+                                        ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                                            "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Site Columns tag in content types");
                                     }
                                 }
                             }
@@ -577,6 +616,8 @@ namespace JDP.Remediation.Console
                                     catch (Exception ex)
                                     {
                                         Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading Site Columns", true);
+                                        ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                                            "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Site Columns");
                                     }
                                 }
                             }
@@ -586,6 +627,16 @@ namespace JDP.Remediation.Console
                     }
                     if (isCustomContentType || isCustomEventReceiver || isCustomSiteColumn || isCustomFeature)
                     {
+                        if (cTHavingCustomER != null && cTHavingCustomER.Length > 0)
+                        {
+                            cTHavingCustomER.Length -= 1;
+                            objSiteCustOutput.CTHavingCustomEventReceiver = cTHavingCustomER.ToString();
+                        }
+                        else
+                        {
+                            objSiteCustOutput.CTHavingCustomEventReceiver = Constants.NotApplicable;
+                        }
+
                         objSiteCustOutput.IsCustomizationPresent = "YES";
                         isCustomizationPresent = true;
 
@@ -608,10 +659,29 @@ namespace JDP.Remediation.Console
                             objSiteCustOutput.IsCustomizedFeature = isCustomFeature ? "YES" : "NO";
                         else
                             objSiteCustOutput.IsCustomizedFeature = Constants.NoInputFile;
+
+
+                        cTHavingCustomER.Clear();
                     }
                     else
                     {
-                        isCustomizationPresent = false;
+                        if (cTHavingCustomER != null && cTHavingCustomER.Length > 0)
+                        {
+                            cTHavingCustomER.Length -= 1;
+                            objSiteCustOutput.CTHavingCustomEventReceiver = cTHavingCustomER.ToString();
+                            objSiteCustOutput.IsCustomizationPresent = "YES";
+                            isCustomizationPresent = true;
+                            objSiteCustOutput.IsCustomizedEventReceiver = "NO";
+                            objSiteCustOutput.IsCustomizedContentType = "NO";
+                            objSiteCustOutput.IsCustomizedFeature = "NO";
+                            objSiteCustOutput.IsCustomizedSiteColumn = "NO";
+                        }
+                        else
+                        {
+                            objSiteCustOutput.CTHavingCustomEventReceiver = Constants.NotApplicable;
+                            isCustomizationPresent = false;
+                        }
+
                     }
                 }
                 else
@@ -623,12 +693,14 @@ namespace JDP.Remediation.Console
             catch (Exception ex)
             {
                 Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.Message, true);
+                ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                    "ProcessWspFile", ex.GetType().ToString(), Constants.NotApplicable);
             }
 
             Directory.SetCurrentDirectory(downloadPath);
             System.IO.DirectoryInfo directory = new System.IO.DirectoryInfo(downloadPath);
-            foreach (System.IO.FileInfo file in directory.GetFiles()) file.Delete();
-            foreach (System.IO.DirectoryInfo subDirectory in directory.GetDirectories()) subDirectory.Delete(true);
+            //foreach (System.IO.FileInfo file in directory.GetFiles()) file.Delete();
+            //foreach (System.IO.DirectoryInfo subDirectory in directory.GetDirectories()) subDirectory.Delete(true);
             return isCustomizationPresent;
         }
 
@@ -653,13 +725,15 @@ namespace JDP.Remediation.Console
                     siteGalleryPath, fileName, objSiteCustOutput.WebUrl, objSiteCustOutput.WebUrl);
                 if (isDownloaded)
                 {
-                    isCustomizationPresent = ProcessWspFile(outputPath, outputPath + @"\" + Constants.DownloadPathSiteTemplates + @"\" + fileName,
+                    isCustomizationPresent = ProcessWspFile(outputPath, outputPath + @"\" + Constants.DownloadPathSiteTemplates + @"\" + fileName.ToLower(),
                         ref objSiteCustOutput);
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: GetCustomizedSiteTemplate]. Exception Message: " + ex.Message + ", Exception Comments: ", true);
+                Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: GetCustomizedSiteTemplate]. Exception Message: " + ex.Message, true);
+                ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                    "GetCustomizedSiteTemplate", ex.GetType().ToString(), Constants.NotApplicable);
             }
             return isCustomizationPresent;
         }
@@ -668,7 +742,7 @@ namespace JDP.Remediation.Console
         {
             try
             {
-                Logger.LogInfoMessage("[DownloadAndModifySiteTemplate: WriteOutputReport] Writing the Output file " + Constants.SiteTemplateCustomizationUsage, true);
+                Logger.LogInfoMessage("[DownloadAndModifySiteTemplate: WriteOutputReport] Writing the Output file " + csvFileName, true);
                 if (System.IO.File.Exists(csvFileName))
                     System.IO.File.Delete(csvFileName);
                 if (ltSiteTemplateOutputBase != null && ltSiteTemplateOutputBase.Any())
@@ -686,7 +760,9 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: WriteOutputReport] Exception Message: " + ex.Message + ", Exception Comments: ", true);
+                Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: WriteOutputReport] Exception Message: " + ex.Message, true);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                    "WriteOutputReport", ex.GetType().ToString(), Constants.NotApplicable);
             }
         }
 
@@ -697,7 +773,8 @@ namespace JDP.Remediation.Console
             {
                 using (ClientContext userContext = Helper.CreateAuthenticatedUserContext(Program.AdminDomain, Program.AdminUsername, Program.AdminPassword, siteCollectionUrl))
                 {
-                    userContext.ExecuteQuery();
+                    //userContext.AuthenticationMode = ClientAuthenticationMode.Default;
+                    //userContext.ExecuteQuery();
                     Web web = userContext.Web;
                     Folder folder = userContext.Web.GetFolderByServerRelativeUrl("_catalogs/solutions");
                     userContext.Load(web.Folders);
@@ -735,19 +812,47 @@ namespace JDP.Remediation.Console
                         }
                         catch (Exception ex)
                         {
-                            Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: DoWork]. Exception Message: " + ex.Message + ", Exception Comments: ", true);
+                            if ((ex.Message.ToLower()).Contains("access denied") || (ex.Message.ToLower()).Contains("unauthorized"))
+                            {
+                                System.Console.ForegroundColor = ConsoleColor.Yellow;
+                                Logger.LogMessage("[DownloadAndModifySiteTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " And For file: " + stFile.Name + " Exception Message: " + ex.Message, true);
+                                System.Console.ResetColor();
+                                ExceptionCsv.WriteException(webApplicationUrl, siteCollectionUrl, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                                    "ProcessSiteCollectionUrl", ex.GetType().ToString(), "Error recorded for Site Collection: " + siteCollectionUrl + " And For file: " + stFile.Name);
+                            }
+                            else
+                            {
+                                Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " And For file: " + stFile.Name + " Exception Message: " + ex.Message, true);
+                                ExceptionCsv.WriteException(webApplicationUrl, siteCollectionUrl, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                                    "ProcessSiteCollectionUrl", ex.GetType().ToString(), "Error recorded for Site Collection: " + siteCollectionUrl + " And For file: " + stFile.Name);
+                            }
+
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: DoWork]. Exception Message: " + ex.Message + ", Exception Comments: ", true);
+                if ((ex.Message.ToLower()).Contains("access denied") || (ex.Message.ToLower()).Contains("unauthorized"))
+                {
+                    System.Console.ForegroundColor = ConsoleColor.Yellow;
+                    Logger.LogMessage("[DownloadAndModifySiteTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " Exception Message: " + ex.Message);
+                    System.Console.ResetColor();
+                    ExceptionCsv.WriteException(webApplicationUrl, siteCollectionUrl, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                       "ProcessSiteCollectionUrl", ex.GetType().ToString(), "Error recorded for Site Collection: " + siteCollectionUrl);
+                }
+                else
+                {
+                    Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " Exception Message: " + ex.Message, true);
+                    ExceptionCsv.WriteException(webApplicationUrl, siteCollectionUrl, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                        "ProcessSiteCollectionUrl", ex.GetType().ToString(), "Error recorded for Site Collection: " + siteCollectionUrl);
+                }
             }
         }
 
         public static void CheckCustomFeature(string xmlFilePath, string featureNodePath, ref bool isCustomFeature, string siteTemplateName)
         {
+            string featureID = string.Empty;
             if (System.IO.File.Exists(xmlFilePath))
             {
                 var reader = new XmlTextReader(xmlFilePath);
@@ -765,7 +870,17 @@ namespace JDP.Remediation.Console
                     {
                         try
                         {
-                            string featureID = siteFeatureNodes[j].Attributes["ID"].Value;
+                            try
+                            {
+                                featureID = siteFeatureNodes[j].Attributes["ID"].Value;
+                            }
+                            catch { }
+
+                            if (string.IsNullOrEmpty(featureID))
+                            {
+                                featureID = siteFeatureNodes[j].Attributes["Id"].Value;
+                            }
+
                             if (featureID.StartsWith("{"))
                             {
                                 featureID = featureID.TrimStart('{');
@@ -781,12 +896,16 @@ namespace JDP.Remediation.Console
                         catch (Exception ex)
                         {
                             Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: CheckCustomFeature]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading Features tag", true);
+                            ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                                "CheckCustomFeature", ex.GetType().ToString(), "Exception while reading Features tag");
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading Features tag", true);
+                    Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: CheckCustomFeature]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading Features tag", true);
+                    ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                        "CheckCustomFeature", ex.GetType().ToString(), "Exception while reading Features tag");
                 }
                 finally
                 {
@@ -835,6 +954,8 @@ namespace JDP.Remediation.Console
                                 catch (Exception ex)
                                 {
                                     Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: CheckCustomEventReceiver]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading Web/Site Receivers tag", true);
+                                    ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                                        "CheckCustomEventReceiver", ex.GetType().ToString(), "Exception while reading Web/Site Receivers tag");
                                 }
                             }
                         }
@@ -842,7 +963,9 @@ namespace JDP.Remediation.Console
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading Features tag", true);
+                    Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: CheckCustomEventReceiver]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading Features tag", true);
+                    ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                                        "CheckCustomEventReceiver", ex.GetType().ToString(), "Exception while reading Web/Site Receivers tag");
                 }
                 finally
                 {
@@ -911,7 +1034,9 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ReadInputFiles]. Exception Message: " + ex.Message + ", Exception Comments: ", true);
+                Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ReadInputFiles]. Exception Message: " + ex.Message, true);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                    "ReadInputFiles", ex.GetType().ToString(), "Exception while reading input files");
             }
             finally
             {
@@ -925,12 +1050,13 @@ namespace JDP.Remediation.Console
         public static bool ReadInputOptions(ref bool processInputFile, ref bool processFarm, ref bool processSiteCollections)
         {
             string processOption = string.Empty;
-
-            Logger.LogMessage("Please select any of following options:");
-            Logger.LogMessage("1 - Process with Auto-generated Site Collection Report");
-            Logger.LogMessage("2 - Process with PreMT/Discovery SiteTemplate Report");
-            Logger.LogMessage("3 - Process with SiteCollectionUrls separated by comma (,)");
-
+            System.Console.ForegroundColor = System.ConsoleColor.White;
+            Logger.LogMessage("Type 1, 2, 3 or 4 and press Enter to select the respective operation to execute:");
+            Logger.LogMessage("1. Process with Auto-generated Site Collection Report");
+            Logger.LogMessage("2. Process with PreMT/Discovery SiteTemplate Report");
+            Logger.LogMessage("3. Process with SiteCollectionUrls separated by comma (,)");
+            Logger.LogMessage("4. Exit to Self Service Report Menu");
+            System.Console.ResetColor();
             processOption = System.Console.ReadLine();
 
             if (processOption.Equals("2"))
@@ -939,6 +1065,8 @@ namespace JDP.Remediation.Console
                 processFarm = true;
             else if (processOption.Equals("3"))
                 processSiteCollections = true;
+            else if (processOption.Equals("4"))
+                return false;
             else
                 return false;
             return true;
@@ -954,7 +1082,9 @@ namespace JDP.Remediation.Console
 
             System.Console.ResetColor();
 
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             Logger.LogMessage("Please enter any one of the web application URL for Context making: ");
+            System.Console.ResetColor();
             webApplicationUrl = System.Console.ReadLine();
 
             if (string.IsNullOrEmpty(webApplicationUrl))
@@ -964,17 +1094,45 @@ namespace JDP.Remediation.Console
 
         public static bool ReadSiteCollectionList(ref string siteCollectionUrlsList)
         {
-            Logger.LogMessage("Enter SiteCollection URLs separated by comma (,): ");
-            siteCollectionUrlsList = System.Console.ReadLine();
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
+            Logger.LogMessage("Enter .txt file path which contains SiteCollection URLs separated by comma (,): ");
+            System.Console.ResetColor();
+            string siteCollectionUrlsByUserFile = System.Console.ReadLine();
 
-            if (string.IsNullOrEmpty(siteCollectionUrlsList))
-                return false;
-            return true;
+            if (System.IO.File.Exists(siteCollectionUrlsByUserFile))
+            {
+                //string ext = Path.GetExtension(siteCollectionUrlsByUserFile);
+                if (Path.GetExtension(siteCollectionUrlsByUserFile).Equals(".txt", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    using (StreamReader streamReader = new StreamReader(siteCollectionUrlsByUserFile, Encoding.UTF8))
+                    {
+                        siteCollectionUrlsList = streamReader.ReadToEnd();
+                    }
+                    if (!string.IsNullOrEmpty(siteCollectionUrlsList))
+                    {
+                        siteCollectionUrlsList = siteCollectionUrlsList.Trim();
+                        if (siteCollectionUrlsList.EndsWith(","))
+                            siteCollectionUrlsList = siteCollectionUrlsList.TrimEnd(',');
+                        return true;
+                    }
+                }
+                else
+                {
+                    Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ReadSiteCollectionList]. This process accepts only .txt file");
+                }
+            }
+            else
+            {
+                Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ReadSiteCollectionList]. Input file is available.");
+            }
+            return false;
         }
 
         public static bool ReadInputFile(ref string SiteTemplateInputFile)
         {
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             Logger.LogMessage("Enter Complete Input File Path of Site Template Report Either Pre-Scan OR Discovery Report.");
+            System.Console.ResetColor();
             SiteTemplateInputFile = System.Console.ReadLine();
             Logger.LogMessage("[DownloadAndModifySiteTemplate: ReadInputFile] Entered Input File of Site Template Data " + SiteTemplateInputFile, false);
             if (string.IsNullOrEmpty(SiteTemplateInputFile) || !System.IO.File.Exists(SiteTemplateInputFile))
@@ -984,8 +1142,10 @@ namespace JDP.Remediation.Console
 
         public static bool ReadInputFilesPath()
         {
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             Logger.LogMessage("Enter the directory of input files for customization analysis (Features.csv, EventReceivers.csv, ContentTypes.csv and CustomFields.csv)");
             Logger.LogMessage("Please refer document for how to create input files to analyze the customization. These files are required to find what customization we are looking inside a template");
+            System.Console.ResetColor();
             filePath = System.Console.ReadLine();
             Logger.LogMessage("[DownloadAndModifySiteTemplate: ReadInputFilesPath] Entered Input files directory: " + filePath, false);
             if (string.IsNullOrEmpty(filePath) || !System.IO.Directory.Exists(filePath))
@@ -1009,7 +1169,9 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: DeleteDownloadedSiteTemplates]. Exception Message: " + ex.Message + ", Exception Comments: ", true);
+                Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: DeleteDownloadedSiteTemplates]. Exception Message: " + ex.Message, true);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                    "DeleteDownloadedSiteTemplates", ex.GetType().ToString(), "Exception while deleting downloaded SiteTemplates");
             }
         }
 
@@ -1045,18 +1207,22 @@ namespace JDP.Remediation.Console
                         }
                         catch (Exception ex)
                         {
-                            Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessSiteTemplateInputFile]. Exception Message: " + ex.Message + ", Exception Comments: ", true);
+                            Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessSiteTemplateInputFile]. Exception Message: " + ex.Message, true);
+                            ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                                "ProcessSiteTemplateInputFile", ex.GetType().ToString(), Constants.NotApplicable);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessSiteTemplateInputFile]. Exception Message: " + ex.Message + ", Exception Comments: ", true);
+                    Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessSiteTemplateInputFile]. Exception Message: " + ex.Message, true);
+                    ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                        "ProcessSiteTemplateInputFile", ex.GetType().ToString(), Constants.NotApplicable);
                 }
             }
             else
             {
-                Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessSiteTemplateInputFile]. Exception Message: Site Template: " + filePath + @"\" + Constants.SiteTemplateCustomizationUsage + " is not present", true);
+                Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessSiteTemplateInputFile]. Exception Message: Site Template: " + filePath + @"\" + siteTemplateInputFile + " is not present", true);
             }
         }
 
@@ -1085,7 +1251,9 @@ namespace JDP.Remediation.Console
                         }
                         catch (Exception ex)
                         {
-                            Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWebApplicationUrl]. Exception Message: " + ex.Message + ", Exception Comments: ", true);
+                            Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWebApplicationUrl]. Exception Message: " + ex.Message, true);
+                            ExceptionCsv.WriteException(webApplicationUrl, Constants.NotApplicable, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                                "ProcessWebApplicationUrl", ex.GetType().ToString(), Constants.NotApplicable);
                         }
                     }
                 }
@@ -1093,7 +1261,9 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWebApplicationUrl]. Exception Message: " + ex.Message + ", Exception Comments: ", true);
+                Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWebApplicationUrl]. Exception Message: " + ex.Message, true);
+                ExceptionCsv.WriteException(webApplicationUrl, Constants.NotApplicable, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                        "ProcessWebApplicationUrl", ex.GetType().ToString(), Constants.NotApplicable);
             }
         }
 
@@ -1113,13 +1283,15 @@ namespace JDP.Remediation.Console
                     }
                     catch (Exception ex)
                     {
-                        Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessSiteCollectionUrlsList]. Exception Message: " + ex.Message + ", Exception Comments: ", true);
+                        Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessSiteCollectionUrlsList]. Exception Message: " + ex.Message, true);
+                        ExceptionCsv.WriteException(webApplicationUrl, Constants.NotApplicable, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                            "ProcessSiteCollectionUrlsList", ex.GetType().ToString(), Constants.NotApplicable);
                     }
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessSiteCollectionUrlsList]. Exception Message: " + ex.Message + ", Exception Comments: ", true);
+                Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessSiteCollectionUrlsList]. Exception Message: " + ex.Message, true);
             }
         }
 
@@ -1136,7 +1308,9 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage("[DownloadAndModifyListTemplate: GetWebapplicationUrlFromSiteCollectionUrl]. Exception Message: " + ex.Message + ", Exception Comments: ", true);
+                Logger.LogErrorMessage("[DownloadAndModifyListTemplate: GetWebapplicationUrlFromSiteCollectionUrl]. Exception Message: " + ex.Message, true);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                    "GetWebapplicationUrlFromSiteCollectionUrl", ex.GetType().ToString(), Constants.NotApplicable);
             }
             finally
             {
