@@ -9,6 +9,7 @@ using Microsoft.SharePoint.Client;
 
 using OfficeDevPnP.Core;
 using OfficeDevPnP.Core.Entities;
+using JDP.Remediation.Console.Common.Utilities;
 
 namespace JDP.Remediation.Console
 {
@@ -16,7 +17,8 @@ namespace JDP.Remediation.Console
     {
         public static void DoWork()
         {
-            Logger.OpenLog("GenerateSiteCollectionReport");
+            string timeStamp = DateTime.Now.ToString("yyyyMMdd_hhmmss");
+            Logger.OpenLog("GenerateSiteCollectionReport", timeStamp);
 
             Logger.LogInfoMessage(String.Format("Preparing to generate report ..."), true);
 
@@ -66,7 +68,8 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage(String.Format("GetAllSites() failed: Error={0}", ex.Message), false);
+                Logger.LogErrorMessage(String.Format("[GenerateSiteCollectionReport: GetAllSites] GetAllSites() failed: Error={0}", ex.Message), false);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "SiteCollectionReport", ex.Message, ex.ToString(), "GetAllSites()", ex.GetType().ToString(), String.Format("GetAllSites() failed: Error={0}", ex.Message));
                 return null;
             }
         }
@@ -84,7 +87,8 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage(String.Format("GetAllSites() failed: Error={0}", ex.Message), false);
+                Logger.LogErrorMessage(String.Format("[GenerateSiteCollectionReport: GetAllSites] GetAllSites() failed: Error={0}", ex.Message), false);
+                ExceptionCsv.WriteException(webAppUrl, Constants.NotApplicable, Constants.NotApplicable, "SiteCollectionReport", ex.Message, ex.ToString(), "GetAllSites()", ex.GetType().ToString(), String.Format("GetAllSites() failed: Error={0}", ex.Message));
                 return null;
             }
         }
@@ -115,8 +119,9 @@ namespace JDP.Remediation.Console
                 }
 
             }
-            catch
+            catch (Exception ex)
             {
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "SiteCollectionReport", ex.Message, ex.ToString(), "GetAllSites2()", ex.GetType().ToString());
                 return URL;
             }
 
@@ -156,7 +161,8 @@ namespace JDP.Remediation.Console
                         }
                         catch (Exception ex)
                         {
-                            Logger.LogErrorMessage(String.Format("GetAllSites() failed: Error={0}", ex.Message), false);
+                            Logger.LogErrorMessage(String.Format("[GenerateSiteCollectionReport: GetAllSites] GetAllSites() failed: Error={0}", ex.Message), false);
+                            ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "SiteCollectionReport", ex.Message, ex.ToString(), "GetAllSites3()", ex.GetType().ToString(), String.Format("GetAllSites3() failed: Error={0}", ex.Message));
                         }
 
 
@@ -177,7 +183,8 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage(String.Format("GetAllSites() failed: Error={0}", ex.Message), false);
+                Logger.LogErrorMessage(String.Format("[GenerateSiteCollectionReport: GetAllSites] GetAllSites() failed: Error={0}", ex.Message), false);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "SiteCollectionReport", ex.Message, ex.ToString(), "GetAllSites3()", ex.GetType().ToString(), String.Format("GetAllSites3() failed: Error={0}", ex.Message));
                 return null;
             }
         }
