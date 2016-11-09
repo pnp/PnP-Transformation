@@ -25,6 +25,7 @@ namespace JDP.Remediation.Console
         public static List<string> lstCustomFeatureIDs;
         public static string filePath = string.Empty;
         public static string outputPath = string.Empty;
+        public static int TempFolderName = 0;
 
         public static void DoWork()
         {
@@ -281,7 +282,7 @@ namespace JDP.Remediation.Console
             Logger.LogInfoMessage("[DownloadAndModifySiteTemplate: ProcessWspFile] Processing the Site Template: " + objSiteCustOutput.SiteTemplateName, true);
             try
             {
-                string newFilePath = solFileName.Replace(".wsp", ".cab");
+                string newFilePath = solFileName.ToLower().Replace(".wsp", ".cab");
                 if (System.IO.File.Exists(newFilePath))
                     System.IO.File.Delete(newFilePath);
                 System.IO.File.Move(solFileName, newFilePath);
@@ -292,14 +293,18 @@ namespace JDP.Remediation.Console
 
                 FileInfo solFileObj = new FileInfo(newFileName);
                 Logger.LogInfoMessage("[DownloadAndModifySiteTemplate: ProcessWspFile] Extracting the Site Template: " + objSiteCustOutput.SiteTemplateName, true);
-                string cmd = "/e /a /y /L \"" + newFileName.Replace(".", "_") + "\" \"" + newFileName + "\"";
-                ProcessStartInfo pI = new ProcessStartInfo("extrac32.exe", cmd);
-                pI.WindowStyle = ProcessWindowStyle.Hidden;
-                Process p = Process.Start(pI);
-                p.WaitForExit();
-                string cabDir = newFilePath.Replace(".", "_");
-                Directory.SetCurrentDirectory(newFileName.Replace(".", "_"));
-                string extractedPath = solFileName.Replace(".wsp", "_cab");
+                //string cmd = "/e /a /y /L \"" + newFileName.Replace(".", "_") + "\" \"" + newFileName + "\"";
+                //ProcessStartInfo pI = new ProcessStartInfo("extrac32.exe", cmd);
+                //pI.WindowStyle = ProcessWindowStyle.Hidden;
+                //Process p = Process.Start(pI);
+                //p.WaitForExit();
+                //string cabDir = newFilePath.Replace(".", "_");
+                //Directory.SetCurrentDirectory(newFileName.Replace(".", "_"));
+                FileUtility.UnCab(fileName.ToLower().Replace(".wsp", ".cab"), destDir);
+                //string cabDir = newFilePath.Replace(".", "_");
+                Directory.SetCurrentDirectory(destDir);
+                //string extractedPath = solFileName.Replace(".wsp", "_cab");
+                string extractedPath = destDir;
                 Logger.LogInfoMessage("[DownloadAndModifySiteTemplate: ProcessWspFile] Extracted the Site Template: " + objSiteCustOutput.SiteTemplateName + "to path: " + extractedPath, true);
 
                 string[] webTempFiles = Directory.GetFiles(Directory.GetCurrentDirectory(), "Onet.xml", SearchOption.AllDirectories);
@@ -329,7 +334,7 @@ namespace JDP.Remediation.Console
                             {
                                 Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading Custom Site Features tag", true);
                                 ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
-                                    "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Custom Site Features tag");
+                                    "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Custom Site Features tag. SolutionName: " + solFileName + ", FileName: " + webTempFiles.ElementAt(0));
                             }
                             #endregion
 
@@ -344,7 +349,7 @@ namespace JDP.Remediation.Console
                                 {
                                     Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading Custom Web Features tag", true);
                                     ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
-                                        "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Custom Web Features tag");
+                                        "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Custom Web Features tag. SolutionName: " + solFileName + ", FileName: " + webTempFiles.ElementAt(0));
                                 }
                             }
                             #endregion
@@ -364,7 +369,7 @@ namespace JDP.Remediation.Console
                                 {
                                     Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading Features tag", true);
                                     ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
-                                        "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Features tag");
+                                        "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Features tag. SolutionName: " + solFileName + ", FileName: " + featureFiles.ElementAt(i));
                                 }
                             }
                         }
@@ -476,7 +481,7 @@ namespace JDP.Remediation.Console
                                                                             {
                                                                                 Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading Receivers tag in content types", true);
                                                                                 ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
-                                                                                    "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Receivers tag in content types");
+                                                                                    "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Receivers tag in content types. SolutionName: " + solFileName + ", FileName: " + contentTypesXml);
                                                                             }
                                                                         }
                                                                     }
@@ -488,7 +493,7 @@ namespace JDP.Remediation.Console
                                                     {
                                                         Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading Receivers tag in content types", true);
                                                         ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
-                                                                                    "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Receivers tag in content types");
+                                                                                    "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Receivers tag in content types. SolutionName: " + solFileName + ", FileName: " + contentTypesXml);
                                                     }
                                                 }
                                             }
@@ -498,7 +503,7 @@ namespace JDP.Remediation.Console
                                     {
                                         Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.ToString() + ", " + ex.Message, true);
                                         ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
-                                            "ProcessWspFile", ex.GetType().ToString(), Constants.NotApplicable);
+                                            "ProcessWspFile", ex.GetType().ToString(), "SolutionName: " + solFileName + ", FileName: " + contentTypesXml);
                                     }
                                 }
                             }
@@ -527,7 +532,7 @@ namespace JDP.Remediation.Console
                                     {
                                         Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading content types", true);
                                         ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
-                                            "ProcessWspFile", ex.GetType().ToString(), "Exception while reading content types");
+                                            "ProcessWspFile", ex.GetType().ToString(), "Exception while reading content types. SolutionName: " + solFileName + ", FileName: " + contentTypesXml);
                                     }
                                 }
                             }
@@ -562,7 +567,7 @@ namespace JDP.Remediation.Console
                                                 {
                                                     Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading Site Columns tag in content types", true);
                                                     ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
-                                                        "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Site Columns tag in content types");
+                                                        "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Site Columns tag in content types. SolutionName: " + solFileName + ", FileName: " + contentTypesXml);
                                                 }
                                             }
                                         }
@@ -571,7 +576,7 @@ namespace JDP.Remediation.Console
                                     {
                                         Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading Site Columns tag in content types", true);
                                         ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
-                                            "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Site Columns tag in content types");
+                                            "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Site Columns tag in content types. SolutionName: " + solFileName + ", FileName: " + contentTypesXml);
                                     }
                                 }
                             }
@@ -617,7 +622,7 @@ namespace JDP.Remediation.Console
                                     {
                                         Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading Site Columns", true);
                                         ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
-                                            "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Site Columns");
+                                            "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Site Columns. SolutionName: " + solFileName + ", FileName: " + customFieldsTypesXml);
                                     }
                                 }
                             }
@@ -692,17 +697,34 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.Message, true);
+                Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.Message + " SolFileName: " + solFileName, true);
                 ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
-                    "ProcessWspFile", ex.GetType().ToString(), Constants.NotApplicable);
+                    "ProcessWspFile", ex.GetType().ToString(), " SolFileName: " + solFileName);
             }
 
             Directory.SetCurrentDirectory(downloadPath);
             System.IO.DirectoryInfo directory = new System.IO.DirectoryInfo(downloadPath);
-            //foreach (System.IO.FileInfo file in directory.GetFiles()) file.Delete();
-            //foreach (System.IO.DirectoryInfo subDirectory in directory.GetDirectories()) subDirectory.Delete(true);
+            foreach (System.IO.FileInfo file in directory.GetFiles())
+            {
+                try { file.Delete(); }
+                catch (Exception ex)
+                {
+                    //As we are extracting .wsp file to local folder, no need to display any 
+                    //exception while deleting these files.
+                }
+            }
+            foreach (System.IO.DirectoryInfo subDirectory in directory.GetDirectories())
+            {
+                try { subDirectory.Delete(true); }
+                catch (Exception ex)
+                {
+                    //As we are extracting .wsp file to local folder, no need to display any 
+                    //exception while deleting these files.
+                }
+            }
             return isCustomizationPresent;
         }
+
 
         public static bool GetCustomizedSiteTemplate(ref SiteTemplateFTCAnalysisOutputBase objSiteCustOutput, DataRow siteTemplateRow,
             Microsoft.SharePoint.Client.File ltFile, string siteCollection, string webAppUrl)
@@ -720,14 +742,16 @@ namespace JDP.Remediation.Console
                 objSiteCustOutput.WebUrl = siteCollection;
                 objSiteCustOutput.SiteTemplateName = fileName;
                 objSiteCustOutput.SiteTemplateGalleryPath = siteGalleryPath;
+                TempFolderName += 1;
 
-                bool isDownloaded = DownloadSiteTemplate(outputPath + @"\" + Constants.DownloadPathSiteTemplates,
+                bool isDownloaded = DownloadSiteTemplate(outputPath + @"\" + Constants.DownloadPathSiteTemplates + @"\" + TempFolderName,
                     siteGalleryPath, fileName, objSiteCustOutput.WebUrl, objSiteCustOutput.WebUrl);
                 if (isDownloaded)
                 {
-                    isCustomizationPresent = ProcessWspFile(outputPath, outputPath + @"\" + Constants.DownloadPathSiteTemplates + @"\" + fileName.ToLower(),
+                    isCustomizationPresent = ProcessWspFile(outputPath, outputPath + @"\" + Constants.DownloadPathSiteTemplates + @"\" + TempFolderName + @"\" + fileName.ToLower(),
                         ref objSiteCustOutput);
                 }
+
             }
             catch (Exception ex)
             {
@@ -802,10 +826,67 @@ namespace JDP.Remediation.Console
                                 userContext.Load(stFile.Author);
                                 userContext.Load(stFile.ModifiedBy);
                                 userContext.ExecuteQuery();
-                                objSiteCustOutput.CreatedBy = stFile.Author.LoginName;
-                                objSiteCustOutput.CreatedDate = stFile.TimeCreated.ToString();
-                                objSiteCustOutput.ModifiedBy = stFile.ModifiedBy.LoginName;
-                                objSiteCustOutput.ModifiedDate = stFile.TimeLastModified.ToString();
+
+                                try
+                                {
+                                    if (stFile.Author != null)
+                                        objSiteCustOutput.CreatedBy = stFile.Author.LoginName;
+                                    else
+                                        objSiteCustOutput.CreatedBy = Constants.NotApplicable;
+                                }
+                                catch (Exception ex)
+                                {
+                                    objSiteCustOutput.CreatedBy = Constants.NotApplicable;
+                                    Logger.LogMessage("[DownloadAndModifySiteTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + stFile.Name + " Exception Message: " + ex.Message + ". Author is NULL.", true);
+                                    ExceptionCsv.WriteException(webApplicationUrl, siteCollectionUrl, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                                        "ProcessSiteCollectionUrl", ex.GetType().ToString(), "Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + stFile.Name + " Exception Message: " + ex.Message + ". Author is NULL.");
+                                }
+
+                                try
+                                {
+                                    if (stFile.TimeCreated != null)
+                                        objSiteCustOutput.CreatedDate = stFile.TimeCreated.ToString();
+                                    else
+                                        objSiteCustOutput.CreatedDate = Constants.NotApplicable;
+                                }
+                                catch (Exception ex)
+                                {
+                                    objSiteCustOutput.CreatedDate = Constants.NotApplicable;
+                                    Logger.LogMessage("[DownloadAndModifySiteTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + stFile.Name + " Exception Message: " + ex.Message + ". TimeCreated is NULL.", true);
+                                    ExceptionCsv.WriteException(webApplicationUrl, siteCollectionUrl, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                                        "ProcessSiteCollectionUrl", ex.GetType().ToString(), "Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + stFile.Name + " Exception Message: " + ex.Message + ". TimeCreated is NULL.");
+                                }
+
+                                try
+                                {
+                                    if (stFile.ModifiedBy != null)
+                                        objSiteCustOutput.ModifiedBy = stFile.ModifiedBy.LoginName;
+                                    else
+                                        objSiteCustOutput.ModifiedBy = Constants.NotApplicable;
+                                }
+                                catch (Exception ex)
+                                {
+                                    objSiteCustOutput.ModifiedBy = Constants.NotApplicable;
+                                    Logger.LogMessage("[DownloadAndModifySiteTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + stFile.Name + " Exception Message: " + ex.Message + ". ModifiedBy is NULL.", true);
+                                    ExceptionCsv.WriteException(webApplicationUrl, siteCollectionUrl, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                                        "ProcessSiteCollectionUrl", ex.GetType().ToString(), "Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + stFile.Name + " Exception Message: " + ex.Message + ". ModifiedBy is NULL.");
+                                }
+
+                                try
+                                {
+                                    if (stFile.TimeLastModified != null)
+                                        objSiteCustOutput.ModifiedDate = stFile.TimeLastModified.ToString();
+                                    else
+                                        objSiteCustOutput.ModifiedDate = Constants.NotApplicable;
+                                }
+                                catch (Exception ex)
+                                {
+                                    objSiteCustOutput.ModifiedDate = Constants.NotApplicable;
+                                    Logger.LogMessage("[DownloadAndModifySiteTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + stFile.Name + " Exception Message: " + ex.Message + ". TimeLastModified is NULL.", true);
+                                    ExceptionCsv.WriteException(webApplicationUrl, siteCollectionUrl, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
+                                        "ProcessSiteCollectionUrl", ex.GetType().ToString(), "Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + stFile.Name + " Exception Message: " + ex.Message + ". TimeLastModified is NULL.");
+                                }
+
                                 lstMissingSiteTempaltesInGalleryBase.Add(objSiteCustOutput);
                             }
                             objSiteCustOutput = null;
@@ -853,15 +934,39 @@ namespace JDP.Remediation.Console
         public static void CheckCustomFeature(string xmlFilePath, string featureNodePath, ref bool isCustomFeature, string siteTemplateName)
         {
             string featureID = string.Empty;
+            string xml;
+
             if (System.IO.File.Exists(xmlFilePath))
             {
                 var reader = new XmlTextReader(xmlFilePath);
                 try
                 {
+                    using (TextReader txtreader = new StreamReader(xmlFilePath))
+                    {
+                        xml = txtreader.ReadToEnd();
+                    }
+
+                    xml = CommonUtility.SanitizeXmlString(xml);
                     reader.Namespaces = false;
                     reader.Read();
+
                     XmlDocument doc = new XmlDocument();
-                    doc.Load(reader);
+
+                    try
+                    {
+                        doc = CommonUtility.GetXmlDocumentFromString(xml);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: CheckCustomFeature]. Exception Message: " + ex.Message
+                            + ", Exception Comments: Exception while loading the XML File. XML File Path: " + xmlFilePath + ". SiteTemplateName: " + siteTemplateName, true);
+                        ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(), "CheckCustomFeature",
+                            ex.GetType().ToString(), "Exception while loading the XML File. XML File Path: " + xmlFilePath + ". SiteTemplateName: " + siteTemplateName);
+                    }
+                    //reader.Namespaces = false;
+                    //reader.Read();
+                    //XmlDocument doc = new XmlDocument();
+                    ////doc.Load(reader);
 
                     //Initiallizing all the nodes required to check
                     XmlNodeList siteFeatureNodes = doc.SelectNodes(featureNodePath);
@@ -916,16 +1021,41 @@ namespace JDP.Remediation.Console
 
         public static void CheckCustomEventReceiver(string xmlFilePath, string erNodePath, ref bool isCustomEventReceiver, string siteTemplateName)
         {
+            string xml;
+
             if (System.IO.File.Exists(xmlFilePath))
             {
                 Logger.LogInfoMessage("[DownloadAndModifySiteTemplate: ProcessWspFile] Searching for customized Web/Site Event Receivers in: " + xmlFilePath, true);
                 var reader = new XmlTextReader(xmlFilePath);
                 try
                 {
+                    using (TextReader txtreader = new StreamReader(xmlFilePath))
+                    {
+                        xml = txtreader.ReadToEnd();
+                    }
+
+                    xml = CommonUtility.SanitizeXmlString(xml);
                     reader.Namespaces = false;
                     reader.Read();
+
                     XmlDocument doc = new XmlDocument();
-                    doc.Load(reader);
+
+                    try
+                    {
+                        doc = CommonUtility.GetXmlDocumentFromString(xml);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: CheckCustomEventReceiver]. Exception Message: " + ex.Message
+                            + ", Exception Comments: Exception while loading the XML File. XML File Path: " + xmlFilePath + ". SiteTemplateName: " + siteTemplateName, true);
+                        ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(), "CheckCustomEventReceiver",
+                            ex.GetType().ToString(), "Exception while loading the XML File. XML File Path: " + xmlFilePath + ". SiteTemplateName: " + siteTemplateName);
+                    }
+
+                    //reader.Namespaces = false;
+                    //reader.Read();
+                    //XmlDocument doc = new XmlDocument();
+                    //doc.Load(reader);
 
                     //Initiallizing all the nodes required to check
                     XmlNodeList receiverNodes = doc.SelectNodes(erNodePath);

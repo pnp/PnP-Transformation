@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -22,6 +23,7 @@ namespace JDP.Remediation.Console
         public static List<string> lstContentTypeIDs;
         public static List<string> lstCustomFieldIDs;
         public static List<string> lstCustomErs;
+        public static int TempFolderName = 0;
 
         public static void DoWork()
         {
@@ -288,7 +290,7 @@ namespace JDP.Remediation.Console
             {
                 string cabDir = string.Empty;
 
-                string newFilePath = solFileName.Replace(".stp", ".cab");
+                string newFilePath = solFileName.ToLower().Replace(".stp", ".cab");
                 if (System.IO.File.Exists(newFilePath))
                     System.IO.File.Delete(newFilePath);
                 System.IO.File.Move(solFileName, newFilePath);
@@ -299,17 +301,26 @@ namespace JDP.Remediation.Console
 
                 FileInfo solFileObj = new FileInfo(newFileName);
                 Logger.LogInfoMessage("[DownloadAndModifyListTemplate: ProcessStpFile] Extracting the List Template: " + objListCustOutput.ListTemplateName, true);
-                string cmd = "/e /a /y /L \"" + newFileName.Replace(".", "_") + "\" \"" + newFileName + "\"";
-                ProcessStartInfo pI = new ProcessStartInfo("extrac32.exe", cmd);
-                pI.WindowStyle = ProcessWindowStyle.Hidden;
-                Process p = Process.Start(pI);
-                p.WaitForExit();
+                //string cmd = "/e /a /y /L \"" + newFileName.Replace(".", "_") + "\" \"" + newFileName + "\"";
+                //ProcessStartInfo pI = new ProcessStartInfo("extrac32.exe", cmd);
+                //pI.WindowStyle = ProcessWindowStyle.Hidden;
+                //Process p = Process.Start(pI);
+                //p.WaitForExit();
 
-                if (!destDir.EndsWith(@"\"))
-                    cabDir = destDir + @"\" + newFileName.Replace(".", "_");
-                else
-                    cabDir = destDir + newFileName.Replace(".", "_");
-                Directory.SetCurrentDirectory(newFileName.Replace(".", "_"));
+                //if (!destDir.EndsWith(@"\"))
+                //    cabDir = destDir + @"\" + newFileName.Replace(".", "_");
+                //else
+                //    cabDir = destDir + newFileName.Replace(".", "_");
+                //Directory.SetCurrentDirectory(newFileName.Replace(".", "_"));
+
+                //if (!destDir.EndsWith(@"\"))
+                //    cabDir = destDir + @"\" + newFileName.Replace(".", "_");
+                //else
+                //    cabDir = destDir + newFileName.Replace(".", "_");
+
+                FileUtility.UnCab(fileName.ToLower().Replace(".stp", ".cab"), destDir);                
+                Directory.SetCurrentDirectory(destDir); 
+
                 Logger.LogInfoMessage("[DownloadAndModifyListTemplate: ProcessStpFile] Extracted the List Template: " + objListCustOutput.ListTemplateName + " in path: " + cabDir, true);
 
                 string[] webTempFiles = Directory.GetFiles(Directory.GetCurrentDirectory(), "Manifest.xml", SearchOption.AllDirectories);
@@ -319,10 +330,39 @@ namespace JDP.Remediation.Console
                 Logger.LogInfoMessage("[DownloadAndModifyListTemplate: ProcessStpFile] Searching for customized elements in: " + xmlString, true);
                 var reader = new XmlTextReader(xmlString);
 
+
+                string xml;
+
+                using (TextReader txtreader = new StreamReader(xmlString))
+                {
+
+                    xml = txtreader.ReadToEnd();
+                }
+
+
+                xml = CommonUtility.SanitizeXmlString(xml);
+
+
+
                 reader.Namespaces = false;
+
                 reader.Read();
                 XmlDocument doc = new XmlDocument();
-                doc.Load(reader);
+                //doc.Load(reader);
+                //doc.LoadXml(xml);
+
+                try
+                {
+                    doc = CommonUtility.GetXmlDocumentFromString(xml);
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogErrorMessage("[DownloadAndModifyListTemplate: ProcessStpFile]. Exception Message: " + ex.Message
+                        + ", Exception Comments: Exception while loading the XML File. XML File Path: " + xmlString + ". SolFileName: " + solFileName, true);
+                    ExceptionCsv.WriteException(objListCustOutput.WebApplication, objListCustOutput.SiteCollection, objListCustOutput.WebUrl, "ListTemplate", ex.Message, ex.ToString(), "ProcessStpFile",
+                        ex.GetType().ToString(), "Exception while loading the XML File. XML File Path: " + xmlString + ". SolFileName: " + solFileName);
+                }
+
 
                 //Initiallizing all the nodes required to check
                 XmlNodeList receiverNodes = doc.SelectNodes("/ListTemplate/UserLists/List/MetaData/Receivers/Receiver");
@@ -352,9 +392,9 @@ namespace JDP.Remediation.Console
                             catch (Exception ex)
                             {
                                 Logger.LogErrorMessage("[DownloadAndModifyListTemplate: ProcessStpFile]. Exception Message: " + ex.Message
-                                    + ", Exception Comments: Exception while reading List Receivers tag", true);
+                                    + ", Exception Comments: Exception while reading List Receivers tag" + " SolFileName: " + solFileName + ". XML File Path: " + xmlString, true);
                                 ExceptionCsv.WriteException(objListCustOutput.WebApplication, objListCustOutput.SiteCollection, objListCustOutput.WebUrl, "ListTemplate", ex.Message, ex.ToString(), "ProcessStpFile",
-                                    ex.GetType().ToString(), "Exception while reading List Receivers tag");
+                                    ex.GetType().ToString(), "Exception while reading List Receivers tag" + " SolFileName: " + solFileName + ".  XML File Path: " + xmlString);
                             }
                         }
                     }
@@ -414,9 +454,9 @@ namespace JDP.Remediation.Console
                                                         catch (Exception ex)
                                                         {
                                                             Logger.LogErrorMessage("[DownloadAndModifyListTemplate: ProcessStpFile]. Exception Message: " + ex.Message
-                                                                + ", Exception Comments: Exception while reading Receivers tag in Content Types", true);
+                                                                + ", Exception Comments: Exception while reading Receivers tag in Content Types" + " SolFileName: " + solFileName + ". XML File Path: " + xmlString, true);
                                                             ExceptionCsv.WriteException(objListCustOutput.WebApplication, objListCustOutput.SiteCollection, objListCustOutput.WebUrl, "ListTemplate", ex.Message, ex.ToString(), "ProcessStpFile",
-                                                                ex.GetType().ToString(), "Exception while reading Receivers tag in Content Types");
+                                                                ex.GetType().ToString(), "Exception while reading Receivers tag in Content Types" + " SolFileName: " + solFileName + ". XML File Path: " + xmlString);
                                                         }
                                                     }
                                                 }
@@ -425,9 +465,9 @@ namespace JDP.Remediation.Console
                                         catch (Exception ex)
                                         {
                                             Logger.LogErrorMessage("[DownloadAndModifyListTemplate: ProcessStpFile]. Exception Message: " + ex.Message
-                                                + ", Exception Comments: Exception while reading Receivers tag in Content Types", true);
+                                                + ", Exception Comments: Exception while reading Receivers tag in Content Types" + " SolFileName: " + solFileName + ". XML File Path: " + xmlString, true);
                                             ExceptionCsv.WriteException(objListCustOutput.WebApplication, objListCustOutput.SiteCollection, objListCustOutput.WebUrl, "ListTemplate", ex.Message, ex.ToString(), "ProcessStpFile",
-                                                ex.GetType().ToString(), "Exception while reading Receivers tag in Content Types");
+                                                ex.GetType().ToString(), "Exception while reading Receivers tag in Content Types" + " SolFileName: " + solFileName + ". XML File Path: " + xmlString);
                                         }
                                     }
                                 }
@@ -435,9 +475,9 @@ namespace JDP.Remediation.Console
                             catch (Exception ex)
                             {
                                 Logger.LogErrorMessage("[DownloadAndModifyListTemplate: ProcessStpFile]. Exception Message: " + ex.Message
-                                    + ", Exception Comments: Exception while reading Receivers tag in Content Types", true);
+                                    + ", Exception Comments: Exception while reading Receivers tag in Content Types" + " SolFileName: " + solFileName + ". XML File Path: " + xmlString, true);
                                 ExceptionCsv.WriteException(objListCustOutput.WebApplication, objListCustOutput.SiteCollection, objListCustOutput.WebUrl, "ListTemplate", ex.Message, ex.ToString(), "ProcessStpFile",
-                                    ex.GetType().ToString(), "Exception while reading Receivers tag in Content Types");
+                                    ex.GetType().ToString(), "Exception while reading Receivers tag in Content Types" + " SolFileName: " + solFileName + ". XML File Path: " + xmlString);
                             }
                         }
                     }
@@ -465,9 +505,9 @@ namespace JDP.Remediation.Console
                             catch (Exception ex)
                             {
                                 Logger.LogErrorMessage("[DownloadAndModifyListTemplate: ProcessStpFile]. Exception Message: " + ex.Message
-                                    + ", Exception Comments: Exception while reading Content Types", true);
+                                    + ", Exception Comments: Exception while reading Content Types" + " SolFileName: " + solFileName + ". XML File Path: " + xmlString, true);
                                 ExceptionCsv.WriteException(objListCustOutput.WebApplication, objListCustOutput.SiteCollection, objListCustOutput.WebUrl, "ListTemplate", ex.Message, ex.ToString(), "ProcessStpFile",
-                                    ex.GetType().ToString(), "Exception while reading Content Types");
+                                    ex.GetType().ToString(), "Exception while reading Content Types" + " SolFileName: " + solFileName + ". XML File Path: " + xmlString);
                             }
                         }
                     }
@@ -502,9 +542,9 @@ namespace JDP.Remediation.Console
                                         catch (Exception ex)
                                         {
                                             Logger.LogErrorMessage("[DownloadAndModifyListTemplate: ProcessStpFile]. Exception Message: " + ex.Message
-                                                + ", Exception Comments: Exception while reading Site Columns tag in Content Types", true);
+                                                + ", Exception Comments: Exception while reading Site Columns tag in Content Types" + " SolFileName: " + solFileName + ". XML File Path: " + xmlString, true);
                                             ExceptionCsv.WriteException(objListCustOutput.WebApplication, objListCustOutput.SiteCollection, objListCustOutput.WebUrl, "ListTemplate", ex.Message, ex.ToString(), "ProcessStpFile",
-                                                ex.GetType().ToString(), "Exception while reading Site Columns tag in Content Types");
+                                                ex.GetType().ToString(), "Exception while reading Site Columns tag in Content Types" + " SolFileName: " + solFileName + ". XML File Path: " + xmlString);
                                         }
                                     }
                                 }
@@ -512,9 +552,9 @@ namespace JDP.Remediation.Console
                             catch (Exception ex)
                             {
                                 Logger.LogErrorMessage("[DownloadAndModifyListTemplate: ProcessStpFile]. Exception Message: " + ex.Message
-                                    + ", Exception Comments: Exception while reading Site Columns tag in Content Types", true);
+                                    + ", Exception Comments: Exception while reading Site Columns tag in Content Types" + " SolFileName: " + solFileName + ". XML File Path: " + xmlString, true);
                                 ExceptionCsv.WriteException(objListCustOutput.WebApplication, objListCustOutput.SiteCollection, objListCustOutput.WebUrl, "ListTemplate", ex.Message, ex.ToString(), "ProcessStpFile",
-                                    ex.GetType().ToString(), "Exception while reading Site Columns tag in Content Types");
+                                    ex.GetType().ToString(), "Exception while reading Site Columns tag in Content Types" + " SolFileName: " + solFileName + ". XML File Path: " + xmlString);
                             }
                         }
                     }
@@ -545,9 +585,9 @@ namespace JDP.Remediation.Console
                             catch (Exception ex)
                             {
                                 Logger.LogErrorMessage("[DownloadAndModifyListTemplate: ProcessStpFile]. Exception Message: " + ex.Message
-                                    + ", Exception Comments: Exception while reading Site Columns", true);
+                                    + ", Exception Comments: Exception while reading Site Columns" + " SolFileName: " + solFileName + ". XML File Path: " + xmlString, true);
                                 ExceptionCsv.WriteException(objListCustOutput.WebApplication, objListCustOutput.SiteCollection, objListCustOutput.WebUrl, "ListTemplate", ex.Message, ex.ToString(), "ProcessStpFile",
-                                    ex.GetType().ToString(), "Exception while reading Site Columns");
+                                    ex.GetType().ToString(), "Exception while reading Site Columns" + " SolFileName: " + solFileName + ". XML File Path: " + xmlString);
                             }
                         }
                     }
@@ -609,26 +649,35 @@ namespace JDP.Remediation.Console
 
                 Directory.SetCurrentDirectory(downloadFolder);
                 System.IO.DirectoryInfo directory = new System.IO.DirectoryInfo(downloadFolder);
-                //foreach (System.IO.DirectoryInfo subDirectory in directory.GetDirectories())
-                //{
-                //    Directory.SetCurrentDirectory(downloadFolder);
-                //    subDirectory.Delete(true);
-                //}
-                //foreach (System.IO.FileInfo file in directory.GetFiles())
-                //{
-                //    file.Delete();
-                //}
+                foreach (System.IO.FileInfo file in directory.GetFiles("*.*", SearchOption.AllDirectories))
+                {
+                    try { file.Delete(); }
+                    catch (Exception ex)
+                    {
+                        //As we are extracting .wsp file to local folder, no need to display any 
+                        //exception while deleting these files.
+                    }
+                }
+                foreach (System.IO.DirectoryInfo subDirectory in directory.GetDirectories())
+                {
+                    try { subDirectory.Delete(true); }
+                    catch (Exception ex)
+                    {
+                        //As we are extracting .wsp file to local folder, no need to display any 
+                        //exception while deleting these files.
+                    }
+                }
             }
 
             catch (Exception ex)
             {
-                Logger.LogErrorMessage("[DownloadAndModifyListTemplate: ProcessStpFile], Exception Message: " + ex.Message, true);
+                Logger.LogErrorMessage("[DownloadAndModifyListTemplate: ProcessStpFile], Exception Message: " + ex.Message + " SolFileName: " + solFileName, true);
                 ExceptionCsv.WriteException(objListCustOutput.WebApplication, objListCustOutput.SiteCollection, objListCustOutput.WebUrl, "ListTemplate", ex.Message, ex.ToString(), "ProcessStpFile",
-                                    ex.GetType().ToString(), Constants.NotApplicable);
+                                    ex.GetType().ToString(), "SolFileName: " + solFileName);
             }
             return isCustomizationPresent;
         }
-
+        
         public static void DeleteListTemplate()
         {
             //Output files
@@ -671,9 +720,9 @@ namespace JDP.Remediation.Console
                     }
                     catch (Exception ex)
                     {
-                        Logger.LogErrorMessage("[DeleteListTemplate]. Exception Message: " + ex.Message, true);
+                        Logger.LogErrorMessage("[DeleteListTemplate]. Exception Message: " + ex.Message+"Exception occured in Delete() while deleting the ListTemplate", true);
                         ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "ListTemplate", ex.Message, ex.ToString(), "DeleteListTemplate",
-                            ex.GetType().ToString(), Constants.NotApplicable);
+                            ex.GetType().ToString(), "Exception occured in Delete() while deleting the ListTemplate");
                     }
                 }
             }
@@ -761,9 +810,9 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage(String.Format("[DownloadAndModifyListTemplate: Delete] failed for {0}: Error={1}", serverRelativeFilePath, ex.Message), true);
+                Logger.LogErrorMessage(String.Format("[DownloadAndModifyListTemplate: Delete] failed for {0}: Error={1}", serverRelativeFilePath, ex.Message) + "Exception occured in while deleting the ListTemplate file. FilePath: " + serverRelativeFilePath, true);
                 ExceptionCsv.WriteException(webAppUrl, Constants.NotApplicable, webUrl, "ListTemplate", ex.Message, ex.ToString(), "Delete",
-                    ex.GetType().ToString(), Constants.NotApplicable);
+                    ex.GetType().ToString(), "Exception occured in while deleting the ListTemplate file. FilePath: "+serverRelativeFilePath);
             }
         }
 
@@ -783,20 +832,21 @@ namespace JDP.Remediation.Console
                 objListCustOutput.WebUrl = siteCollection;
                 objListCustOutput.ListTemplateName = fileName;
                 objListCustOutput.ListGalleryPath = listGalleryPath;
+                TempFolderName += 1;
 
-                bool isDownloaded = DownloadListTemplate(outputPath + @"\" + Constants.DownloadPathListTemplates,
+                bool isDownloaded = DownloadListTemplate(outputPath + @"\" + Constants.DownloadPathListTemplates + @"\" +TempFolderName,
                     listGalleryPath, fileName, objListCustOutput.WebUrl, objListCustOutput.WebUrl);
                 if (isDownloaded)
                 {
-                    isCustomizationPresent = ProcessStpFile(outputPath, outputPath + @"\" + Constants.DownloadPathListTemplates + @"\" + fileName.ToLower(),
-                        ref objListCustOutput);
+                    isCustomizationPresent = ProcessStpFile(outputPath, outputPath + @"\" + Constants.DownloadPathListTemplates + @"\" + TempFolderName
+                        + @"\" + fileName.ToLower(), ref objListCustOutput);
                 }
             }
             catch (Exception ex)
             {
                 Logger.LogErrorMessage("[DownloadAndModifyListTemplate: GetCustomizedListTemplate] Exception Message: " + ex.Message, true);
                 ExceptionCsv.WriteException(Constants.NotApplicable, objListCustOutput.SiteCollection, objListCustOutput.WebUrl, "ListTemplate", ex.Message, ex.ToString(), "GetCustomizedListTemplate",
-                    ex.GetType().ToString(), Constants.NotApplicable);
+                    ex.GetType().ToString(), "Exception occured while getting the ListTemplates from Gallery ");
             }
             return isCustomizationPresent;
         }
@@ -863,10 +913,67 @@ namespace JDP.Remediation.Console
                                 userContext.Load(ltFile.Author);
                                 userContext.Load(ltFile.ModifiedBy);
                                 userContext.ExecuteQuery();
-                                objListCustOutput.CreatedBy = ltFile.Author.LoginName;
-                                objListCustOutput.CreatedDate = ltFile.TimeCreated.ToString();
-                                objListCustOutput.ModifiedBy = ltFile.ModifiedBy.LoginName;
-                                objListCustOutput.ModifiedDate = ltFile.TimeLastModified.ToString();
+
+                                try
+                                {
+                                    if (ltFile.Author != null)
+                                        objListCustOutput.CreatedBy = ltFile.Author.LoginName;
+                                    else
+                                        objListCustOutput.CreatedBy = Constants.NotApplicable;
+                                }
+                                catch(Exception ex)
+                                {
+                                    objListCustOutput.CreatedBy = Constants.NotApplicable;
+                                    Logger.LogMessage("[DownloadAndModifyListTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + ltFile.Name + " Exception Message: " + ex.Message + ". Author is NULL.", true);
+                                    ExceptionCsv.WriteException(webApplicationUrl, siteCollectionUrl, Constants.NotApplicable, "ListTemplate", ex.Message, ex.ToString(), "ProcessSiteCollectionUrl",
+                                         ex.GetType().ToString(), "Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + ltFile.Name + " Exception Message: " + ex.Message + ". Author is NULL.");
+                                }
+                                
+                                try
+                                {
+                                    if (ltFile.TimeCreated != null)
+                                        objListCustOutput.CreatedDate = ltFile.TimeCreated.ToString();
+                                    else
+                                        objListCustOutput.CreatedDate = Constants.NotApplicable;
+                                }
+                                catch (Exception ex)
+                                {
+                                    objListCustOutput.CreatedDate = Constants.NotApplicable;
+                                    Logger.LogMessage("[DownloadAndModifyListTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + ltFile.Name + " Exception Message: " + ex.Message + ". TimeCreated is NULL.", true);
+                                    ExceptionCsv.WriteException(webApplicationUrl, siteCollectionUrl, Constants.NotApplicable, "ListTemplate", ex.Message, ex.ToString(), "ProcessSiteCollectionUrl",
+                                         ex.GetType().ToString(), "Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + ltFile.Name + " Exception Message: " + ex.Message + ". TimeCreated is NULL.");
+                                }
+
+                                try
+                                {
+                                    if (ltFile.ModifiedBy != null)
+                                        objListCustOutput.ModifiedBy = ltFile.ModifiedBy.LoginName;
+                                    else
+                                        objListCustOutput.ModifiedBy = Constants.NotApplicable;
+                                }
+                                catch (Exception ex)
+                                {
+                                    objListCustOutput.ModifiedBy = Constants.NotApplicable;
+                                    Logger.LogMessage("[DownloadAndModifyListTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + ltFile.Name + " Exception Message: " + ex.Message + ". ModifiedBy is NULL.", true);
+                                    ExceptionCsv.WriteException(webApplicationUrl, siteCollectionUrl, Constants.NotApplicable, "ListTemplate", ex.Message, ex.ToString(), "ProcessSiteCollectionUrl",
+                                         ex.GetType().ToString(), "Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + ltFile.Name + " Exception Message: " + ex.Message + ". ModifiedBy is NULL.");
+                                }
+
+                                try
+                                {
+                                    if (ltFile.TimeLastModified != null)
+                                        objListCustOutput.ModifiedDate = ltFile.TimeLastModified.ToString();
+                                    else
+                                        objListCustOutput.ModifiedDate = Constants.NotApplicable;
+                                }
+                                catch (Exception ex)
+                                {
+                                    objListCustOutput.ModifiedDate = Constants.NotApplicable;
+                                    Logger.LogMessage("[DownloadAndModifyListTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + ltFile.Name + " Exception Message: " + ex.Message + ". TimeLastModified is NULL.", true);
+                                    ExceptionCsv.WriteException(webApplicationUrl, siteCollectionUrl, Constants.NotApplicable, "ListTemplate", ex.Message, ex.ToString(), "ProcessSiteCollectionUrl",
+                                         ex.GetType().ToString(), "Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + ltFile.Name + " Exception Message: " + ex.Message + ". TimeLastModified is NULL.");
+                                }
+                                
                                 lstMissingListTempaltesInGalleryBase.Add(objListCustOutput);
                             }
                             objListCustOutput = null;

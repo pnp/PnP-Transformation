@@ -290,7 +290,7 @@ OR  AllListTemplatesInGallery_Usage.csv`(Mandatory for Option 2, not for others)
 
 - ListTemplateCustomization_Usage.csv
 - SiteCollections.txt `(Output for only Option 1)`
-- DownloadAndModifyListTemplate-* yyyymmdd*-* hhhhmmss*.log 
+- DownloadAndModifyListTemplate-*yyyymmdd*-*hhhhmmss*.log 
 
 > **Note:** If any of the input files *(ContentTypes.csv, CustomFields.csv, EventReceivers.csv)* is not present in the input folder provided by the user, or the file has no entries then corresponding element/s would not be searched to get the customization details in the list templates.
 

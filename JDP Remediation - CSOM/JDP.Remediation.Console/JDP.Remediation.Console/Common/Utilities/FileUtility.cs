@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using JDP.Remediation.Console.Common.CSV;
+using Microsoft.Deployment.Compression.Cab;
 
 namespace JDP.Remediation.Console.Common.Utilities
 {
@@ -333,5 +334,20 @@ namespace JDP.Remediation.Console.Common.Utilities
                 ExceptionCsv.WriteException(ExceptionCsv.WebApplication, ExceptionCsv.SiteCollection, ExceptionCsv.WebUrl, "DoPeriodicFlush", ex.Message, ex.ToString(), "DoPeriodicFlush", ex.GetType().ToString(), Constants.NotApplicable);
             }
         }
+        public static void UnCab(string cabFile, string wspFolderToUse)
+        {
+            EnsureDirectoryExists(wspFolderToUse);
+            CabInfo cabToUnpack = new CabInfo(cabFile);
+            cabToUnpack.Unpack(wspFolderToUse);
+        }
+
+        private static void EnsureDirectoryExists(string dir)
+        {
+            if (!System.IO.Directory.Exists(dir))
+            {
+                System.IO.Directory.CreateDirectory(dir);
+            }
+        } 
+
     }
 }
