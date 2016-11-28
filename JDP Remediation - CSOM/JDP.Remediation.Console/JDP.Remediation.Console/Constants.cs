@@ -32,8 +32,8 @@ namespace JDP.Remediation.Console
         public static readonly int CharacterLimitForCsvCell = 32758;
         public static readonly long OutputFileSizeinKb = 8192; //8 MB
 
-        private static readonly string portalWebAppRoot = "https://intranet.poc.com";
-        public static readonly string PortalRootSiteUrl = portalWebAppRoot + "/";
+        //private static readonly string portalWebAppRoot = "https://intranet.poc.com";
+        //public static readonly string PortalRootSiteUrl = portalWebAppRoot + "/";
         public static readonly string WEBPART_SERVICE = "/_vti_bin/webpartpages.asmx";
         public static readonly string PropertyBagInheritMaster = "__InheritMasterUrl";
         public static readonly string PropertyBagInheritCustomMaster = "__InheritCustomMasterUrl";
@@ -47,7 +47,7 @@ namespace JDP.Remediation.Console
 
         // these are CSV files and are expected to contain a Header row (as described)
         public static readonly string UsageReport_ContentTypesInputFileName = "contentTypes.csv";
-        public static readonly string UsageReport_SiteColumnsInputFileName = "siteColumns.csv";
+        public static readonly string UsageReport_CustomFieldsInputFileName = "CustomFields.csv";
 
         public static readonly string AddWebPartStatusFileName = "AddWebPart_SuccessFailure-";
         public static readonly string ReplaceWebPartStatusFileName = "ReplaceWebPart_SuccessFailure-";
@@ -75,8 +75,19 @@ namespace JDP.Remediation.Console
         public static readonly string DeleteFeatureStatus = "DeleteFeatures_SuccessFailure-";
         public static readonly string DeleteSetupFileStatus = "DeleteSetupFiles_SuccessFailure-";
         public static readonly string DeleteWorkflowAssociationsStatus = "DeleteWorkflowAssociations_SuccessFailure-";
-        public static readonly string DeleteListTemplateStatus = "DeleteListTemplates_SucessFailure-";
+        public static readonly string DeleteListTemplateStatus = "DeleteListTemplates_SuccessFailure-";
         public static readonly string DeleteWebpartStatus = "DeleteWebparts_SuccessFailure-";
+
+        //ColumnORFieldAndTypeUsage
+        public static readonly string ContentTypeAndCustomFieldFileName = "SiteColumnORFieldAndContentTypeUsage-";
+        public static readonly string ContentTypes = "ContentType";
+        public static readonly string CustomFields = "SiteColumn/CustomField";
+
+        //NonDefaultMasterPage
+        public static readonly string NonDefaultMasterPageFileName = "NonDefaultMasterPageUsage-";
+
+        //Generate Site Collections Reports
+        public static readonly string GenSiteCollectionFileName = "SiteCollectionsReport-";
 
         #region ListTemplate and SiteTemplate
         public static readonly string NoInputFile = "No Input File";

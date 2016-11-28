@@ -129,7 +129,7 @@ namespace JDP.Remediation.Console
                     //For SitePage or Team Site, Pass - StorageKey.ToGuid()
                     webPartXml = service.GetWebPart2(pageUrl, StorageKey.ToGuid(), Storage.Shared, SPWebServiceBehavior.Version3);
 
-                    Logger.LogInfoMessage("[GetWebPartProperties] Successfully retreived Web Part Properties");
+                    Logger.LogSuccessMessage("[GetWebPartProperties] Successfully retreived Web Part Properties", true);
 
                     webPartPropertiesFileName = sourceWebPartXmlFilesDir + "\\" + StorageKey + "_" + Constants.WEBPART_PROPERTIES_FILENAME;
 
@@ -139,7 +139,7 @@ namespace JDP.Remediation.Console
                         fsWebPartProperties.Flush();
                     }
 
-                    Logger.LogInfoMessage("[GetWebPartProperties] WebPart Properties in xml format is exported to the file " + webPartPropertiesFileName);
+                    Logger.LogSuccessMessage("[GetWebPartProperties] WebPart Properties in xml format is exported to the file " + webPartPropertiesFileName, true);
                 }
 
             }

@@ -206,7 +206,7 @@ namespace JDP.Remediation.Console
                     //Default Pages
 
                     if (isfound)
-                        Logger.LogSuccessMessage("[GetWebPartUsage] WebPart Usage is exported to the file " + webPartUsageFileName);
+                        Logger.LogSuccessMessage("[GetWebPartUsage] WebPart Usage is exported to the file " + webPartUsageFileName, true);
 
                 }
             }

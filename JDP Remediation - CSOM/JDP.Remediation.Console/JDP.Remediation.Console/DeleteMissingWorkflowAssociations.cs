@@ -19,13 +19,23 @@ namespace JDP.Remediation.Console
             try
             {
                 string timeStamp = DateTime.Now.ToString("yyyyMMdd_hhmmss");
+                string workflowInputFile = string.Empty;
                 Logger.OpenLog("DeleteWorkflowAssociations", timeStamp);
 
-                if (!ShowInformation())
+                //if (!ShowInformation())
+                //  return;
+
+                if (!ReadInputFile(ref workflowInputFile))
+                {
+                    System.Console.ForegroundColor = System.ConsoleColor.Red;
+                    Logger.LogErrorMessage("Workflow Associations input file is not valid or available. So, Operation aborted!");
+                    Logger.LogErrorMessage("Please enter path like: E.g. C:\\<Working Directory>\\<InputFile>.csv");
+                    System.Console.ResetColor();
                     return;
+                }
 
+                string inputFileSpec = workflowInputFile;
 
-                string inputFileSpec = Environment.CurrentDirectory + @"\" + Constants.MissingWorkflowAssociationsInputFileName;
                 if (System.IO.File.Exists(inputFileSpec))
                 {
                     Logger.LogInfoMessage(String.Format("Scan starting {0}", DateTime.Now.ToString()), true);
@@ -91,6 +101,7 @@ namespace JDP.Remediation.Console
             objWFOP.WebApplication = webAppUrl;
             objWFOP.WebUrl = webUrl;
             objWFOP.SiteCollection = missingFile.SiteCollection;
+            objWFOP.ExecutionDateTime = DateTime.Now.ToString();
 
             if (webUrl.IndexOf("http", StringComparison.InvariantCultureIgnoreCase) < 0)
             {
@@ -135,7 +146,10 @@ namespace JDP.Remediation.Console
                     userContext.ExecuteQuery();
 
                     if (Helper.DeleteFileByServerRelativeUrl(web, serverRelativeFilePath))
+                    {
+                        Logger.LogInfoMessage(wfFileName + " deleted successfully and output file is present in the path: " + Environment.CurrentDirectory);
                         objWFOP.Status = Constants.Success;
+                    }
                     else
                         objWFOP.Status = Constants.Failure;
                     //Logger.LogInfoMessage(targetFile.Name + " deleted successfully");
@@ -166,6 +180,20 @@ namespace JDP.Remediation.Console
             if (option.Equals("y", StringComparison.OrdinalIgnoreCase))
                 doContinue = true;
             return doContinue;
+        }
+
+        private static bool ReadInputFile(ref string workflowInputFile)
+        {
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
+            Logger.LogMessage("Enter Complete Input File Path of Pre Scan Workflow Associations <" + Constants.MissingWorkflowAssociationsInputFileName + "> Report:");
+            System.Console.ForegroundColor = System.ConsoleColor.Yellow;
+            System.Console.WriteLine("Please make sure you verify the data before executing Clean-up option as cleaned Workflow Associations can't be rollback.");
+            System.Console.ResetColor();
+            workflowInputFile = System.Console.ReadLine();
+            Logger.LogMessage("[DeleteFeatures : ReadInputFile] Entered Input File of Workflow Associations Data " + workflowInputFile, false);
+            if (string.IsNullOrEmpty(workflowInputFile) || !System.IO.File.Exists(workflowInputFile))
+                return false;
+            return true;
         }
     }
 }

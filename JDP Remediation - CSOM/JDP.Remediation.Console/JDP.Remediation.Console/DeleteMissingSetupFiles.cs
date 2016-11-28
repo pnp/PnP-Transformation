@@ -17,11 +17,23 @@ namespace JDP.Remediation.Console
         public static void DoWork()
         {
             string timeStamp = DateTime.Now.ToString("yyyyMMdd_hhmmss");
+            string setupInputFile = string.Empty;
             Logger.OpenLog("DeleteSetupFiles", timeStamp);
-            if (!ShowInformation())
-                return;
 
-            string inputFileSpec = Environment.CurrentDirectory + @"\" + Constants.MissingSetupFilesInputFileName;
+            //if (!ShowInformation())
+            //    return;
+
+            if (!ReadInputFile(ref setupInputFile))
+            {
+                System.Console.ForegroundColor = System.ConsoleColor.Red;
+                Logger.LogErrorMessage("Setup Files input file is not valid or available. So, Operation aborted!");
+                Logger.LogErrorMessage("Please enter path like: E.g. C:\\<Working Directory>\\<InputFile>.csv");
+                System.Console.ResetColor();
+                return;
+            }
+
+            string inputFileSpec = setupInputFile;
+
             if (System.IO.File.Exists(inputFileSpec))
             {
                 Logger.LogInfoMessage(String.Format("Scan starting {0}", DateTime.Now.ToString()), true);
@@ -76,6 +88,7 @@ namespace JDP.Remediation.Console
             objSetupOP.SetupFileName = setupFileName;
             objSetupOP.WebApplication = webAppUrl;
             objSetupOP.WebUrl = webUrl;
+            objSetupOP.ExecutionDateTime = DateTime.Now.ToString();
 
             if (webUrl.IndexOf("http", StringComparison.InvariantCultureIgnoreCase) < 0)
             {
@@ -131,7 +144,10 @@ namespace JDP.Remediation.Console
                     userContext.ExecuteQuery();
 
                     if (Helper.DeleteFileByServerRelativeUrl(web, serverRelativeFilePath))
+                    {
+                        Logger.LogInfoMessage(setupFileName + " deleted successfully and output file is present in the path: " + Environment.CurrentDirectory);
                         objSetupOP.Status = Constants.Success;
+                    }
                     else
                         objSetupOP.Status = Constants.Failure;
                     if (System.IO.File.Exists(csvFile))
@@ -162,6 +178,20 @@ namespace JDP.Remediation.Console
             if (option.Equals("y", StringComparison.OrdinalIgnoreCase))
                 doContinue = true;
             return doContinue;
+        }
+
+        private static bool ReadInputFile(ref string setupInputFile)
+        {
+            System.Console.ForegroundColor = System.ConsoleColor.Cyan;
+            Logger.LogMessage("Enter Complete Input File Path of Pre-Scan Setup File <" + Constants.MissingSetupFilesInputFileName + "> Report:");
+            System.Console.ForegroundColor = System.ConsoleColor.Yellow;
+            System.Console.WriteLine("Please make sure you verify the data before executing Clean-up option as cleaned Setup Files can't be rollback.");
+            System.Console.ResetColor();
+            setupInputFile = System.Console.ReadLine();
+            Logger.LogMessage("[DeleteSetupFiles : ReadInputFile] Entered Input File of Setup File Data " + setupInputFile, false);
+            if (string.IsNullOrEmpty(setupInputFile) || !System.IO.File.Exists(setupInputFile))
+                return false;
+            return true;
         }
     }
 }

@@ -131,14 +131,14 @@ namespace JDP.Remediation.Console
                             {
                                 objWPOutputBase.Status = Constants.Success;
                                 System.Console.ForegroundColor = System.ConsoleColor.Green;
-                                Logger.LogInfoMessage("Successfully Deleted WebPart with Webpart Type " + objInput.WebPartType + " and with StorageKey " + objInput.StorageKey);
+                                Logger.LogSuccessMessage("Successfully Deleted WebPart with Webpart Type " + objInput.WebPartType + " and with StorageKey " + objInput.StorageKey + "and output file is present in the path: " + Environment.CurrentDirectory, true);
                                 System.Console.ResetColor();
                             }
                             else
                             {
                                 objWPOutputBase.Status = Constants.Failure;
                                 System.Console.ForegroundColor = System.ConsoleColor.Gray;
-                                Logger.LogInfoMessage("Failed to Delete WebPart with Webpart Type " + objInput.WebPartType + " and with StorageKey " + objInput.StorageKey);
+                                Logger.LogErrorMessage("Failed to Delete WebPart with Webpart Type " + objInput.WebPartType + " and with StorageKey " + objInput.StorageKey, true);
                                 System.Console.ResetColor();
                             }
                         }
@@ -154,6 +154,7 @@ namespace JDP.Remediation.Console
                         objWPOutputBase.PageUrl = objInput.PageUrl;
                         objWPOutputBase.WebUrl = objInput.WebUrl;
                         objWPOutputBase.StorageKey = objInput.StorageKey;
+                        objWPOutputBase.ExecutionDateTime = DateTime.Now.ToString();
 
                         if (System.IO.File.Exists(csvFile))
                         {
@@ -295,11 +296,11 @@ namespace JDP.Remediation.Console
                         if (DeleteWebPart(userContext.Web, ServerRelativePageUrl, storageKey))
                         {
                             isWebPartDeleted = true;
-                            Logger.LogInfoMessage("Successfully Deleted the WebPart", false);
+                            Logger.LogSuccessMessage("Successfully Deleted the WebPart", true);
                         }
                         else
                         {
-                            Logger.LogInfoMessage("WebPart with StorageKey: " + storageKey + " does not exist in the Page: " + ServerRelativePageUrl, false);
+                            Logger.LogErrorMessage("WebPart with StorageKey: " + storageKey + " does not exist in the Page: " + ServerRelativePageUrl, true);
                         }
                     }
                     catch (Exception ex)
@@ -617,6 +618,8 @@ namespace JDP.Remediation.Console
         {
             System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             Logger.LogMessage("Enter Complete Input File Path of Webparts Report Either Pre-Scan OR Discovery Report:");
+            System.Console.ForegroundColor = System.ConsoleColor.Yellow;
+            System.Console.WriteLine("Please make sure you verify the data before executing Clean-up option as cleaned Webparts can't be rollback.");
             System.Console.ResetColor();
             webPartsInputFile = System.Console.ReadLine();
             Logger.LogMessage("[DownloadAndModifyListTemplate: ReadInputFile] Entered Input File of List Template Data " + webPartsInputFile, false);

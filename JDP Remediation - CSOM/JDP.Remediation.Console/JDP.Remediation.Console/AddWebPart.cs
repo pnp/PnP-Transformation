@@ -112,6 +112,7 @@ namespace JDP.Remediation.Console
                 objWPOutputBase.ZoneID = webPartZoneID;
                 objWPOutputBase.ZoneIndex = webPartZoneIndex;
                 objWPOutputBase.PageUrl = serverRelativePageUrl;
+                objWPOutputBase.ExecutionDateTime = DateTime.Now.ToString();
 
                 if (AddWebPartToPage(webUrl, webPartFileName, webPartXmlFilePath, webPartZoneIndex, webPartZoneID, serverRelativePageUrl, outputPath))
                 {

@@ -23,8 +23,9 @@ namespace JDP.Remediation.Console
             string timeStamp = DateTime.Now.ToString("yyyyMMdd_hhmmss");
             string featureInputFile = string.Empty;
             Logger.OpenLog("DeleteFeatures", timeStamp);
-            if (!ShowInformation())
-                return;
+
+            //if (!ShowInformation())
+            //    return;
 
             if (!ReadInputFile(ref featureInputFile))
             {
@@ -91,6 +92,8 @@ namespace JDP.Remediation.Console
             objFeatureOP.FeatureId = featureId; ;
             objFeatureOP.Scope = missingFeature.Scope;
             objFeatureOP.WebApplication = missingFeature.WebApplication;
+            objFeatureOP.ExecutionDateTime = DateTime.Now.ToString();
+
             if (missingFeature.Scope == "Site")
             {
                 targetUrl = missingFeature.SiteCollection;
@@ -125,12 +128,12 @@ namespace JDP.Remediation.Console
                             userContext.ExecuteQuery();
                             if (RemoveFeatureFromSite(userContext, featureDefinitionId))
                             {
-                                Logger.LogSuccessMessage(String.Format("Deleted Feature {0} from site {1}", featureDefinitionId.ToString(), userContext.Site.Url), false);
+                                Logger.LogSuccessMessage(String.Format("Deleted Feature {0} from site {1} and output file is present in the path: {2}", featureDefinitionId.ToString(), userContext.Site.Url, Environment.CurrentDirectory), true);
                                 objFeatureOP.Status = Constants.Success;
                             }
                             else
                             {
-                                Logger.LogErrorMessage(String.Format("[DeleteMissingFeatures: DeleteMissingFeature] Could not delete site Feature {0}; feature not found", featureDefinitionId.ToString()), false);
+                                Logger.LogErrorMessage(String.Format("[DeleteMissingFeatures: DeleteMissingFeature] Could not delete site Feature {0}; feature not found", featureDefinitionId.ToString()), true);
                                 objFeatureOP.Status = Constants.Failure;
                             }
                             break;
@@ -140,12 +143,12 @@ namespace JDP.Remediation.Console
                             userContext.ExecuteQuery();
                             if (RemoveFeatureFromWeb(userContext, featureDefinitionId))
                             {
-                                Logger.LogSuccessMessage(String.Format("Deleted Feature {0} from web {1}", featureDefinitionId.ToString(), userContext.Web.Url), false);
+                                Logger.LogSuccessMessage(String.Format("Deleted Feature {0} from web {1} and output file is present in the path: {2}", featureDefinitionId.ToString(), userContext.Web.Url, Environment.CurrentDirectory), true);
                                 objFeatureOP.Status = Constants.Success;
                             }
                             else
                             {
-                                Logger.LogErrorMessage(String.Format("[DeleteMissingFeatures: DeleteMissingFeature] Could not delete web Feature {0}; feature not found", featureDefinitionId.ToString()), false);
+                                Logger.LogErrorMessage(String.Format("[DeleteMissingFeatures: DeleteMissingFeature] Could not delete web Feature {0}; feature not found", featureDefinitionId.ToString()), true);
                                 objFeatureOP.Status = Constants.Failure;
                             }
                             break;
@@ -175,7 +178,7 @@ namespace JDP.Remediation.Console
 
             if (RemoveFeatureFromWeb(userContext, featureDefinitionId))
             {
-                Logger.LogSuccessMessage(String.Format("Deleted Feature {0} from web {1}", featureDefinitionId.ToString(), userContext.Web.Url), false);
+                Logger.LogSuccessMessage(String.Format("Deleted Feature {0} from web {1}", featureDefinitionId.ToString(), userContext.Web.Url), true);
                 return;
             }
 
@@ -183,7 +186,7 @@ namespace JDP.Remediation.Console
 
             if (RemoveFeatureFromSite(userContext, featureDefinitionId))
             {
-                Logger.LogSuccessMessage(String.Format("Deleted Feature {0} from site {1}", featureDefinitionId.ToString(), userContext.Site.Url), false);
+                Logger.LogSuccessMessage(String.Format("Deleted Feature {0} from site {1}", featureDefinitionId.ToString(), userContext.Site.Url), true);
                 return;
             }
 
@@ -300,6 +303,8 @@ namespace JDP.Remediation.Console
         {
             System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             Logger.LogMessage("Enter Complete Input File Path of Features Report Either Pre-Scan OR Discovery Report:");
+            System.Console.ForegroundColor = System.ConsoleColor.Yellow;
+            System.Console.WriteLine("Please make sure you verify the data before executing Clean-up option as cleaned Features can't be rollback.");
             System.Console.ResetColor();
             featureInputFile = System.Console.ReadLine();
             Logger.LogMessage("[DeleteFeatures : ReadInputFile] Entered Input File of Feature Data " + featureInputFile, false);

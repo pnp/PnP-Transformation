@@ -208,6 +208,7 @@ namespace JDP.Remediation.Console
                             objWPOutputBase.ZoneIndex = objInput.ZoneIndex;
                             objWPOutputBase.WebPartId = objInput.WebPartId;
                             objWPOutputBase.PageUrl = objInput.PageUrl;
+                            objWPOutputBase.ExecutionDateTime = DateTime.Now.ToString();
 
                             if (status)
                             {
@@ -517,7 +518,7 @@ namespace JDP.Remediation.Console
                     System.Console.ForegroundColor = System.ConsoleColor.Green;
                     isWebPartReplaced = true;
                     Logger.LogSuccessMessage("[ReplaceWebPart]Successfully Added WebPart ");
-                    Logger.LogSuccessMessage("[ReplaceWebPart] Successfully Replaced the newly configured WebPart");
+                    Logger.LogSuccessMessage("[ReplaceWebPart] Successfully Replaced the newly configured WebPart and output file is present in the path: " + outPutDirectory, true);
                     System.Console.ResetColor();
                 }
             }
