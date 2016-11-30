@@ -200,8 +200,8 @@ namespace JDP.Remediation.Console
             Logger.CloseLog();
         }
 
-        public static bool DownloadListTemplate(string filePath, string ListGalleryPath, string ListTemplateName,
-            string SiteCollection, string WebUrl)
+        public static bool DownloadListTemplate(string filePath, string ListGalleryPath, ref string ListTemplateName,
+            string SiteCollection, string WebUrl, string TempFolderName)
         {
             Logger.LogInfoMessage("[DownloadAndModifyListTemplate: DownloadListTemplate] Downloading the List Template: " + ListTemplateName, true);
             if (!Directory.Exists(filePath))
@@ -237,11 +237,12 @@ namespace JDP.Remediation.Console
                         FileInformation info = Microsoft.SharePoint.Client.File.OpenBinaryDirect(userContext, fileUrl);
                         string fileName = fileUrl.Substring(fileUrl.LastIndexOf("/") + 1);
 
-                        var fileNamePath = Path.Combine(filePath, fileName.ToLower());
+                        var fileNamePath = Path.Combine(filePath, TempFolderName + Constants.StpExtension);
                         using (var fileStream = System.IO.File.Create(fileNamePath))
                         {
                             info.Stream.CopyTo(fileStream);
                             isDownloaded = true;
+                            ListTemplateName = TempFolderName + Constants.StpExtension;
                             Logger.LogInfoMessage("[DownloadAndModifyListTemplate: DownloadListTemplate] Successfully Downloaded List Template " + ListTemplateName, true);
                         }
                     }
@@ -318,7 +319,7 @@ namespace JDP.Remediation.Console
                 //else
                 //    cabDir = destDir + newFileName.Replace(".", "_");
 
-                FileUtility.UnCab(fileName.ToLower().Replace(".stp", ".cab"), destDir);
+                FileUtility.UnCab(solFileName.ToLower().Replace(".stp", ".cab"), destDir);
                 Directory.SetCurrentDirectory(destDir);
 
                 Logger.LogInfoMessage("[DownloadAndModifyListTemplate: ProcessStpFile] Extracted the List Template: " + objListCustOutput.ListTemplateName + " in path: " + cabDir, true);
@@ -843,7 +844,7 @@ namespace JDP.Remediation.Console
                 TempFolderName += 1;
 
                 bool isDownloaded = DownloadListTemplate(outputPath + @"\" + Constants.DownloadPathListTemplates + @"\" + TempFolderName,
-                    listGalleryPath, fileName, objListCustOutput.WebUrl, objListCustOutput.WebUrl);
+                    listGalleryPath, ref fileName, objListCustOutput.WebUrl, objListCustOutput.WebUrl, TempFolderName.ToString());
                 if (isDownloaded)
                 {
                     isCustomizationPresent = ProcessStpFile(outputPath, outputPath + @"\" + Constants.DownloadPathListTemplates + @"\" + TempFolderName

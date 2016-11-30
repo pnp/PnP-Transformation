@@ -75,13 +75,13 @@ namespace JDP.Remediation.Console
                     if (contextCount == 1)
                     {
                         Logger.LogMessage(String.Format("\n"), true);
-                        Logger.LogErrorMessage(String.Format("Attempt [{0}]: You have entered an invalid username or password. You have two more attempts.", contextCount, 3 - contextCount), true);
+                        Logger.LogErrorMessage(String.Format("Attempt [{0}]: You have entered an invalid username or password. The maximum retry attempts allowed for login are 3. You have 2 more attempts.", contextCount, 3 - contextCount), true);
                         ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, siteUrl, "Authentication", exc.Message, exc.ToString(), "CreateAuthenticatedUserContext()", exc.GetType().ToString());
                     }
                     else if (contextCount == 2)
                     {
                         Logger.LogMessage(String.Format("\n"), true);
-                        Logger.LogErrorMessage(String.Format("Attempt [{0}]: Incorrect login credentials twice. You have one more attempt. If you fail to enter correct credentials this time, your login will be disabled/locked.", contextCount, 3 - contextCount), true);
+                        Logger.LogErrorMessage(String.Format("Attempt [{0}]: Incorrect login credentials twice. You have one more attempt. If you fail to enter correct credentials this time, application would be terminated.", contextCount, 3 - contextCount), true);
                         //Logger.LogErrorMessage(String.Format("\nWrong user credentials given for {0} time. {1} attemps remained", contextCount, 3 - contextCount), true);
                         ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, siteUrl, "Authentication", exc.Message, exc.ToString(), "CreateAuthenticatedUserContext()", exc.GetType().ToString());
                     }
@@ -105,13 +105,13 @@ namespace JDP.Remediation.Console
                 if (contextCount == 1)
                 {
                     Logger.LogMessage(String.Format("\n"), true);
-                    Logger.LogErrorMessage(String.Format("Attempt [{0}]: You have entered an invalid username or password. You have two more attempts.", contextCount, 3 - contextCount), true);
+                    Logger.LogErrorMessage(String.Format("Attempt [{0}]: You have entered an invalid username or password. The maximum retry attempts allowed for login are 3. You have 2 more attempts.", contextCount, 3 - contextCount), true);
                     ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, siteUrl, "Authentication", exc.Message, exc.ToString(), "CreateAuthenticatedUserContext()", exc.GetType().ToString());
                 }
                 else if (contextCount == 2)
                 {
                     Logger.LogMessage(String.Format("\n"), true);
-                    Logger.LogErrorMessage(String.Format("Attempt [{0}]: Incorrect login credentials twice. You have one more attempt. If you fail to enter correct credentials this time, your login will be disabled/locked.", contextCount, 3 - contextCount), true);
+                    Logger.LogErrorMessage(String.Format("Attempt [{0}]: Incorrect login credentials twice. You have one more attempt. If you fail to enter correct credentials this time, application would be terminated.", contextCount, 3 - contextCount), true);
                     //Logger.LogErrorMessage(String.Format("\nWrong user credentials given for {0} time. {1} attemps remained", contextCount, 3 - contextCount), true);
                     ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, siteUrl, "Authentication", exc.Message, exc.ToString(), "CreateAuthenticatedUserContext()", exc.GetType().ToString());
                 }

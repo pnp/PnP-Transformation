@@ -31,8 +31,6 @@ namespace JDP.Remediation.Console
 
             GenerateReportFile(sites, GenSiteColFileName);
 
-            Logger.LogSuccessMessage(String.Format("[GenerateSiteCollectionReport] Usage report is exported to the file {0}", GenSiteColFileName), true);
-
             Logger.LogInfoMessage(String.Format("Report completed at {0}", DateTime.Now.ToString()), true);
             Logger.CloseLog();
         }
@@ -53,6 +51,7 @@ namespace JDP.Remediation.Console
                 Logger.LogInfoMessage(String.Format("No site collections were found"), true);
                 return;
             }
+           
             //Text File
             string outputFileSpecFormat = "{0}" + DateTime.Now.ToString("yyyyMMdd_hhmmss") + ".txt";
             string outputFileSpec = String.Format(outputFileSpecFormat, Constants.GenSiteCollectionFileName);
@@ -69,8 +68,8 @@ namespace JDP.Remediation.Console
                     FileUtility.WriteCsVintoFile(GenSiteColFileName, objGenSiteColOutput, ref headerSiteCollection);
                 }
                 outputFile.Close();
-
-                Logger.LogMessage(String.Format("Report containing {0} sites has been saved to {1} (Text Format) and "+GenSiteColFileName+" (CSV Format) ", sites.Count, outputFileSpec), true);
+                Logger.LogSuccessMessage(String.Format("[GenerateSiteCollectionReport] GenerateReportFile: Usage report is exported to the file {0}", GenSiteColFileName), true);
+                Logger.LogMessage(String.Format("[GenerateSiteCollectionReport] GenerateReportFile: Report containing {0} sites has been saved to {1} (Text Format) and " + GenSiteColFileName + " (CSV Format) ", sites.Count, outputFileSpec), true);
             }
         }
 
@@ -80,7 +79,7 @@ namespace JDP.Remediation.Console
             try
             {
                 System.Console.ForegroundColor = System.ConsoleColor.Cyan;
-                System.Console.WriteLine("Enter any Web/Site Url in the farm to report all site collections in that farm: ");
+                System.Console.WriteLine("Enter any Web/Site Url from the farm for which you want all site collections report:");
                 System.Console.ResetColor();
                 url = System.Console.ReadLine();
                 if (string.IsNullOrEmpty(url))

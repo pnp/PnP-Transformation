@@ -194,7 +194,7 @@ namespace JDP.Remediation.Console
             Logger.CloseLog();
         }
 
-        public static bool DownloadSiteTemplate(string filePath, string SiteTemplateGalleryPath, string SiteTemplateName, string SiteCollection, string WebUrl)
+        public static bool DownloadSiteTemplate(string filePath, string SiteTemplateGalleryPath, ref string SiteTemplateName, string SiteCollection, string WebUrl, string TempFolderName)
         {
             Logger.LogInfoMessage("[DownloadSiteTemplate] Downloading the Site Template: " + SiteTemplateName, true);
             if (!Directory.Exists(filePath))
@@ -229,11 +229,12 @@ namespace JDP.Remediation.Console
                         FileInformation info = Microsoft.SharePoint.Client.File.OpenBinaryDirect(userContext, fileUrl);
                         string fileName = fileUrl.Substring(fileUrl.LastIndexOf("/") + 1);
 
-                        var fileNamePath = Path.Combine(filePath, fileName.ToLower());
+                        var fileNamePath = Path.Combine(filePath, TempFolderName + Constants.WspExtension);
                         using (var fileStream = System.IO.File.Create(fileNamePath))
                         {
                             info.Stream.CopyTo(fileStream);
                             isDownloaded = true;
+                            SiteTemplateName = TempFolderName + Constants.WspExtension;
                             Logger.LogInfoMessage("[DownloadSiteTemplate] Successfully Downloaded Site Template " + SiteTemplateName, true);
                         }
                     }
@@ -300,7 +301,7 @@ namespace JDP.Remediation.Console
                 //p.WaitForExit();
                 //string cabDir = newFilePath.Replace(".", "_");
                 //Directory.SetCurrentDirectory(newFileName.Replace(".", "_"));
-                FileUtility.UnCab(fileName.ToLower().Replace(".wsp", ".cab"), destDir);
+                FileUtility.UnCab(solFileName.ToLower().Replace(".wsp", ".cab"), destDir);
                 //string cabDir = newFilePath.Replace(".", "_");
                 Directory.SetCurrentDirectory(destDir);
                 //string extractedPath = solFileName.Replace(".wsp", "_cab");
@@ -745,7 +746,7 @@ namespace JDP.Remediation.Console
                 TempFolderName += 1;
 
                 bool isDownloaded = DownloadSiteTemplate(outputPath + @"\" + Constants.DownloadPathSiteTemplates + @"\" + TempFolderName,
-                    siteGalleryPath, fileName, objSiteCustOutput.WebUrl, objSiteCustOutput.WebUrl);
+                    siteGalleryPath, ref fileName, objSiteCustOutput.WebUrl, objSiteCustOutput.WebUrl, TempFolderName.ToString());
                 if (isDownloaded)
                 {
                     isCustomizationPresent = ProcessWspFile(outputPath, outputPath + @"\" + Constants.DownloadPathSiteTemplates + @"\" + TempFolderName + @"\" + fileName.ToLower(),

@@ -57,7 +57,7 @@ namespace JDP.Remediation.Console
                 return;
             Logger.LogInfoMessage(String.Format("Scan starting {0}", DateTime.Now.ToString()), true);
 
-            string contentTypesInputFileSpec = Environment.CurrentDirectory + "\\" + Constants.UsageReport_ContentTypesInputFileName;
+            string contentTypesInputFileSpec = Environment.CurrentDirectory + "\\" + Constants.ContentTypeInput;
             List<ContentTypeSpec> contentTypes = new List<ContentTypeSpec>();
             if (System.IO.File.Exists(contentTypesInputFileSpec))
             {
@@ -71,7 +71,8 @@ namespace JDP.Remediation.Console
             else
                 Logger.LogErrorMessage(String.Format("[GenerateColumnORFieldAndTypeUsageReport] Input file {0} is not available", contentTypesInputFileSpec), true);
 
-            string customFieldsInputFileSpec = Environment.CurrentDirectory + "\\" + Constants.UsageReport_CustomFieldsInputFileName;
+            string customFieldsInputFileSpec = Environment.CurrentDirectory + "\\" + Constants.CustomFieldsInput;
+
             List<SiteColumnSpec> customFields = new List<SiteColumnSpec>();
             if (System.IO.File.Exists(customFieldsInputFileSpec))
             {
@@ -390,7 +391,7 @@ namespace JDP.Remediation.Console
             bool doContinue = false;
             string option = string.Empty;
             System.Console.ForegroundColor = System.ConsoleColor.Yellow;
-            System.Console.WriteLine("Input files <" + Constants.UsageReport_ContentTypesInputFileName + ", " + Constants.UsageReport_CustomFieldsInputFileName + ", " + Constants.UsageReport_SitesInputFileName + "> needs to be present in current working directory (where JDP.Remediation.Console.exe is present) to generate usage report. ");
+            System.Console.WriteLine("Input files <" + Constants.ContentTypeInput + ", " + Constants.CustomFieldsInput + ", " + Constants.UsageReport_SitesInputFileName + "> needs to be present in current working directory (where JDP.Remediation.Console.exe is present) to generate usage report. ");
             System.Console.ResetColor();
             System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             System.Console.WriteLine("Press 'y' to proceed further. Press any key to go for Self Service Report Menu.");
