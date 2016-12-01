@@ -51,7 +51,7 @@ namespace JDP.Remediation.Console
                     if (!ReadInputOptions(ref processInputFile, ref processFarm, ref processSiteCollections))
                     {
                         System.Console.ForegroundColor = System.ConsoleColor.Red;
-                        Logger.LogMessage("Operation aborted by user.");
+                        Logger.LogErrorMessage("Operation aborted by user.");
                         System.Console.ResetColor();
                         return;
                     }
@@ -62,7 +62,7 @@ namespace JDP.Remediation.Console
                         if (!ReadWebApplication(ref webApplicationUrl))
                         {
                             System.Console.ForegroundColor = System.ConsoleColor.Red;
-                            Logger.LogInfoMessage("WebApplicationUrl is not valid. So, Operation aborted!");
+                            Logger.LogErrorMessage("WebApplicationUrl is not valid. So, Operation aborted!");
                             System.Console.ResetColor();
                             return;
                         }
@@ -74,7 +74,7 @@ namespace JDP.Remediation.Console
                         if (!ReadSiteCollectionList(ref siteCollectionUrlsList))
                         {
                             System.Console.ForegroundColor = System.ConsoleColor.Red;
-                            Logger.LogInfoMessage("SiteCollectionUrls is not valid. So, Operation aborted!");
+                            Logger.LogErrorMessage("SiteCollectionUrls is not valid. So, Operation aborted!");
                             System.Console.ResetColor();
                             return;
                         }
@@ -87,8 +87,8 @@ namespace JDP.Remediation.Console
                         if (!ReadInputFile(ref ListTemplateInputFile))
                         {
                             System.Console.ForegroundColor = System.ConsoleColor.Red;
-                            Logger.LogInfoMessage("ListTemplate input file is not valid or available. So, Operation aborted!");
-                            Logger.LogInfoMessage("Please enter path like: E.g. C:\\<Working Directory>\\<InputFile>.csv");
+                            Logger.LogErrorMessage("ListTemplate input file is not valid or available. So, Operation aborted!");
+                            Logger.LogErrorMessage("Please enter path like: E.g. C:\\<Working Directory>\\<InputFile>.csv");
                             System.Console.ResetColor();
                             return;
                         }
@@ -101,7 +101,7 @@ namespace JDP.Remediation.Console
                         if (!ReadInputFilesPath())
                         {
                             System.Console.ForegroundColor = System.ConsoleColor.Red;
-                            Logger.LogInfoMessage("Input files directory is not valid. So, Operation aborted!");
+                            Logger.LogErrorMessage("Input files directory is not valid. So, Operation aborted!");
                             System.Console.ResetColor();
                             return;
                         }
@@ -200,8 +200,8 @@ namespace JDP.Remediation.Console
             Logger.CloseLog();
         }
 
-        public static bool DownloadListTemplate(string filePath, string ListGalleryPath, string ListTemplateName,
-            string SiteCollection, string WebUrl)
+        public static bool DownloadListTemplate(string filePath, string ListGalleryPath, ref string ListTemplateName,
+            string SiteCollection, string WebUrl, string TempFolderName)
         {
             Logger.LogInfoMessage("[DownloadAndModifyListTemplate: DownloadListTemplate] Downloading the List Template: " + ListTemplateName, true);
             if (!Directory.Exists(filePath))
@@ -237,17 +237,18 @@ namespace JDP.Remediation.Console
                         FileInformation info = Microsoft.SharePoint.Client.File.OpenBinaryDirect(userContext, fileUrl);
                         string fileName = fileUrl.Substring(fileUrl.LastIndexOf("/") + 1);
 
-                        var fileNamePath = Path.Combine(filePath, fileName.ToLower());
+                        var fileNamePath = Path.Combine(filePath, TempFolderName + Constants.StpExtension);
                         using (var fileStream = System.IO.File.Create(fileNamePath))
                         {
                             info.Stream.CopyTo(fileStream);
                             isDownloaded = true;
+                            ListTemplateName = TempFolderName + Constants.StpExtension;
                             Logger.LogInfoMessage("[DownloadAndModifyListTemplate: DownloadListTemplate] Successfully Downloaded List Template " + ListTemplateName, true);
                         }
                     }
                     else
                     {
-                        Logger.LogInfoMessage("[DownloadAndModifyListTemplate: DownloadListTemplate] Download Failed for " + ListTemplateName + ". ListGalleryPath is not present in the current Site Collection: ", true);
+                        Logger.LogErrorMessage("[DownloadAndModifyListTemplate: DownloadListTemplate] Download Failed for " + ListTemplateName + ". ListGalleryPath is not present in the current Site Collection: ", true);
                     }
                 }
             }
@@ -256,7 +257,7 @@ namespace JDP.Remediation.Console
                 if ((ex.Message.ToLower()).Contains("access denied") || (ex.Message.ToLower()).Contains("unauthorized"))
                 {
                     System.Console.ForegroundColor = ConsoleColor.Yellow;
-                    Logger.LogMessage("[DownloadAndModifyListTemplate: DownloadListTemplate]. Error recorded for Site Collection: " + SiteCollection + " and File: " + ListTemplateName + " Exception Message: " + ex.Message
+                    Logger.LogErrorMessage("[DownloadAndModifyListTemplate: DownloadListTemplate]. Error recorded for Site Collection: " + SiteCollection + " and File: " + ListTemplateName + " Exception Message: " + ex.Message
                     + ", Exception Comments: ListGalleryPath is not present in the current Site Collection", true);
                     System.Console.ResetColor();
                     ExceptionCsv.WriteException(Constants.NotApplicable, SiteCollection, WebUrl, "ListTemplate", ex.Message, ex.ToString(), "DownloadListTemplate",
@@ -318,8 +319,8 @@ namespace JDP.Remediation.Console
                 //else
                 //    cabDir = destDir + newFileName.Replace(".", "_");
 
-                FileUtility.UnCab(fileName.ToLower().Replace(".stp", ".cab"), destDir);                
-                Directory.SetCurrentDirectory(destDir); 
+                FileUtility.UnCab(solFileName.ToLower().Replace(".stp", ".cab"), destDir);
+                Directory.SetCurrentDirectory(destDir);
 
                 Logger.LogInfoMessage("[DownloadAndModifyListTemplate: ProcessStpFile] Extracted the List Template: " + objListCustOutput.ListTemplateName + " in path: " + cabDir, true);
 
@@ -677,7 +678,7 @@ namespace JDP.Remediation.Console
             }
             return isCustomizationPresent;
         }
-        
+
         public static void DeleteListTemplate()
         {
             //Output files
@@ -686,15 +687,22 @@ namespace JDP.Remediation.Console
             Logger.OpenLog("DeleteListTemplates", timeStamp);
             string listTemplateInputFile = string.Empty;
 
+            System.Console.ForegroundColor = ConsoleColor.Yellow;
+            System.Console.WriteLine("!!! NOTE !!!");
+            System.Console.WriteLine("List Template report generated using Pre-Scan (PreMT_AllListTemplatesInGallery_Usage.csv) OR Discovery Output (AllListTemplatesInGallery_Usage.csv) OR Output (ListTemplateCustomization_Usage.csv) generated by (Self Service > Operation 1), have collection of list templates with customization analysis, so it will delete all the list templates from the site collection, which are present in the input CSV file provided by user");
+
             System.Console.ForegroundColor = System.ConsoleColor.Cyan;
-            Logger.LogMessage("Enter Complete Input File Path of List Template Data. E.g. C:\\Test\\Test.csv ");
+            Logger.LogMessage("Enter Complete Input File Path of List Template Report Either Pre-Scan OR Discovery Report. E.g. C:\\Test\\Test.csv ");
+            System.Console.ForegroundColor = System.ConsoleColor.Yellow;
+            System.Console.WriteLine("Please make sure you verify the data before executing Clean-up option as cleaned List Template can't be rollback.");
             System.Console.ResetColor();
             listTemplateInputFile = System.Console.ReadLine();
 
             if (string.IsNullOrEmpty(listTemplateInputFile) || !System.IO.File.Exists(listTemplateInputFile))
             {
                 System.Console.ForegroundColor = System.ConsoleColor.Red;
-                Logger.LogInfoMessage("ListTemplateInputFile is not valid/available. So, Operation aborted.");
+                Logger.LogErrorMessage("ListTemplateInputFile is not valid/available. So, Operation aborted.");
+                Logger.LogErrorMessage("Please enter path like: E.g. C:\\<Working Directory>\\<InputFile>.csv");
                 System.Console.ResetColor();
                 return;
             }
@@ -720,7 +728,7 @@ namespace JDP.Remediation.Console
                     }
                     catch (Exception ex)
                     {
-                        Logger.LogErrorMessage("[DeleteListTemplate]. Exception Message: " + ex.Message+"Exception occured in Delete() while deleting the ListTemplate", true);
+                        Logger.LogErrorMessage("[DeleteListTemplate]. Exception Message: " + ex.Message + "Exception occured in Delete() while deleting the ListTemplate", true);
                         ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "ListTemplate", ex.Message, ex.ToString(), "DeleteListTemplate",
                             ex.GetType().ToString(), "Exception occured in Delete() while deleting the ListTemplate");
                     }
@@ -751,6 +759,7 @@ namespace JDP.Remediation.Console
             objLTOP.WebApplication = webAppUrl;
             objLTOP.WebUrl = webAppUrl;
             objLTOP.SiteCollection = listTemplate["SiteCollection"].ToString(); ;
+            objLTOP.ExecutionDateTime = DateTime.Now.ToString();
 
             if (webUrl.IndexOf("http", StringComparison.InvariantCultureIgnoreCase) < 0)
             {
@@ -796,7 +805,7 @@ namespace JDP.Remediation.Console
 
                     if (Helper.DeleteFileByServerRelativeUrl(web, serverRelativeFilePath))
                     {
-                        Logger.LogInfoMessage(listTemplateName + " deleted successfully");
+                        Logger.LogInfoMessage(listTemplateName + " deleted successfully and output file is present int he path: " + Environment.CurrentDirectory);
                         objLTOP.Status = Constants.Success;
                     }
                     else
@@ -812,7 +821,7 @@ namespace JDP.Remediation.Console
             {
                 Logger.LogErrorMessage(String.Format("[DownloadAndModifyListTemplate: Delete] failed for {0}: Error={1}", serverRelativeFilePath, ex.Message) + "Exception occured in while deleting the ListTemplate file. FilePath: " + serverRelativeFilePath, true);
                 ExceptionCsv.WriteException(webAppUrl, Constants.NotApplicable, webUrl, "ListTemplate", ex.Message, ex.ToString(), "Delete",
-                    ex.GetType().ToString(), "Exception occured in while deleting the ListTemplate file. FilePath: "+serverRelativeFilePath);
+                    ex.GetType().ToString(), "Exception occured in while deleting the ListTemplate file. FilePath: " + serverRelativeFilePath);
             }
         }
 
@@ -834,8 +843,8 @@ namespace JDP.Remediation.Console
                 objListCustOutput.ListGalleryPath = listGalleryPath;
                 TempFolderName += 1;
 
-                bool isDownloaded = DownloadListTemplate(outputPath + @"\" + Constants.DownloadPathListTemplates + @"\" +TempFolderName,
-                    listGalleryPath, fileName, objListCustOutput.WebUrl, objListCustOutput.WebUrl);
+                bool isDownloaded = DownloadListTemplate(outputPath + @"\" + Constants.DownloadPathListTemplates + @"\" + TempFolderName,
+                    listGalleryPath, ref fileName, objListCustOutput.WebUrl, objListCustOutput.WebUrl, TempFolderName.ToString());
                 if (isDownloaded)
                 {
                     isCustomizationPresent = ProcessStpFile(outputPath, outputPath + @"\" + Constants.DownloadPathListTemplates + @"\" + TempFolderName
@@ -921,14 +930,14 @@ namespace JDP.Remediation.Console
                                     else
                                         objListCustOutput.CreatedBy = Constants.NotApplicable;
                                 }
-                                catch(Exception ex)
+                                catch (Exception ex)
                                 {
                                     objListCustOutput.CreatedBy = Constants.NotApplicable;
-                                    Logger.LogMessage("[DownloadAndModifyListTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + ltFile.Name + " Exception Message: " + ex.Message + ". Author is NULL.", true);
+                                    Logger.LogErrorMessage("[DownloadAndModifyListTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + ltFile.Name + " Exception Message: " + ex.Message + ". Author is NULL.", true);
                                     ExceptionCsv.WriteException(webApplicationUrl, siteCollectionUrl, Constants.NotApplicable, "ListTemplate", ex.Message, ex.ToString(), "ProcessSiteCollectionUrl",
                                          ex.GetType().ToString(), "Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + ltFile.Name + " Exception Message: " + ex.Message + ". Author is NULL.");
                                 }
-                                
+
                                 try
                                 {
                                     if (ltFile.TimeCreated != null)
@@ -939,7 +948,7 @@ namespace JDP.Remediation.Console
                                 catch (Exception ex)
                                 {
                                     objListCustOutput.CreatedDate = Constants.NotApplicable;
-                                    Logger.LogMessage("[DownloadAndModifyListTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + ltFile.Name + " Exception Message: " + ex.Message + ". TimeCreated is NULL.", true);
+                                    Logger.LogErrorMessage("[DownloadAndModifyListTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + ltFile.Name + " Exception Message: " + ex.Message + ". TimeCreated is NULL.", true);
                                     ExceptionCsv.WriteException(webApplicationUrl, siteCollectionUrl, Constants.NotApplicable, "ListTemplate", ex.Message, ex.ToString(), "ProcessSiteCollectionUrl",
                                          ex.GetType().ToString(), "Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + ltFile.Name + " Exception Message: " + ex.Message + ". TimeCreated is NULL.");
                                 }
@@ -954,7 +963,7 @@ namespace JDP.Remediation.Console
                                 catch (Exception ex)
                                 {
                                     objListCustOutput.ModifiedBy = Constants.NotApplicable;
-                                    Logger.LogMessage("[DownloadAndModifyListTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + ltFile.Name + " Exception Message: " + ex.Message + ". ModifiedBy is NULL.", true);
+                                    Logger.LogErrorMessage("[DownloadAndModifyListTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + ltFile.Name + " Exception Message: " + ex.Message + ". ModifiedBy is NULL.", true);
                                     ExceptionCsv.WriteException(webApplicationUrl, siteCollectionUrl, Constants.NotApplicable, "ListTemplate", ex.Message, ex.ToString(), "ProcessSiteCollectionUrl",
                                          ex.GetType().ToString(), "Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + ltFile.Name + " Exception Message: " + ex.Message + ". ModifiedBy is NULL.");
                                 }
@@ -969,11 +978,11 @@ namespace JDP.Remediation.Console
                                 catch (Exception ex)
                                 {
                                     objListCustOutput.ModifiedDate = Constants.NotApplicable;
-                                    Logger.LogMessage("[DownloadAndModifyListTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + ltFile.Name + " Exception Message: " + ex.Message + ". TimeLastModified is NULL.", true);
+                                    Logger.LogErrorMessage("[DownloadAndModifyListTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + ltFile.Name + " Exception Message: " + ex.Message + ". TimeLastModified is NULL.", true);
                                     ExceptionCsv.WriteException(webApplicationUrl, siteCollectionUrl, Constants.NotApplicable, "ListTemplate", ex.Message, ex.ToString(), "ProcessSiteCollectionUrl",
                                          ex.GetType().ToString(), "Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + ltFile.Name + " Exception Message: " + ex.Message + ". TimeLastModified is NULL.");
                                 }
-                                
+
                                 lstMissingListTempaltesInGalleryBase.Add(objListCustOutput);
                             }
                             objListCustOutput = null;
@@ -983,7 +992,7 @@ namespace JDP.Remediation.Console
                             if ((ex.Message.ToLower()).Contains("access denied") || (ex.Message.ToLower()).Contains("unauthorized"))
                             {
                                 System.Console.ForegroundColor = ConsoleColor.Yellow;
-                                Logger.LogMessage("[DownloadAndModifyListTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + ltFile.Name + " Exception Message: " + ex.Message, true);
+                                Logger.LogErrorMessage("[DownloadAndModifyListTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + ltFile.Name + " Exception Message: " + ex.Message, true);
                                 System.Console.ResetColor();
                                 ExceptionCsv.WriteException(webApplicationUrl, siteCollectionUrl, Constants.NotApplicable, "ListTemplate", ex.Message, ex.ToString(), "ProcessSiteCollectionUrl",
                                 ex.GetType().ToString(), "Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + ltFile.Name);
@@ -1003,7 +1012,7 @@ namespace JDP.Remediation.Console
                 if ((ex.Message.ToLower()).Contains("access denied") || (ex.Message.ToLower()).Contains("unauthorized"))
                 {
                     System.Console.ForegroundColor = ConsoleColor.Yellow;
-                    Logger.LogMessage("[DownloadAndModifyListTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " Exception Message: " + ex.Message, true);
+                    Logger.LogErrorMessage("[DownloadAndModifyListTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " Exception Message: " + ex.Message, true);
                     System.Console.ResetColor();
                     ExceptionCsv.WriteException(webApplicationUrl, siteCollectionUrl, Constants.NotApplicable, "ListTemplate", ex.Message, ex.ToString(), "ProcessSiteCollectionUrl",
                     ex.GetType().ToString(), "Error recorded for Site Collection: " + siteCollectionUrl);
@@ -1173,6 +1182,7 @@ namespace JDP.Remediation.Console
         {
             System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             Logger.LogMessage("Enter the directory of input files for customization analysis (EventReceivers.csv, ContentTypes.csv and CustomFields.csv)");
+            System.Console.ForegroundColor = System.ConsoleColor.Yellow;
             Logger.LogMessage("Please refer document for how to create input files to analyze the customization. These files are required to find what customization we are looking inside a template");
             System.Console.ResetColor();
             filePath = System.Console.ReadLine();
