@@ -376,13 +376,26 @@ namespace InfoPathScraper.Model.Feature
 		#region Public interface
 		public string Url { get; private set; }
 
-		public static XmlConnection Parse(XElement dataConnection)
+		public static DataConnection Parse(XElement dataConnection)
 		{
 			XmlConnection xc = null;
 			bool isRest = IsConnectionRest(dataConnection);
 			xc = isRest ? new RESTConnection() : new XmlConnection();
-			xc.Url = dataConnection.Attribute(fileUrlAttribute).Value;
-			return xc;
+
+            string fileUrl = dataConnection.Attribute(fileUrlAttribute).Value;
+
+            if (!String.IsNullOrEmpty(fileUrl))
+            {
+                // We have an embedded XmlConnection
+                xc.Url = dataConnection.Attribute(fileUrlAttribute).Value;
+                return xc;
+            }
+            else
+            {
+                // The XmlConnection is stored in a UDCX connection file
+                XElement udcExtension = FindChild(dataConnection);
+                return UdcConnection.Parse(dataConnection, udcExtension);
+            }
 		}
 
 		public override string ToString()
@@ -394,36 +407,45 @@ namespace InfoPathScraper.Model.Feature
 		{
 			return Url;
 		}
-		#endregion
+        #endregion
 
-		#region Private helpers
-		/// <summary>
-		/// Need to find the xsf2:xmlFileAdapterExtension node elsewhere in the XDocument
-		/// Need to find the one that has ref the same as our connection name, then look for isRest="[bool]" in there
-		/// </summary>
-		/// <param name="dataConnection"></param>
-		/// <returns></returns>
-		private static bool IsConnectionRest(XElement dataConnection)
+        #region Private helpers
+        private static XElement FindChild(XElement dataConnection)
+        {
+            XAttribute name = dataConnection.Attribute(nameAttribute);
+            if (name == null) return null;
+
+            string connectionName = name.Value;
+            foreach (XElement xmlExt in dataConnection.Document.Descendants(xsf2Namespace + xmlFileAdapterExtension))
+            {
+                XAttribute refAtt = xmlExt.Attribute(refAttribute);
+                if (refAtt == null) continue; // No name = no match
+                if (!refAtt.Value.Equals(connectionName)) continue; // These are not the extensions you are looking for ... *waves hand*
+                return xmlExt;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Need to find the xsf2:xmlFileAdapterExtension node elsewhere in the XDocument
+        /// Need to find the one that has ref the same as our connection name, then look for isRest="[bool]" in there
+        /// </summary>
+        /// <param name="dataConnection"></param>
+        /// <returns></returns>
+        private static bool IsConnectionRest(XElement dataConnection)
 		{
-			XAttribute name = dataConnection.Attribute(nameAttribute);
-			if (name == null) return false;
+            XElement xmlExt = FindChild(dataConnection);
+            if (xmlExt == null) return false;
 
-			string connectionName = name.Value;
-			foreach (XElement xmlExt in dataConnection.Document.Descendants(xsf2Namespace + xmlFileAdapterExtension))
-			{
-				XAttribute refAtt = xmlExt.Attribute(refAttribute);
-				if (refAtt == null) continue; // No name = no match
-				if (!refAtt.Value.Equals(connectionName)) continue; // These are not the extensions you are looking for ... *waves hand*
-				XAttribute isRest = xmlExt.Attribute(isRestAttribute);
-				if (isRest == null) return false;
-				return isRest.Value.Equals("yes");
-			}
-			return false;
+			XAttribute isRest = xmlExt.Attribute(isRestAttribute);
+			if (isRest == null) return false;
+
+            return isRest.Value.Equals("yes");
 		}
-		#endregion
-	}
+        #endregion
+    }
 
-	class RESTConnection : XmlConnection
+    class RESTConnection : XmlConnection
 	{
 	}
 
