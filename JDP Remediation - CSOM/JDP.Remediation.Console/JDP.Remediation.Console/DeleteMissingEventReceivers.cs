@@ -23,8 +23,9 @@ namespace JDP.Remediation.Console
             string timeStamp = DateTime.Now.ToString("yyyyMMdd_hhmmss");
             string eventReceiverInputFile = string.Empty;
             Logger.OpenLog("DeleteEventReceivers", timeStamp);
-            if (!ShowInformation())
-                return;
+
+            //if (!ShowInformation())
+            //  return;
 
             if (!ReadInputFile(ref eventReceiverInputFile))
             {
@@ -98,6 +99,7 @@ namespace JDP.Remediation.Console
             objEROP.SiteCollection = siteUrl;
             objEROP.WebUrl = webUrl;
             objEROP.WebApplication = MissingEventReceiver.WebApplication;
+            objEROP.ExecutionDateTime = DateTime.Now.ToString();
 
             if (webUrl.IndexOf("http", StringComparison.InvariantCultureIgnoreCase) < 0)
             {
@@ -186,11 +188,11 @@ namespace JDP.Remediation.Console
                         {
                             receiver.DeleteObject();
                             userContext.ExecuteQuery();
-                            Logger.LogSuccessMessage(String.Format("[DeleteMissingEventReceivers: DeleteSiteEventReceiver] Deleted SITE Event Receiver [{0}] from site {1}", eventName, siteUrl), false);
+                            Logger.LogSuccessMessage(String.Format("[DeleteMissingEventReceivers: DeleteSiteEventReceiver] Deleted SITE Event Receiver [{0}] from site {1} and output file is present in the path: {2}", eventName, siteUrl, Environment.CurrentDirectory), true);
                             return true;
                         }
                     }
-                    Logger.LogErrorMessage(String.Format("[DeleteMissingEventReceivers: DeleteSiteEventReceiver] DeleteSiteEventReceiver() failed for Event Receiver [{0}] on site {1}; Error=Event Receiver not Found.", eventName, siteUrl), false);
+                    Logger.LogErrorMessage(String.Format("[DeleteMissingEventReceivers: DeleteSiteEventReceiver] DeleteSiteEventReceiver() failed for Event Receiver [{0}] on site {1}; Error=Event Receiver not Found.", eventName, siteUrl), true);
                 }
             }
             catch (Exception ex)
@@ -224,11 +226,11 @@ namespace JDP.Remediation.Console
                         {
                             receiver.DeleteObject();
                             userContext.ExecuteQuery();
-                            Logger.LogSuccessMessage(String.Format("[DeleteMissingEventReceivers: DeleteWebEventReceiver] Deleted WEB Event Receiver [{0}] from web {1}", eventName, webUrl), false);
+                            Logger.LogSuccessMessage(String.Format("[DeleteMissingEventReceivers: DeleteWebEventReceiver] Deleted WEB Event Receiver [{0}] from web {1} and output file is present in the path: {2}", eventName, webUrl, Environment.CurrentDirectory), true);
                             return true;
                         }
                     }
-                    Logger.LogErrorMessage(String.Format("[DeleteMissingEventReceivers: DeleteWebEventReceiver] DeleteWebEventReceiver() failed for Event Receiver [{0}] on web {1}; Error=Event Receiver not Found.", eventName, webUrl), false);
+                    Logger.LogErrorMessage(String.Format("[DeleteMissingEventReceivers: DeleteWebEventReceiver] DeleteWebEventReceiver() failed for Event Receiver [{0}] on web {1}; Error=Event Receiver not Found.", eventName, webUrl), true);
                 }
             }
             catch (Exception ex)
@@ -260,7 +262,7 @@ namespace JDP.Remediation.Console
                     userContext.ExecuteQuery();
                     if (list == null)
                     {
-                        Logger.LogErrorMessage(String.Format("[DeleteMissingEventReceivers: DeleteListEventReceiver] failed for Event Receiver [{0}] on list [{1}] of web {2}; Error=List not Found.", eventName, hostId, webUrl), false);
+                        Logger.LogErrorMessage(String.Format("[DeleteMissingEventReceivers: DeleteListEventReceiver] failed for Event Receiver [{0}] on list [{1}] of web {2}; Error=List not Found.", eventName, hostId, webUrl), true);
                         return false;
                     }
 
@@ -276,11 +278,11 @@ namespace JDP.Remediation.Console
                         {
                             receiver.DeleteObject();
                             userContext.ExecuteQuery();
-                            Logger.LogSuccessMessage(String.Format("[DeleteMissingEventReceivers: DeleteListEventReceiver] Deleted LIST Event Receiver [{0}] from list [{1}] on web {2}", eventName, list.Title, webUrl), false);
+                            Logger.LogSuccessMessage(String.Format("[DeleteMissingEventReceivers: DeleteListEventReceiver] Deleted LIST Event Receiver [{0}] from list [{1}] on web {2} and output file is present in the path: {3}", eventName, list.Title, webUrl, Environment.CurrentDirectory), true);
                             return true;
                         }
                     }
-                    Logger.LogErrorMessage(String.Format("[DeleteMissingEventReceivers: DeleteListEventReceiver] failed for Event Receiver [{0}] on list [{1}] of web {2}; Error=Event Receiver not Found.", eventName, list.Title, webUrl), false);
+                    Logger.LogErrorMessage(String.Format("[DeleteMissingEventReceivers: DeleteListEventReceiver] failed for Event Receiver [{0}] on list [{1}] of web {2}; Error=Event Receiver not Found.", eventName, list.Title, webUrl), true);
                 }
             }
             catch (Exception ex)
@@ -302,7 +304,7 @@ namespace JDP.Remediation.Console
         {
             bool doContinue = false;
             string option = string.Empty;
-            System.Console.WriteLine(Constants.EventReceiversInput + " file needs to be present in current working directory (where JDP.Remediation.Console.exe is present) for EventReceivers cleanup ");
+            System.Console.WriteLine("Event Receivers Input File (Pre-Scan OR Discovery Report) file needs to be present in current working directory (where JDP.Remediation.Console.exe is present) for EventReceivers cleanup ");
             System.Console.WriteLine("Please make sure you verify the data before executing Clean-up option as cleaned EventReceivers can't be rollback.");
             System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             System.Console.WriteLine("Press 'y' to proceed further. Press any key to go for Clean-Up Menu.");
@@ -317,6 +319,8 @@ namespace JDP.Remediation.Console
         {
             System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             Logger.LogMessage("Enter Complete Input File Path of Event Receivers Report Either Pre-Scan OR Discovery Report:");
+            System.Console.ForegroundColor = System.ConsoleColor.Yellow;
+            System.Console.WriteLine("Please make sure you verify the data before executing Clean-up option as cleaned EventReceivers can't be rollback.");
             System.Console.ResetColor();
             eventReceiverInputFile = System.Console.ReadLine();
             Logger.LogMessage("[DeleteMissingEventReceivers.csv : ReadInputFile] Entered Input File of Event Receiver Data " + eventReceiverInputFile, false);

@@ -50,7 +50,7 @@ namespace JDP.Remediation.Console
                 if (!ReadInputOptions(ref processInputFile, ref processFarm, ref processSiteCollections))
                 {
                     System.Console.ForegroundColor = System.ConsoleColor.Red;
-                    Logger.LogMessage("Operation aborted by User.");
+                    Logger.LogErrorMessage("Operation aborted by User.");
                     System.Console.ResetColor();
                     return;
                 }
@@ -61,7 +61,7 @@ namespace JDP.Remediation.Console
                     if (!ReadWebApplication(ref webApplicationUrl))
                     {
                         System.Console.ForegroundColor = System.ConsoleColor.Red;
-                        Logger.LogMessage("WebApplicationUrl is not valid. So, Operation aborted!");
+                        Logger.LogErrorMessage("WebApplicationUrl is not valid. So, Operation aborted!");
                         System.Console.ResetColor();
                         return;
                     }
@@ -73,7 +73,7 @@ namespace JDP.Remediation.Console
                     if (!ReadSiteCollectionList(ref siteCollectionUrlsList))
                     {
                         System.Console.ForegroundColor = System.ConsoleColor.Red;
-                        Logger.LogMessage("SiteCollectionUrls is not valid. So, Operation aborted!");
+                        Logger.LogErrorMessage("SiteCollectionUrls is not valid. So, Operation aborted!");
                         System.Console.ResetColor();
                         return;
                     }
@@ -86,8 +86,8 @@ namespace JDP.Remediation.Console
                     if (!ReadInputFile(ref siteTemplateInputFile))
                     {
                         System.Console.ForegroundColor = System.ConsoleColor.Red;
-                        Logger.LogMessage("SiteTemplate input file is not valid or available. So, Operation aborted!");
-                        Logger.LogMessage("Please enter path like: E.g. C:\\<Working Directory>\\<InputFile>.csv");
+                        Logger.LogErrorMessage("SiteTemplate input file is not valid or available. So, Operation aborted!");
+                        Logger.LogErrorMessage("Please enter path like: E.g. C:\\<Working Directory>\\<InputFile>.csv");
                         System.Console.ResetColor();
                         return;
                     }
@@ -100,7 +100,7 @@ namespace JDP.Remediation.Console
                     if (!ReadInputFilesPath())
                     {
                         System.Console.ForegroundColor = System.ConsoleColor.Red;
-                        Logger.LogMessage("Input files directory is not valid. So, Operation aborted!");
+                        Logger.LogErrorMessage("Input files directory is not valid. So, Operation aborted!");
                         System.Console.ResetColor();
                         return;
                     }
@@ -194,7 +194,7 @@ namespace JDP.Remediation.Console
             Logger.CloseLog();
         }
 
-        public static bool DownloadSiteTemplate(string filePath, string SiteTemplateGalleryPath, string SiteTemplateName, string SiteCollection, string WebUrl)
+        public static bool DownloadSiteTemplate(string filePath, string SiteTemplateGalleryPath, ref string SiteTemplateName, string SiteCollection, string WebUrl, string TempFolderName)
         {
             Logger.LogInfoMessage("[DownloadSiteTemplate] Downloading the Site Template: " + SiteTemplateName, true);
             if (!Directory.Exists(filePath))
@@ -229,17 +229,18 @@ namespace JDP.Remediation.Console
                         FileInformation info = Microsoft.SharePoint.Client.File.OpenBinaryDirect(userContext, fileUrl);
                         string fileName = fileUrl.Substring(fileUrl.LastIndexOf("/") + 1);
 
-                        var fileNamePath = Path.Combine(filePath, fileName.ToLower());
+                        var fileNamePath = Path.Combine(filePath, TempFolderName + Constants.WspExtension);
                         using (var fileStream = System.IO.File.Create(fileNamePath))
                         {
                             info.Stream.CopyTo(fileStream);
                             isDownloaded = true;
+                            SiteTemplateName = TempFolderName + Constants.WspExtension;
                             Logger.LogInfoMessage("[DownloadSiteTemplate] Successfully Downloaded Site Template " + SiteTemplateName, true);
                         }
                     }
                     else
                     {
-                        Logger.LogInfoMessage("[DownloadSiteTemplate] Download Failed for " + SiteTemplateName + ". SiteGalleryPath is not present in the current Site Collection: ", true);
+                        Logger.LogErrorMessage("[DownloadSiteTemplate] Download Failed for " + SiteTemplateName + ". SiteGalleryPath is not present in the current Site Collection: ", true);
                     }
                 }
             }
@@ -300,7 +301,7 @@ namespace JDP.Remediation.Console
                 //p.WaitForExit();
                 //string cabDir = newFilePath.Replace(".", "_");
                 //Directory.SetCurrentDirectory(newFileName.Replace(".", "_"));
-                FileUtility.UnCab(fileName.ToLower().Replace(".wsp", ".cab"), destDir);
+                FileUtility.UnCab(solFileName.ToLower().Replace(".wsp", ".cab"), destDir);
                 //string cabDir = newFilePath.Replace(".", "_");
                 Directory.SetCurrentDirectory(destDir);
                 //string extractedPath = solFileName.Replace(".wsp", "_cab");
@@ -745,7 +746,7 @@ namespace JDP.Remediation.Console
                 TempFolderName += 1;
 
                 bool isDownloaded = DownloadSiteTemplate(outputPath + @"\" + Constants.DownloadPathSiteTemplates + @"\" + TempFolderName,
-                    siteGalleryPath, fileName, objSiteCustOutput.WebUrl, objSiteCustOutput.WebUrl);
+                    siteGalleryPath, ref fileName, objSiteCustOutput.WebUrl, objSiteCustOutput.WebUrl, TempFolderName.ToString());
                 if (isDownloaded)
                 {
                     isCustomizationPresent = ProcessWspFile(outputPath, outputPath + @"\" + Constants.DownloadPathSiteTemplates + @"\" + TempFolderName + @"\" + fileName.ToLower(),
@@ -837,7 +838,7 @@ namespace JDP.Remediation.Console
                                 catch (Exception ex)
                                 {
                                     objSiteCustOutput.CreatedBy = Constants.NotApplicable;
-                                    Logger.LogMessage("[DownloadAndModifySiteTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + stFile.Name + " Exception Message: " + ex.Message + ". Author is NULL.", true);
+                                    Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + stFile.Name + " Exception Message: " + ex.Message + ". Author is NULL.", true);
                                     ExceptionCsv.WriteException(webApplicationUrl, siteCollectionUrl, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
                                         "ProcessSiteCollectionUrl", ex.GetType().ToString(), "Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + stFile.Name + " Exception Message: " + ex.Message + ". Author is NULL.");
                                 }
@@ -852,7 +853,7 @@ namespace JDP.Remediation.Console
                                 catch (Exception ex)
                                 {
                                     objSiteCustOutput.CreatedDate = Constants.NotApplicable;
-                                    Logger.LogMessage("[DownloadAndModifySiteTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + stFile.Name + " Exception Message: " + ex.Message + ". TimeCreated is NULL.", true);
+                                    Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + stFile.Name + " Exception Message: " + ex.Message + ". TimeCreated is NULL.", true);
                                     ExceptionCsv.WriteException(webApplicationUrl, siteCollectionUrl, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
                                         "ProcessSiteCollectionUrl", ex.GetType().ToString(), "Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + stFile.Name + " Exception Message: " + ex.Message + ". TimeCreated is NULL.");
                                 }
@@ -867,7 +868,7 @@ namespace JDP.Remediation.Console
                                 catch (Exception ex)
                                 {
                                     objSiteCustOutput.ModifiedBy = Constants.NotApplicable;
-                                    Logger.LogMessage("[DownloadAndModifySiteTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + stFile.Name + " Exception Message: " + ex.Message + ". ModifiedBy is NULL.", true);
+                                    Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + stFile.Name + " Exception Message: " + ex.Message + ". ModifiedBy is NULL.", true);
                                     ExceptionCsv.WriteException(webApplicationUrl, siteCollectionUrl, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
                                         "ProcessSiteCollectionUrl", ex.GetType().ToString(), "Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + stFile.Name + " Exception Message: " + ex.Message + ". ModifiedBy is NULL.");
                                 }
@@ -882,7 +883,7 @@ namespace JDP.Remediation.Console
                                 catch (Exception ex)
                                 {
                                     objSiteCustOutput.ModifiedDate = Constants.NotApplicable;
-                                    Logger.LogMessage("[DownloadAndModifySiteTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + stFile.Name + " Exception Message: " + ex.Message + ". TimeLastModified is NULL.", true);
+                                    Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + stFile.Name + " Exception Message: " + ex.Message + ". TimeLastModified is NULL.", true);
                                     ExceptionCsv.WriteException(webApplicationUrl, siteCollectionUrl, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
                                         "ProcessSiteCollectionUrl", ex.GetType().ToString(), "Error recorded for Site Collection: " + siteCollectionUrl + " and for file: " + stFile.Name + " Exception Message: " + ex.Message + ". TimeLastModified is NULL.");
                                 }
@@ -896,7 +897,7 @@ namespace JDP.Remediation.Console
                             if ((ex.Message.ToLower()).Contains("access denied") || (ex.Message.ToLower()).Contains("unauthorized"))
                             {
                                 System.Console.ForegroundColor = ConsoleColor.Yellow;
-                                Logger.LogMessage("[DownloadAndModifySiteTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " And For file: " + stFile.Name + " Exception Message: " + ex.Message, true);
+                                Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " And For file: " + stFile.Name + " Exception Message: " + ex.Message, true);
                                 System.Console.ResetColor();
                                 ExceptionCsv.WriteException(webApplicationUrl, siteCollectionUrl, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
                                     "ProcessSiteCollectionUrl", ex.GetType().ToString(), "Error recorded for Site Collection: " + siteCollectionUrl + " And For file: " + stFile.Name);
@@ -917,7 +918,7 @@ namespace JDP.Remediation.Console
                 if ((ex.Message.ToLower()).Contains("access denied") || (ex.Message.ToLower()).Contains("unauthorized"))
                 {
                     System.Console.ForegroundColor = ConsoleColor.Yellow;
-                    Logger.LogMessage("[DownloadAndModifySiteTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " Exception Message: " + ex.Message);
+                    Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessSiteCollectionUrl]. Error recorded for Site Collection: " + siteCollectionUrl + " Exception Message: " + ex.Message);
                     System.Console.ResetColor();
                     ExceptionCsv.WriteException(webApplicationUrl, siteCollectionUrl, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
                        "ProcessSiteCollectionUrl", ex.GetType().ToString(), "Error recorded for Site Collection: " + siteCollectionUrl);
@@ -1274,6 +1275,7 @@ namespace JDP.Remediation.Console
         {
             System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             Logger.LogMessage("Enter the directory of input files for customization analysis (Features.csv, EventReceivers.csv, ContentTypes.csv and CustomFields.csv)");
+            System.Console.ForegroundColor = System.ConsoleColor.Yellow;
             Logger.LogMessage("Please refer document for how to create input files to analyze the customization. These files are required to find what customization we are looking inside a template");
             System.Console.ResetColor();
             filePath = System.Console.ReadLine();

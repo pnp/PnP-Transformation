@@ -32,8 +32,8 @@ namespace JDP.Remediation.Console
         public static readonly int CharacterLimitForCsvCell = 32758;
         public static readonly long OutputFileSizeinKb = 8192; //8 MB
 
-        private static readonly string portalWebAppRoot = "https://intranet.poc.com";
-        public static readonly string PortalRootSiteUrl = portalWebAppRoot + "/";
+        //private static readonly string portalWebAppRoot = "https://intranet.poc.com";
+        //public static readonly string PortalRootSiteUrl = portalWebAppRoot + "/";
         public static readonly string WEBPART_SERVICE = "/_vti_bin/webpartpages.asmx";
         public static readonly string PropertyBagInheritMaster = "__InheritMasterUrl";
         public static readonly string PropertyBagInheritCustomMaster = "__InheritCustomMasterUrl";
@@ -44,10 +44,6 @@ namespace JDP.Remediation.Console
 
         // these are simple Text files and are NOT expected to contain a Header row
         public static readonly string UsageReport_SitesInputFileName = "sites.txt";
-
-        // these are CSV files and are expected to contain a Header row (as described)
-        public static readonly string UsageReport_ContentTypesInputFileName = "contentTypes.csv";
-        public static readonly string UsageReport_SiteColumnsInputFileName = "siteColumns.csv";
 
         public static readonly string AddWebPartStatusFileName = "AddWebPart_SuccessFailure-";
         public static readonly string ReplaceWebPartStatusFileName = "ReplaceWebPart_SuccessFailure-";
@@ -61,6 +57,7 @@ namespace JDP.Remediation.Console
         
         public static readonly string WEBPART_USAGE_ENTITY_FILENAME = "WebPartUsage-";
         public static readonly string TARGET_WEBPART_XML_DIR = "TargetConfiguredWebPartXmls";
+
         // OOB Site-level Features IDs of interest...
         public static readonly Guid SharePointEnterpriseFeatures_SiteFeatureID = new Guid("8581a8a7-cf16-4770-ac54-260265ddb0b2");
         public static readonly Guid SharePointStandardFeatures_SiteFeatureID = new Guid("b21b090c-c796-4b0f-ac0f-7ef1659c20ae");
@@ -75,8 +72,22 @@ namespace JDP.Remediation.Console
         public static readonly string DeleteFeatureStatus = "DeleteFeatures_SuccessFailure-";
         public static readonly string DeleteSetupFileStatus = "DeleteSetupFiles_SuccessFailure-";
         public static readonly string DeleteWorkflowAssociationsStatus = "DeleteWorkflowAssociations_SuccessFailure-";
-        public static readonly string DeleteListTemplateStatus = "DeleteListTemplates_SucessFailure-";
+        public static readonly string DeleteListTemplateStatus = "DeleteListTemplates_SuccessFailure-";
         public static readonly string DeleteWebpartStatus = "DeleteWebparts_SuccessFailure-";
+
+        //ColumnORFieldAndTypeUsage
+        public static readonly string ContentTypeAndCustomFieldFileName = "SiteColumnORFieldAndContentTypeUsage-";
+        public static readonly string ContentTypes = "ContentType";
+        public static readonly string CustomFields = "SiteColumn/CustomField";
+
+        public static string WspExtension = ".wsp";
+        public static string StpExtension = ".stp";
+
+        //NonDefaultMasterPage
+        public static readonly string NonDefaultMasterPageFileName = "NonDefaultMasterPageUsage-";
+
+        //Generate Site Collections Reports
+        public static readonly string GenSiteCollectionFileName = "SiteCollectionsReport-";
 
         #region ListTemplate and SiteTemplate
         public static readonly string NoInputFile = "No Input File";
@@ -88,12 +99,14 @@ namespace JDP.Remediation.Console
         public static readonly string SiteCollectionsTextFile = "SiteCollections.txt";
 
         #region ListTemplate
-        public static readonly string DownloadPathListTemplates = "DownloadedListTemplate";
+        //Download Folder
+        public static readonly string DownloadPathListTemplates = "L";
         public static readonly string ListTemplateCustomizationUsage = "ListTemplateCustomization_Usage.csv";
         #endregion ListTemplate
 
         #region SiteTemplate
-        public static readonly string DownloadPathSiteTemplates = "DownloadedSiteTemplate";
+        //Download Folder
+        public static readonly string DownloadPathSiteTemplates = "S";
         public static readonly string SiteTemplateCustomizationUsage = "SiteTemplateCustomization_Usage.csv";
         #endregion SiteTemplate
 

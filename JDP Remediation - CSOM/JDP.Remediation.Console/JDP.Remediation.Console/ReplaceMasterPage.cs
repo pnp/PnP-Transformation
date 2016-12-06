@@ -57,7 +57,7 @@ namespace JDP.Remediation.Console
                         System.Console.ResetColor();
                         return;
                     }
-                    ProcessInputFile(masterPageInputFile, replaceMasterUrl, replaceCustomMasterUrl, replaceBothMaserUrls);
+                    ProcessInputFile(masterPageInputFile, replaceMasterUrl, replaceCustomMasterUrl, replaceBothMaserUrls, outputPath);
                 }
 
                 if (processWebUrl)
@@ -81,20 +81,20 @@ namespace JDP.Remediation.Console
                     if (ProcessWebUrl(webUrl, null, replaceMasterUrl, replaceCustomMasterUrl, replaceBothMaserUrls))
                     {
                         System.Console.ForegroundColor = System.ConsoleColor.Green;
-                        Logger.LogSuccessMessage("[ReplceMasterPage: DoWork] Successfully processed given WebUrl and output file is present in the path: "
+                        Logger.LogSuccessMessage("[ReplaceMasterPage: DoWork] Successfully processed given WebUrl and output file is present in the path: "
                             + outputPath, true);
                         System.Console.ResetColor();
                     }
                     else
                     {
-                        Logger.LogInfoMessage("Replaceing custom master page with oob master page is failed for the site " + webUrl);
+                        Logger.LogErrorMessage("Replacing Custom Master Page with OOB Master Page is failed for the site " + webUrl);
                     }
                 }
 
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage(String.Format("[ReplceMasterPage: DoWork] failed: Error={0}", ex.Message), true);
+                Logger.LogErrorMessage(String.Format("[ReplaceMasterPage: DoWork] failed: Error={0}", ex.Message), true);
                 ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, webUrl, "ReplaceMasterPage", ex.Message, ex.ToString(), "ReplaceMasterPage: DoWork()", ex.GetType().ToString());
             }
             Logger.CloseLog();
@@ -200,13 +200,23 @@ namespace JDP.Remediation.Console
             Logger.LogMessage("Enter Custom MasterPage to be replaced with OOB MasterPAge along with extension (E.g, contoso.master):");
             System.Console.ResetColor();
             customMasterPage = System.Console.ReadLine().ToLower();
+            if (string.IsNullOrEmpty(customMasterPage))
+            {
+                Logger.LogErrorMessage("[ReplaceMasterPage: DoWork]customMasterPage should not be empty or null. Operation aborted...", true);
+                return;
+            }
             System.Console.ForegroundColor = System.ConsoleColor.Cyan;
             Logger.LogMessage("Enter OOB MasterPage to replace Custom MasterPage along with extension (E.g, seattle.master):");
             System.Console.ResetColor();
             oobMasterPage = System.Console.ReadLine().ToLower();
+            if (string.IsNullOrEmpty(oobMasterPage))
+            {
+                Logger.LogErrorMessage("[ReplaceMasterPage: DoWork]oobMasterPage should not be empty or null. Operation aborted...", true);
+                return;
+            }
         }
 
-        private static void ProcessInputFile(string masterPageInputFile, bool replaceMasterUrl, bool replaceCustomMasterUrl, bool replaceBothMaserUrls)
+        private static void ProcessInputFile(string masterPageInputFile, bool replaceMasterUrl, bool replaceCustomMasterUrl, bool replaceBothMaserUrls, string outputDirectory)
         {
             DataTable dtMasterPagesInput = new DataTable();
             try
@@ -225,10 +235,10 @@ namespace JDP.Remediation.Console
                         Logger.LogInfoMessage("[ReplaceMasterPage: ProcessInputFile] Processing the Site: " + webUrl, true);
                         if (ProcessWebUrl(webUrl, null, replaceMasterUrl, replaceCustomMasterUrl, replaceBothMaserUrls))
                         {
-                            Logger.LogInfoMessage("[ReplaceMasterPage:ProcessInputFile]successfully replaced master page for the site " + webUrl, true);
+                            Logger.LogSuccessMessage("[ReplaceMasterPage:ProcessInputFile]successfully replaced master page for the site " + webUrl + "  and output file is present in the path: " + outputDirectory, true);
                         }
                         else
-                            Logger.LogInfoMessage("[ReplaceMasterPage: ProcessInputFile] Replaceing custom master page with oob master page is failed for the site " + webUrl);
+                            Logger.LogErrorMessage("[ReplaceMasterPage: ProcessInputFile] Replacing Custom Master Page with OOB Master Page is failed for the site " + webUrl);
                     }
                     catch (Exception ex)
                     {
@@ -237,7 +247,7 @@ namespace JDP.Remediation.Console
                     }
                 }
                 System.Console.ForegroundColor = System.ConsoleColor.Green;
-                Logger.LogSuccessMessage("[ReplceMasterPage: DoWork] Successfully processed all sites and output file is present in the path: "
+                Logger.LogSuccessMessage("[ReplaceMasterPage: DoWork] Successfully processed all sites and output file is present in the path: "
                     + outputPath, true);
                 System.Console.ResetColor();
             }
@@ -269,49 +279,51 @@ namespace JDP.Remediation.Console
                 {
                     result = false;
                 }
-                if (!customMasterPage.EndsWith(".master"))
-                {
-                    customMasterPage = string.Empty;
-                    Logger.LogMessage("Invalid extension of custom master page.");
-                    result = false;
-                }
-                if (!oobMasterPage.EndsWith(".master"))
-                {
-                    oobMasterPage = string.Empty;
-                    Logger.LogMessage("Invalid extension of oob master page.");
-                    result = false;
-                }
                 else
                 {
-                    using (ClientContext userContext = Helper.CreateAuthenticatedUserContext(Program.AdminDomain, Program.AdminUsername, Program.AdminPassword, webUrl))
+                    if (!customMasterPage.EndsWith(".master"))
                     {
-                        try
+                        customMasterPage = string.Empty;
+                        Logger.LogErrorMessage("Invalid extension of Custom Master Page.");
+                        result = false;
+                    }
+                    if (!oobMasterPage.EndsWith(".master"))
+                    {
+                        oobMasterPage = string.Empty;
+                        Logger.LogErrorMessage("Invalid extension of OOB Master Page.");
+                        result = false;
+                    }
+                    else
+                    {
+                        using (ClientContext userContext = Helper.CreateAuthenticatedUserContext(Program.AdminDomain, Program.AdminUsername, Program.AdminPassword, webUrl))
                         {
-                            site = userContext.Site;
-                            web = userContext.Web;
-                            userContext.Load(site);
-                            userContext.Load(web);
-                            userContext.ExecuteQuery();
-                            serverRelativeUrl = site.ServerRelativeUrl;
-
-                            if (web.MasterUrl.ToLower().Contains(customMasterPage) || web.CustomMasterUrl.ToLower().Contains(customMasterPage))
+                            try
                             {
-                                result = ReplaceMasterUrl(userContext, oobMasterPage, serverRelativeUrl, replaceMasterUrl, replaceCustomMasterUrl, replaceBothMaserUrls);
+                                site = userContext.Site;
+                                web = userContext.Web;
+                                userContext.Load(site);
+                                userContext.Load(web);
+                                userContext.ExecuteQuery();
+                                serverRelativeUrl = site.ServerRelativeUrl;
+
+                                if (web.MasterUrl.ToLower().Contains(customMasterPage) || web.CustomMasterUrl.ToLower().Contains(customMasterPage))
+                                {
+                                    result = ReplaceMasterUrl(userContext, oobMasterPage, serverRelativeUrl, replaceMasterUrl, replaceCustomMasterUrl, replaceBothMaserUrls);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.LogErrorMessage("[ReplaceMasterpage: ProcessWebUrl]. Exception Message: " + ex.Message, true);
+                                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, webUrl, "ReplaceMasterPage", ex.Message, ex.ToString(), "ProcessWebUrl()", ex.GetType().ToString());
                             }
                         }
-                        catch (Exception ex)
-                        {
-                            Logger.LogErrorMessage("[ReplaceMasterpage: ProcessWebUrl]. Exception Message: " + ex.Message, true);
-                            ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, webUrl, "ReplaceMasterPage", ex.Message, ex.ToString(), "ProcessWebUrl()", ex.GetType().ToString());
-                        }
-
                     }
-
                 }
                 ReplaceMasterPageStatusBase objOutputBase = new ReplaceMasterPageStatusBase();
                 objOutputBase.WebApplication = Constants.NotApplicable;
                 objOutputBase.SiteCollection = Constants.NotApplicable;
                 objOutputBase.WebUrl = webUrl;
+                objOutputBase.ExecutionDateTime = DateTime.Now.ToString();
 
                 if (!string.IsNullOrEmpty(customMasterPage))
                     objOutputBase.CustomMasterPageUrl = customMasterPage;

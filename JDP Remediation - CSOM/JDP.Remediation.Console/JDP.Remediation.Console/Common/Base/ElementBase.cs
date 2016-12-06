@@ -22,6 +22,7 @@ namespace JDP.Remediation.Console.Common.Base
         public string WebApplication { get; set; }
         public string SiteCollection { get; set; }
         public string WebUrl { get; set; }
+        public string ExecutionDateTime { get; set; }
     }
     public class AddWebPartStatusBase
     {
@@ -33,6 +34,7 @@ namespace JDP.Remediation.Console.Common.Base
         public string WebApplication { get; set; }
         public string SiteCollection { get; set; }
         public string WebUrl { get; set; }
+        public string ExecutionDateTime { get; set; }
     }
     public class TranformWebPartStatusBase
     {
@@ -45,6 +47,7 @@ namespace JDP.Remediation.Console.Common.Base
         public string WebApplication { get; set; }
         public string SiteCollection { get; set; }
         public string WebUrl { get; set; }
+        public string ExecutionDateTime { get; set; }
     }
     public class MissingEventReceiversInput : Elementbase
     {
@@ -66,6 +69,7 @@ namespace JDP.Remediation.Console.Common.Base
         public string WebApplication { get; set; }
         public string SiteCollection { get; set; }
         public string WebUrl { get; set; }
+        public string ExecutionDateTime { get; set; }
     }
     public class WebPartUsageEntity
     {
@@ -103,6 +107,7 @@ namespace JDP.Remediation.Console.Common.Base
         public string WebUrl { get; set; }
         public string SiteCollection { get; set; }
         public string Status { get; set; }
+        public string ExecutionDateTime { get; set; }
     }
     public class MissingSetupFilesInput : Elementbase
     {
@@ -119,6 +124,7 @@ namespace JDP.Remediation.Console.Common.Base
         public string Status { get; set; }
         public string WebUrl { get; set; }
         public string WebApplication { get; set; }
+        public string ExecutionDateTime { get; set; }
     }
 
     public class MissingWorkflowAssociationsInput : Elementbase
@@ -134,6 +140,7 @@ namespace JDP.Remediation.Console.Common.Base
         public string WebApplication { get; set; }
         public string SiteCollection { get; set; }
         public string WebUrl { get; set; }
+        public string ExecutionDateTime { get; set; }
     }
     public class ContentTypeBase
     {
@@ -220,6 +227,7 @@ namespace JDP.Remediation.Console.Common.Base
         public string SiteCollection { get; set; }
         public string WebUrl { get; set; }
         public string Status { get; set; }
+        public string ExecutionDateTime { get; set; }
     }
     public class SiteTemplateFTCAnalysisOutputBase : SiteCustomizationHeader
     {
@@ -267,5 +275,44 @@ namespace JDP.Remediation.Console.Common.Base
     public class WebpartDeleteOutputBase : WebpartInput
     {
         public string Status { get; set; }
+        public string ExecutionDateTime { get; set; }
+    }
+
+    public class InputContentTypeBase
+    {
+        public string ContentTypeID { get; set; }
+        public string ContentTypeName { get; set; }
+
+    }
+
+    public class InputCustomFieldBase
+    {
+        public string ID { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class ContentTypeCustomFieldOutput
+    {
+        public string ComponentName { get; set; }
+        public string ListId { get; set; }
+        public string ListTitle { get; set; }
+        public string ContentTypeOrCustomFieldId { get; set; }
+        public string ContentTypeOrCustomFieldName { get; set; }
+        public string WebUrl { get; set; }
+        public string SiteCollection { get; set; }
+
+    }
+
+    public class NonDefaultMasterpageOutput
+    {
+        public string MasterUrl { get; set; }
+        public string CustomMasterUrl { get; set; }
+        public string SiteCollection { get; set; }
+        public string WebUrl { get; set; }
+    }
+
+    public class GenerateSiteCollectionnOutput
+    {
+        public string SiteCollectionUrl { get; set; }
     }
 }

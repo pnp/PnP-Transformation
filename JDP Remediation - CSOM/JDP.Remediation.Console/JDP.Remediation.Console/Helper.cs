@@ -17,6 +17,8 @@ namespace JDP.Remediation.Console
 {
     public class Helper
     {
+        public static int contextCount = 0;
+        public static bool alreadyAuthorized = false;
 
         public class MasterPageInfo
         {
@@ -26,7 +28,7 @@ namespace JDP.Remediation.Console
             public bool InheritCustomMaster;
         }
 
-        public static ClientContext CreateAuthenticatedUserContext(string domain, string username, SecureString password, string siteUrl)
+        public static ClientContext CreateAuthenticatedUserContextOld(string domain, string username, SecureString password, string siteUrl)
         {
             ClientContext userContext = new ClientContext(siteUrl);
             if (String.IsNullOrEmpty(domain))
@@ -42,6 +44,100 @@ namespace JDP.Remediation.Console
 
             return userContext;
         }
+        public static ClientContext CreateAuthenticatedUserContext(string domain, string username, SecureString password, string siteUrl)
+        {
+            ClientContext userContext = new ClientContext(siteUrl);
+            try
+            {
+                if (String.IsNullOrEmpty(domain))
+                {
+                    // use o365 authentication (SPO-MT or vNext)
+                    userContext.Credentials = new SharePointOnlineCredentials(username, password);
+                }
+                else
+                {
+                    // use Windows authentication (SPO-D or On-Prem) 
+                    userContext.Credentials = new NetworkCredential(username, password, domain);
+                }
+
+                Web web = userContext.Web;
+                userContext.Load(web);
+                userContext.ExecuteQuery();
+                contextCount = 0;
+                alreadyAuthorized = true;
+                return userContext;
+            }
+            catch (System.Net.WebException exc)
+            {
+                if (exc.Message.ToLower().Contains("unauthorized") && alreadyAuthorized == false)
+                {
+                    contextCount++;
+                    if (contextCount == 1)
+                    {
+                        Logger.LogMessage(String.Format("\n"), true);
+                        Logger.LogErrorMessage(String.Format("Attempt [{0}]: You have entered an invalid username or password. The maximum retry attempts allowed for login are 3. You have 2 more attempts.", contextCount, 3 - contextCount), true);
+                        ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, siteUrl, "Authentication", exc.Message, exc.ToString(), "CreateAuthenticatedUserContext()", exc.GetType().ToString());
+                    }
+                    else if (contextCount == 2)
+                    {
+                        Logger.LogMessage(String.Format("\n"), true);
+                        Logger.LogErrorMessage(String.Format("Attempt [{0}]: Incorrect login credentials twice. You have one more attempt. If you fail to enter correct credentials this time, application would be terminated.", contextCount, 3 - contextCount), true);
+                        //Logger.LogErrorMessage(String.Format("\nWrong user credentials given for {0} time. {1} attemps remained", contextCount, 3 - contextCount), true);
+                        ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, siteUrl, "Authentication", exc.Message, exc.ToString(), "CreateAuthenticatedUserContext()", exc.GetType().ToString());
+                    }
+                    else if (contextCount == 3)
+                    {
+                        Logger.LogErrorMessage(String.Format("\n"), true);
+                        Logger.LogErrorMessage(String.Format("Attempt [{0}]: You have entered an invalid username or password. Press any key to terminate the application!!", contextCount, 3 - contextCount), true);
+                        ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, siteUrl, "Authentication", exc.Message, exc.ToString(), "CreateAuthenticatedUserContext()", exc.GetType().ToString());
+
+                        System.Console.ReadKey();
+                        Environment.Exit(0);
+                    }
+
+                    Program.GetCredentials();
+                    userContext = CreateAuthenticatedUserContext(Program.AdminDomain, Program.AdminUsername, Program.AdminPassword, siteUrl);
+                }
+            }
+            catch (System.ArgumentNullException exc)
+            {
+                contextCount++;
+                if (contextCount == 1)
+                {
+                    Logger.LogMessage(String.Format("\n"), true);
+                    Logger.LogErrorMessage(String.Format("Attempt [{0}]: You have entered an invalid username or password. The maximum retry attempts allowed for login are 3. You have 2 more attempts.", contextCount, 3 - contextCount), true);
+                    ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, siteUrl, "Authentication", exc.Message, exc.ToString(), "CreateAuthenticatedUserContext()", exc.GetType().ToString());
+                }
+                else if (contextCount == 2)
+                {
+                    Logger.LogMessage(String.Format("\n"), true);
+                    Logger.LogErrorMessage(String.Format("Attempt [{0}]: Incorrect login credentials twice. You have one more attempt. If you fail to enter correct credentials this time, application would be terminated.", contextCount, 3 - contextCount), true);
+                    //Logger.LogErrorMessage(String.Format("\nWrong user credentials given for {0} time. {1} attemps remained", contextCount, 3 - contextCount), true);
+                    ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, siteUrl, "Authentication", exc.Message, exc.ToString(), "CreateAuthenticatedUserContext()", exc.GetType().ToString());
+                }
+                else if (contextCount == 3)
+                {
+                    Logger.LogErrorMessage(String.Format("\n"), true);
+                    Logger.LogErrorMessage(String.Format("Attempt [{0}]: You have entered an invalid username or password. Press any key to terminate the application!!", contextCount, 3 - contextCount), true);
+                    ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, siteUrl, "Authentication", exc.Message, exc.ToString(), "CreateAuthenticatedUserContext()", exc.GetType().ToString());
+
+                    System.Console.ReadKey();
+                    Environment.Exit(0);
+                }
+
+                Program.GetCredentials();
+                userContext = CreateAuthenticatedUserContext(Program.AdminDomain, Program.AdminUsername, Program.AdminPassword, siteUrl);
+            }
+
+            catch (Exception ex)
+            {
+                Logger.LogErrorMessage(String.Format("\nCreateAuthenticatedUserContext() failed for {0}: Error={1}", siteUrl, ex.Message), false);
+                ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, siteUrl, "Authentication", ex.Message, ex.ToString(), "CreateAuthenticatedUserContext()", ex.GetType().ToString());
+            }
+
+            return userContext;
+        }
+
 
         /// <summary>
         /// Creates a Secure String
@@ -364,11 +460,11 @@ namespace JDP.Remediation.Console
                     targetFile.DeleteObject();
                     web.Context.ExecuteQuery();
                     result = true;
-                    Logger.LogSuccessMessage(String.Format("Deleted File: {0}", serverRelativeFilePath), false);
+                    Logger.LogSuccessMessage(String.Format("Deleted File: {0}", serverRelativeFilePath), true);
                 }
                 else
                 {
-                    Logger.LogErrorMessage(String.Format("DeleteFileByServerRelativeUrl() failed for {0}: Error={1}", serverRelativeFilePath, "File was not Found."), false);
+                    Logger.LogErrorMessage(String.Format("DeleteFileByServerRelativeUrl() failed for {0}: Error={1}", serverRelativeFilePath, "File was not Found."), true);
                 }
             }
             catch (ServerException ex)
