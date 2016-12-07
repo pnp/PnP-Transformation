@@ -7,6 +7,9 @@ OOB Web Service that is supported in SharePoint Online (MT) and (vNext).  It exa
 and flags those that are considered to be cross-site calls. Cross-site OOB Web Service calls 
 will fail in SPO-MT/vNext; as such, the offending forms/udcx need to be remediated.
 
+The report ignores embedded SOAP connections because it is not possible to define a cross-site
+SOAP call in an InfoPath Form.
+
 .DESCRIPTION
 Execute the script to generate a report of Cross-Site (OOB) Web Service Calls
 
@@ -19,8 +22,8 @@ try
     #======================================================================================
     #ACTION ITEMS: Please initialize these settings with values that suit your environment
 
-    #specfiy the location of your InfoPath Report folder
-    $Global:exportFolder = "c:\Scanner\InfoPath"
+    #specify the location of your InfoPath Report folder
+    $Global:exportFolder = "C:\Scanner\InfoPath"
 
     # list all of your supported managed paths here
     # - do not include any slash ("/") characters
@@ -71,19 +74,18 @@ try
     $outputFile = [string]::Format("InfoPathForms_CrossSiteWebService_{0}.csv", $fileDateTime)
     $errorFile = [string]::Format("InfoPathForms_CrossSiteWebService_Errors_{0}.csv", $fileDateTime)
 
-
     if (-not (Test-Path $Global:exportFolder)) 
     { 
         New-Item $Global:exportFolder -ItemType Directory | Out-Null
     }
 
-
     #This is the Form Template (XSN) contents/attributes report
     $infoPathRecords = Import-CSV $Global:reportFolder\InfoPathScraper_report.csv -Header ColumnA, ColumnB, ColumnC, ColumnD
     
     #This is the UDCX File instance report
-    $udcxRecords = @(Import-CSV $Global:udcxFolder\UDCXReport.csv | Select WebId, SiteUrl, RelativeUrl, SelectServiceUrl, SelectSoapActionName)
+    $udcxRecords = @(Import-CSV $Global:udcxFolder\UDCXReport.csv | Select WebId, SiteId, WebUrl, SiteUrl, RelativeUrl, SelectServiceUrl, SelectSoapActionName)
     
+    $Global:urnCounter = 0
 
     #=========================================================================================
     #functions
@@ -110,7 +112,9 @@ try
     {
         param([PSObject]$currentObject)
 
-        foreach($mode in $Global:modes)
+        $ourModes = @($Global:modes | ?{$_.ColumnA -eq $currentObject.XsnUrn})
+
+        foreach($mode in $ourModes)
         {
             if($mode.ColumnA -ne $currentObject.XsnUrn)
             {
@@ -123,75 +127,43 @@ try
         }
     }
 
-    function Lookup-XsnLocationInfo
+    # returns a collection of records where each record describes a deployed instance of the specified XSN Form template
+    function Get-XsnLocations
     {
         param($urn)
 
-        $formCabPaths = @($Global:cabPaths | ?{$_.ColumnA -eq $urn})
+        $ourCabPaths = @($Global:cabPaths | ?{$_.ColumnA -eq $urn})
     
-        $tempLocations = @()
-        $tempSiteUrls = @()
-    
-        $retVal = New-Object PSObject -Property @{ 
-                                                    XsnFileUrls = [string]::Empty
-                                                    XsnUrlCount = 0
-                                                    XsnSiteUrls = [string]::Empty
-                                                 }
+        $retVal = @()
 
-        foreach($url in $formCabPaths)
+        foreach($cabPath in $ourCabPaths)
         {
             $tempCabPath = ""
-            if([string]::IsNullOrWhiteSpace($url.ColumnC))
+            if([string]::IsNullOrWhiteSpace($cabPath.ColumnC))
             {
-                $tempCabPath = $url.ColumnD
+                $tempCabPath = $cabPath.ColumnD
             }
             else
             {
-                $tempCabPath = $url.ColumnC
+                $tempCabPath = $cabPath.ColumnC
             }        
         
             #CabPath will always be in the following format c:\splocalbin\infopath_scanner\[Guid]\file.xsn       
             $docID = $tempCabPath.Substring(($tempCabPath.LastIndexOf("\")-36), 36)
             $file = $fileInfo[$docID]
-            $tempLocations += [string]::Format("{0}/{1}", $file.DirName, $file.LeafName)
-            
-            $tempSiteUrls += $file.SiteUrl
+
+            $tempVal = New-Object PSObject -Property @{ 
+                XsnFileUrl = [string]::Format("{0}/{1}", $file.DirName, $file.LeafName)
+                XsnSiteId = $file.SiteId
+                XsnSiteUrl = $file.SiteUrl
+                XsnWebId = $file.WebId
+                XsnWebUrl = $file.WebUrl
+                }
+
+            $retVal += $tempVal
         }
 
-        $retVal.XsnFileUrls = [string]::Join(";", $tempLocations)
-        $retVal.XsnUrlCount = $tempLocations.Count
-        $retVal.XsnSiteUrls = [string]::Join(";", $tempSiteUrls)
-       
         return $retVal
-    }
-
-    function Lookup-XsnWebIds
-    {
-        param($urn)
-
-        $formCabPaths = @($Global:cabPaths | ?{$_.ColumnA -eq $urn})
-    
-        $tempWebIDs = @()
-
-        foreach($url in $formCabPaths)
-        {
-            $tempCabPath = ""
-            if([string]::IsNullOrWhiteSpace($url.ColumnC))
-            {
-                $tempCabPath = $url.ColumnD
-            }
-            else
-            {
-                $tempCabPath = $url.ColumnC
-            }        
-        
-            #CabPath will always be in the following format c:\splocalbin\infopath_scanner\[Guid]\file.xsn       
-            $docID = $tempCabPath.Substring(($tempCabPath.LastIndexOf("\")-36), 36)
-            $file = $fileInfo[$docID]
-            $tempWebIDs += $file.WebId
-        }
-       
-        return $tempWebIDs
     }
 
     #Parses a UDCX ServiceUrl and extracts the Url of the hosting SPSite
@@ -243,60 +215,104 @@ try
         return $url.Substring(0, $pos)
     }
 
-    function Get-FormLocations
-    {
-        param([PSObject]$currentObject)
-
-        $locationInfo = Lookup-XsnLocationInfo $currentObject.XsnUrn
-
-        $currentObject.XsnInstanceCount = $locationInfo.XsnUrlCount
-        $currentObject.XsnFileUrls = $locationInfo.XsnFileUrls.ToLower() -replace '[\r\n]',''
-        $currentObject.XsnSiteUrls = $locationInfo.XsnSiteUrls.ToLower()
-    }
+    # loads information for all of UDCX-based service calls issued by all deployed instances of the specified XSN form template
+    #
+    # for the specified XSN form template:
+    #  get all udcx connection file definitions
+    #  get all deployed XSN form template instances
+    #
+    #  for each deployed XSN form template instance:
+    #     get udcx connection file instances
+    #
+    #     for each udcx connection file instance
+    #       get contents of udcx connection file (ServiceUrl info)
+    #       record the connection instance: include XSN Location info, UDCX Location info, and UDCX Content (ServiceUrl info)
 
     function Get-UdcxConnections
     {
-        param([PSObject]$currentObject)
+        param([PSObject]$currentObject)  # the XSN form template to process
 
+        $xsnSiteUrls = @()    
+        $xsnFileUrls = @()    
         $udcxSiteUrls = @()    
         $udcxFileUrls = @()    
         $udcxSupportedServiceSiteUrls = @()
         $udcxSupportedServiceUrls = @()
 
-        foreach($item in $Global:udcxConnections)
+        #query the UDCX connection definitions read from the scraper report for the ones defined for this XSN form template
+        $ourUdcxConnections = @($Global:udcxConnections |
+            ? {$_.ColumnA -eq $currentObject.XsnUrn} |
+            Select -Unique ColumnA, ColumnB, ColumnC, ColumnD)
+
+        $hasConnectionToProcess = ($ourUdcxConnections.Count -gt 0)            
+        if($hasConnectionToProcess)
         {
-            if($item.ColumnA -ne $currentObject.XsnUrn)
-            {
-                continue
-            }
-            
-            if($supportedWebServices.ContainsKey($item.ColumnD))
-            {
-                #the current web service is supported in vNext...
-                $webIds = @(Lookup-XsnWebIds $currentObject.XsnUrn)             
-                $udcxFilePath = [string]::Format("*{0}", $item.ColumnC)                
-                $udcxCalls = $udcxRecords | ? { $webIds -contains $_.WebId -and $_.RelativeUrl -like  $udcxFilePath}
+            #get the list of locations where this XSN form template has been deployed
+            $xsnLocations = Get-XsnLocations $currentObject.XsnUrn
 
-                foreach($udcxCall in $udcxCalls)
+            #for each deployed instance of this form template...
+            foreach ($xsnLocation in $xsnLocations)
+            {
+                #for each udcx connection definition defined for this XSN form template...
+                foreach($item in $ourUdcxConnections)
                 {
-                    if($supportedWebServices.ContainsKey($udcxCall.SelectSoapActionName))
+                    #is the web service endpoint referenced in the UDCX file supported by MT/vNext?
+                    if($supportedWebServices.ContainsKey($item.ColumnD))
                     {
-                        $udcxSiteUrls += [string]::Format("{0}", $udcxCall.SiteUrl.ToLower())
-                        $udcxFileUrls += [string]::Format("{0}", $udcxCall.RelativeUrl.ToLower())
+                        # the current web service is supported in vNext...
 
-                        $udcxSupportedServiceSiteUrls += Get-ServiceSiteUrl($udcxCall.SelectServiceUrl.ToLower())
-                        $udcxSupportedServiceUrls += [string]::Format("{0}?{1}", $udcxCall.SelectServiceUrl.ToLower(), $udcxCall.SelectSoapActionName.ToLower())
+                        #---------------------------------------------------------
+                        # Attempt to locate the expected UDCX File instance...
+                        #---------------------------------------------------------
+
+                        #construct a query string to locate UDCX connection files whose name matches the SPSite-relative path of the expected UDCX connection file
+                        $udcxFilePath = [string]::Format("*{0}", $item.ColumnC)   
+
+                        #Query the list of UDCX Connection File records for the one that is _expected_ by this deployed form instance
+                        # Notes: 
+                        #  - XSN Forms can be deployed to a different SPWeb than the one that contains the UDCX file; however, both SPWebs must be within the same SPSite (so we compare SiteIds)
+                        #  - It is entirely possible that the expected UDCX file is not present (e.g., not deployed, moved, renamed, deleted, etc.)
+                        #  - The query might return more than one UDCX file instance; however, no harm done - net result is redundant report rows, not additional work to be done
+                        #
+                        $udcxFiles = @($udcxRecords | ? { $_.SiteId -eq $xsnLocation.XsnSiteId -and $_.SelectSoapActionName -eq $item.ColumnD -and $_.RelativeUrl -like  $udcxFilePath})
+
+                        foreach($udcxFile in $udcxFiles)
+                        {
+                            #success: we found the UDCX file instance... 
+                            # add the information for this udcx connection instance to the supporting collections of this form template record
+                            # be sure to keep the collections in sync                        
+
+                            #add the location of the form instance
+                            $xsnSiteUrls += $xsnLocation.XsnSiteUrl.ToLower()
+                            $xsnFileUrls += $xsnLocation.XsnFileUrl.ToLower()
+
+                            #add the location of the udcx file referenced
+                            $udcxSiteUrls += $udcxFile.SiteUrl.ToLower()
+                            $udcxFileUrls += $udcxFile.RelativeUrl.ToLower()
+
+                            #add the serviceUrl contained in the referenced udcx file
+                            $udcxSupportedServiceSiteUrls += Get-ServiceSiteUrl($udcxFile.SelectServiceUrl.ToLower())
+                            $udcxSupportedServiceUrls += [string]::Format("{0}?{1}", $udcxFile.SelectServiceUrl.ToLower(), $udcxFile.SelectSoapActionName.ToLower())
+                        }
                     }
                 }
             }
         }
 
-        # Assert: 
-        #$udcxSupportedServiceSiteUrls.Count == $udcxFileUrls.Count == $udcxSupportedServiceUrls.Count
-        
+        # Assert: $xsnFileUrls.Count -eq $udcxFileUrls.Count -eq $udcxSupportedServiceSiteUrls.Count
+        #
+        $currentObject.XsnInstanceCount = $xsnFileUrls.Count
+        if ($xsnFileUrls.Count -gt 0)
+        {
+            # Assert: $xsnSiteUrls.Count -eq $xsnFileUrls.Count
+            $currentObject.XsnSiteUrls = [string]::Join(";", ($xsnSiteUrls)).ToLower() -replace '[\r\n]',''
+            $currentObject.XsnFileUrls = [string]::Join(";", ($xsnFileUrls)).ToLower() -replace '[\r\n]',''
+        }
+
         $currentObject.UdcxFileUrlsCount = $udcxFileUrls.Count
         if ($udcxFileUrls.Count -gt 0)
         {
+            # Assert: $udcxSiteUrls.Count -eq $udcxFileUrls.Count
             $currentObject.UdcxSiteUrls = [string]::Join(";", ($udcxSiteUrls)).ToLower() -replace '[\r\n]',''
             $currentObject.UdcxFileUrls = [string]::Join(";", ($udcxFileUrls)).ToLower() -replace '[\r\n]',''
         }
@@ -304,6 +320,7 @@ try
         $currentObject.UdcxSupportedServiceUrlsCount = $udcxSupportedServiceUrls.Count
         if ($udcxSupportedServiceUrls.Count -gt 0)
         {
+            # Assert: $udcxSupportedServiceSiteUrls.Count -eq $udcxSupportedServiceUrls.Count
             $currentObject.UdcxSupportedServiceSiteUrls = [string]::Join(";", ($udcxSupportedServiceSiteUrls)).ToLower() -replace '[\r\n]',''
             $currentObject.UdcxSupportedServiceUrls = [string]::Join(";", ($udcxSupportedServiceUrls)).ToLower() -replace '[\r\n]',''
         }
@@ -348,12 +365,7 @@ try
         foreach($urn in $Global:urns)
         {
 
-            # skip this form if we have already added it to the report
-            if($reportOutput.ContainsKey($urn))
-            {
-                continue
-            }
-
+            #this represents the current XSN form template.
             $currentObject = New-Object PSObject -Property @{ 
                 XsnUrn = $urn
                 XsnMode = [string]::Empty
@@ -366,10 +378,10 @@ try
                 UdcxSupportedServiceUrlsCount = 0                                                              
                 UdcxSupportedServiceSiteUrls = [string]::Empty
                 UdcxSupportedServiceUrls = [string]::Empty
-                UdcxNeedsToBeVerified = [string]::Empty
                 Remediation = [string]::Empty
                 }
 
+            #load information for all of the UDCX-based service calls issued by all deployed instances of this XSN form template
             Get-UdcxConnections ([REF]$currentObject)
             
             $hasUdcxConnection = $currentObject.UdcxFileUrlsCount -gt 0
@@ -377,13 +389,12 @@ try
             
             if($hasUdcxConnection -or $hasSupportedServiceCall)
             {
-                Get-FormLocations ([REF]$currentObject)
                 Get-XsnMode ([REF]$currentObject)
 
-                #At this point, we output a row for each XSN Instance, as well as for each Service call
-                # We effectively have two sets of parallel collections:
-                # - XsnSiteUrls[n] and XsnFileUrls[n], where 'n' = XsnInstanceCount
-                # - UdcxFileUrls[x], UdcxSupportedServiceSiteUrls[x], and UdcxSupportedServiceUrls[x], where 'x' = UdcxFileUrlsCount (assert UdcxSupportedServiceUrlsCount == UdcxFileUrlsCount)
+                # We will now output a row for each UDCX-based Service call issued by all deployed instances of this XSN form template
+
+                # We effectively have several sets of parallel collections for this XSN form instance:
+                # - for a given index value (e.g., 'n'), the set of items at that index across each collection represents a single UDCX-based service call
                 #
                 $local:xsnSiteUrls = $currentObject.XsnSiteUrls -split ";"
                 $local:xsnFileUrls = $currentObject.XsnFileUrls -split ";"
@@ -393,41 +404,51 @@ try
                 $local:udcxSupportedServiceUrls = $currentObject.UdcxSupportedServiceUrls -split ";"
 
                 #expand/denormalize the parallel collections of each row
+                #
                 for ($i=0; $i -lt $currentObject.XsnInstanceCount; $i++)
                 {
-                    for ($j=0; $j -lt $currentObject.UdcxFileUrlsCount; $j++)
-                    {
-                        $tempObject = New-Object PSObject -Property @{ 
-                            XsnUrn = $currentObject.XsnUrn
-                            XsnMode = $currentObject.XsnMode
-                            XsnInstanceCount = $currentObject.XsnInstanceCount
-                            XsnSiteUrls = [string]::Empty
-                            XsnFileUrls = [string]::Empty
-                            UdcxFileUrlsCount = $currentObject.UdcxFileUrlsCount
-                            UdcxSiteUrls = [string]::Empty
-                            UdcxFileUrls = [string]::Empty
-                            UdcxSupportedServiceUrlsCount = $currentObject.UdcxSupportedServiceUrlsCount                                                       
-                            UdcxSupportedServiceSiteUrls = [string]::Empty
-                            UdcxSupportedServiceUrls = [string]::Empty
-                            UdcxNeedsToBeVerified = $currentObject.UdcxNeedsToBeVerified
-                            Remediation = [string]::Empty
-                            }
+                    $tempObject = New-Object PSObject -Property @{ 
+                        XsnUrn = $currentObject.XsnUrn
+                        XsnMode = $currentObject.XsnMode
+                        XsnInstanceCount = $currentObject.XsnInstanceCount
+                        XsnSiteUrls = [string]::Empty
+                        XsnFileUrls = [string]::Empty
+                        UdcxFileUrlsCount = $currentObject.UdcxFileUrlsCount
+                        UdcxSiteUrls = [string]::Empty
+                        UdcxFileUrls = [string]::Empty
+                        UdcxSupportedServiceUrlsCount = $currentObject.UdcxSupportedServiceUrlsCount                                                       
+                        UdcxSupportedServiceSiteUrls = [string]::Empty
+                        UdcxSupportedServiceUrls = [string]::Empty
+                        Remediation = [string]::Empty
+                        }
 
-                        $tempObject.XsnSiteUrls = $local:xsnSiteUrls[$i]
-                        $tempObject.XsnFileUrls = $local:xsnFileUrls[$i]
+                    $tempObject.XsnSiteUrls = $local:xsnSiteUrls[$i]
+                    $tempObject.XsnFileUrls = $local:xsnFileUrls[$i]
 
-                        $tempObject.UdcxSiteUrls = $local:udcxSiteUrls[$j]
-                        $tempObject.UdcxFileUrls = $local:udcxFileUrls[$j]
+                    $tempObject.UdcxSiteUrls = $local:udcxSiteUrls[$i]
+                    $tempObject.UdcxFileUrls = $local:udcxFileUrls[$i]
 
-                        $tempObject.UdcxSupportedServiceSiteUrls = $local:udcxSupportedServiceSiteUrls[$j]
-                        $tempObject.UdcxSupportedServiceUrls = $local:udcxSupportedServiceUrls[$j]
+                    $tempObject.UdcxSupportedServiceSiteUrls = $local:udcxSupportedServiceSiteUrls[$i]
+                    $tempObject.UdcxSupportedServiceUrls = $local:udcxSupportedServiceUrls[$i]
 
-                        # Now that the row has been normalized, we can compute the remediation for the form/udcx represented by the row
-                        Get-Remediation ([REF]$tempObject)
+                    # Now that the row has been normalized, we can compute the remediation for the form/udcx represented by the row
+                    Get-Remediation ([REF]$tempObject)
 
-                        #Add the row to the output collection
-                        $reportOutput.Add($urn + '#' + $i.ToString() + '.' + $j.ToString(), $tempObject);
-                    }
+                    #Add the row to the output collection.  Since we add multiple report rows for this URN, we need to generate a unique key for each Add operation related to this form
+                    # Note:
+                    # - $urn comes from the $Global:urns array and the Contains operator used in Add-Urn is case-insensitive.
+                    # - $reportOutput is a dictionary and its keys are case-insensitive as well.
+                    #
+                    # Therefore, $Global:urns might contain two real InfoPath Form Template urns that differ only by case; each represents a unique form template in the eyes of InfoPath
+                    # - urn:schemas-microsoft-com:office:infopath:sampleform:-myXSD-2015-03-03T20-34-02
+                    # - urn:schemas-microsoft-com:office:infopath:SAMPLEFORM:-myXSD-2015-03-03T20-34-02
+                    #
+                    # In this case, we will process the first one and add its multiple report rows to $reportOutput without issue
+                    # When we try to later process the second urn, we will get a key collision on the Add operation if we use a suffix format such as (e.g., "#" + i.ToString())
+                    # We now use a suffix format that is practically guaranteed to be unique
+                    $ticks = [DateTime]::Now.Ticks
+                    $key = $urn + '#' + $i.ToString() + $ticks.ToString();
+                    $reportOutput.Add($key, $tempObject);
                 }
             }        
         }
