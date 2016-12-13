@@ -1,4 +1,4 @@
-# InfoPath Form RPC Data Connection Remediation #
+﻿# InfoPath Form RPC Data Connection Remediation #
 
 ### Summary ###
 This InfoPath Form RPC Data Connection Remediation application shows how to replace a legacy RPC-based InfoPath data connection with a SharePoint List data connection or an alternative implementation.
@@ -79,23 +79,23 @@ The following section outlines the general process of remediation.
 
 The following form serves as a sample to demonstrate this concept.
 
-![](\images/App_SampleForm.PNG) 
+![](images/App_SampleForm.PNG) 
 
 ### Form Schema ###
 
 The form has the following fields to support filtering criteria.
 
-![](\images/App_FormSchema1.PNG)
+![](images/App_FormSchema1.PNG)
 
 The form leverages a SharePoint List Data Connection that returns the following schema.
 
-![](\images/App_FormSchema2.PNG)
+![](images/App_FormSchema2.PNG)
 
 ### Form Rules ###
 
 The form applies the following ruleset when the button is clicked
 
-![](\images/App_FormRules1.PNG)
+![](images/App_FormRules1.PNG)
 
 ### Create a SharePoint List Data Connection: ###
 
@@ -103,41 +103,41 @@ Leverage an existing data connection file if one already exists.
 
 Otherwise, create a connection to receive data from a list
 
-![](\images/App_SPListDataConnection1.PNG)
+![](images/App_SPListDataConnection1.PNG)
 
 Choose a SharePoint Library/List connection
 
-![](\images/App_SPListDataConnection2.PNG)
+![](images/App_SPListDataConnection2.PNG)
 
 Specify the target list
 
-![](\images/App_SPListDataConnection3.PNG)
+![](images/App_SPListDataConnection3.PNG)
 
 Select one or more those fields to include in the result set
 
 - to improve performance, select only those that are needed/used by the form
 
-![](\images/App_SPListDataConnection4.PNG)
+![](images/App_SPListDataConnection4.PNG)
 
 Name the connection and choose whether to auto-execute when the form opens
 
-![](\images/App_SPListDataConnection5.PNG)
+![](images/App_SPListDataConnection5.PNG)
 
 Convert the data connection to leverage a server-relative data connection (UDCX) file]
 
-![](\images/App_SPListDataConnection6.PNG)
+![](images/App_SPListDataConnection6.PNG)
 
 ### Create Rules to Filter/Execute the Data Connection ###
 
 Add a rule to establish a filter value for the **ID** field of the queryFields
 
-![](\images/App_SPListDataConnection7.PNG)
+![](images/App_SPListDataConnection7.PNG)
 
 Add a rule to establish a filter value for the **Title** field of the queryFields
 
-![](\images/App_SPListDataConnection8.PNG)
+![](images/App_SPListDataConnection8.PNG)
 
 Add a rule to execute the data connection
 
-![](\images/App_SPListDataConnection9.PNG)
+![](images/App_SPListDataConnection9.PNG)
 
