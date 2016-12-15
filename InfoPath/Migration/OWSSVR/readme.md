@@ -1,12 +1,10 @@
-﻿# InfoPath Form RPC Data Connection Remediation #
+# InfoPath Form RPC Data Connection Remediation #
 
 ### Summary ###
 This InfoPath Form RPC Data Connection Remediation application shows how to replace a legacy RPC-based InfoPath data connection with a SharePoint List data connection or an alternative implementation.
 
 ### Applies to ###
--  Office 365 Dedicated (D)
--  SharePoint 2013 on-premises
-
+-  SharePoint Online
 
 ### Solution ###
 Solution | Author(s)
