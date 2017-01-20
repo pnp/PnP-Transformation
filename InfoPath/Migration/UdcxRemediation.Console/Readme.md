@@ -62,7 +62,7 @@ Be sure to specify an account that has Admin permissions on the target SharePoin
 - If you wish to target an SPO-MT (or vNext) farm:
     - use the <alias>@<domain>.com format for the administrator account
 
-Example is shown in the below screen shot:
+Example is shown in the below screen shot:  
 
 ![](http://i.imgur.com/NT51RMx.png)
 
