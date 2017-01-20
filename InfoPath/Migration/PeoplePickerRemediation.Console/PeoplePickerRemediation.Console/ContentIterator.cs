@@ -64,7 +64,7 @@ namespace PeoplePickerRemediation.Console
             {
                 ListItemCollection listItems = list.GetItems(query);
                 _context.Load(listItems, items => items.ListItemCollectionPosition);
-                _context.ExecuteQuery();
+                _context.ExecuteQueryRetry();
 
                 for (int i = 0; i < listItems.Count; i++)
                 {
