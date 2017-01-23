@@ -36,6 +36,23 @@ namespace PeoplePickerRemediation.Console
             Logger.LogInfoMessage(inputFileSpec, true);
             List<PeoplePickerListOutput> _WriteUDCList = null;
 
+            Logger.LogInfoMessage(String.Format("AppSettings:"), true);            
+            Logger.LogInfoMessage(String.Format("- AppSettings[UseAppModel] = {0}", Program.UseAppModel), true);
+            if (Program.UseAppModel == true)
+            {
+                Logger.LogInfoMessage(String.Format("- AppId = {0}", ConfigurationManager.AppSettings["ClientId"].ToString()), true);
+            }
+            else
+            {
+                string adminUsername = String.Format("{0}{1}", (String.IsNullOrEmpty(Program.AdminDomain) ? "" : String.Format("{0}\\", Program.AdminDomain)), Program.AdminUsername);
+                Logger.LogInfoMessage(String.Format("- Admin Username = {0}", adminUsername), true);
+            }
+            Logger.LogInfoMessage(String.Format("- AppSettings[LocalAdLdapQuery] = {0}", ConfigurationManager.AppSettings["LocalAdLdapQuery"].ToString()), true);
+            Logger.LogInfoMessage(String.Format("- AppSettings[UpnPrefix] = {0}", ConfigurationManager.AppSettings["UpnPrefix"].ToString()), true);
+            Logger.LogInfoMessage(String.Format("- AppSettings[UpdateUserInfoEvenIfEventReceiversEnabled] = {0}", ConfigurationManager.AppSettings["UpdateUserInfoEvenIfEventReceiversEnabled"].ToString()), true);
+            Logger.LogInfoMessage(String.Format("- AppSettings[UpdateUserInfoEvenIfWorkflowsEnabled] = {0}", ConfigurationManager.AppSettings["UpdateUserInfoEvenIfWorkflowsEnabled"].ToString()), true);
+            Logger.LogInfoMessage(String.Format("- AppSettings[CamlQueryRowLimit] = {0}", ConfigurationManager.AppSettings["CamlQueryRowLimit"].ToString()), true);
+
             IEnumerable<PeoplePickerListsInput> pprCSVRows = ImportCSV.ReadMatchingColumns<PeoplePickerListsInput>(inputFileSpec, Constants.CsvDelimeter);
             if (pprCSVRows != null)
             {
@@ -45,7 +62,7 @@ namespace PeoplePickerRemediation.Console
                     if (lists != null && lists.Count() > 0)
                     {
                         _WriteUDCList = new List<PeoplePickerListOutput>();
-                        Logger.LogInfoMessage(String.Format("Preparing to process a total of {0} PeoplePicker InfoPath Forms ...", lists.Count()), true);
+                        Logger.LogInfoMessage(String.Format("Preparing to process a total of {0} PeoplePicker InfoPath Form Libraries ...", lists.Count()), true);
                         PeoplePickerListOutput ps = new PeoplePickerListOutput();
                         foreach (PeoplePickerListsInput pprFileInput in lists)
                         {
@@ -60,7 +77,7 @@ namespace PeoplePickerRemediation.Console
                     }
                     else
                     {
-                        Logger.LogInfoMessage("No valid authentication records found in '" + inputFileSpec + "' File ", true);
+                        Logger.LogInfoMessage("No valid PeoplePicker InfoPath Form Library records found in '" + inputFileSpec + "' File ", true);
                     }
                 }
                 catch (Exception ex)
@@ -72,7 +89,7 @@ namespace PeoplePickerRemediation.Console
             }
             else
             {
-                Logger.LogInfoMessage("No records found in '" + inputFileSpec + "' File ", true);
+                Logger.LogInfoMessage("No PeoplePicker InfoPath Form Library records found in '" + inputFileSpec + "' File ", true);
             }
 
             Logger.CloseLog();
@@ -112,7 +129,7 @@ namespace PeoplePickerRemediation.Console
             listName = formLib.ListName;
 
 
-            Logger.LogInfoMessage(String.Format("Processing PeoplePicker Form Library [{0}] of Web [{1}] ...", listName, webUrl), true);
+            Logger.LogInfoMessage(String.Format("Processing PeoplePicker InfoPath Form Library [{0}] of Web [{1}] ...", listName, webUrl), true);
 
             CamlQuery camlQuery = new CamlQuery();
             //Set View Scope for the Query
@@ -136,30 +153,44 @@ namespace PeoplePickerRemediation.Console
                     userContext.Load(list);
                     userContext.Load(list.EventReceivers);
                     userContext.Load(list.WorkflowAssociations);
-                    userContext.ExecuteQuery();
+                    userContext.ExecuteQueryRetry();
 
-                    bool updateXmlIfEventReceiversNotFound = true;
-                    bool updateXmlIfWorkflowsNotFound = true;
+                    // By default, we will process the specified library unless we find that it has event receiver registrations or workflow associations. 
+                    // We are about to update the files of this library and we do not want to cause side effects that might arise from triggering a event receiver or workflow.
+                    bool processTheLibrary = true;
 
                     if (list.EventReceivers.Count > 0)
                     {
-                        if (ConfigurationManager.AppSettings["UpdateUserInfoEvenIfEventReceiversEnabled"].ToString().Equals("No"))
+                        // We found some event receivers on the library.  Consult the app setting to determine if we should still process the library.
+                        if (String.Equals(ConfigurationManager.AppSettings["UpdateUserInfoEvenIfEventReceiversEnabled"].ToString(), "Yes", StringComparison.InvariantCultureIgnoreCase) == true)
                         {
-                            updateXmlIfEventReceiversNotFound = true;
-                            Logger.LogInfoMessage(String.Format("EventReceivers are associated with List [{0}] of Web [{1}] and permission is not given to update user info", listName, webUrl), true);
+                            Logger.LogWarningMessage(String.Format("[{0}] EventReceivers are associated with List [{1}] of Web [{2}]; event receivers might be executed", list.EventReceivers.Count, listName, webUrl), true);
+                        }
+                        else
+                        {
+                            // The admin has not configured this utility to process libraries that have event receivers
+                            processTheLibrary = false;
+                            Logger.LogWarningMessage(String.Format("[{0}] EventReceivers are associated with List [{1}] of Web [{2}]; skipping the list per the AppSetting", list.EventReceivers.Count, listName, webUrl), true);
                         }
                     }
 
                     if (list.WorkflowAssociations.Count > 0)
                     {
-                        if (ConfigurationManager.AppSettings["UpdateUserInfoEvenIfWorkflowsEnabled"].ToString().Equals("No"))
+                        // We found some workflow associations on the library.  Consult the app setting to determine if we should still process the library.
+                        if (String.Equals(ConfigurationManager.AppSettings["UpdateUserInfoEvenIfWorkflowsEnabled"].ToString(), "Yes", StringComparison.InvariantCultureIgnoreCase) == true)
                         {
-                            updateXmlIfWorkflowsNotFound = true;
-                            Logger.LogInfoMessage(String.Format("Workflows are associated with List [{0}] of Web [{1}] and permission is not given to update user info", listName, webUrl), true);
+                            Logger.LogWarningMessage(String.Format("[{0}] Workflows are associated with List [{1}] of Web [{2}]; workflows might be started", list.WorkflowAssociations.Count, listName, webUrl), true);
+                        }
+                        else
+                        {
+                            // The admin has not configured this utility to process libraries that have workflow associations
+                            processTheLibrary = false;
+                            Logger.LogWarningMessage(String.Format("[{0}] Workflows are associated with List [{1}] of Web [{2}]; skipping the list per the AppSetting", list.WorkflowAssociations.Count, listName, webUrl), true);
                         }
                     }
 
-                    if (updateXmlIfEventReceiversNotFound && updateXmlIfWorkflowsNotFound)
+                    // Process the library if it is still OK to do so.
+                    if (processTheLibrary)
                     {
                         // TODO: uncomment below lines to switch read-only property
                         //PeoplePickerEdiorModified modified = new PeoplePickerEdiorModified();
@@ -169,14 +200,13 @@ namespace PeoplePickerRemediation.Console
                         try
                         {
 
-                            contentIterator.ProcessListItem(listName, camlQuery,
-                            ProcessItem, ref lstPeoplepickeroutput,
-                            delegate(ListItem item, System.Exception ex)
-                            {
-                                return true;
-                            });
+                            contentIterator.ProcessListItem(listName, camlQuery, ProcessItem, ref lstPeoplepickeroutput,
+                                delegate(ListItem item, System.Exception ex)
+                                {
+                                    return true;
+                                });
 
-                            Logger.LogInfoMessage("Total :" + totalCount, true);
+                            Logger.LogInfoMessage(String.Format("[{0}] InfoPath Form files processed for List [{1}] of Web [{2}]", totalCount, listName, webUrl), true);
                         }
                         catch (Exception ex)
                         {
@@ -200,7 +230,7 @@ namespace PeoplePickerRemediation.Console
             }
         }
 
-        private static void UpdateEditorAndModifiedFieldsProperty(ClientContext userContext, List list, string listName, ref PeoplePickerEdiorModified isEditorModified, bool reset)
+        private static void UpdateEditorAndModifiedFieldsProperty(ClientContext userContext, List list, string listName, ref PeoplePickerEditorModified isEditorModified, bool reset)
         {
             try
             {
@@ -210,11 +240,11 @@ namespace PeoplePickerRemediation.Console
                     Web oweb = userContext.Web;
                     userContext.Load(oweb);
                     userContext.Load(list);
-                    userContext.ExecuteQuery();
+                    userContext.ExecuteQueryRetry();
                 }
                 FieldCollection fields = list.Fields;
                 userContext.Load(fields, flds => flds.Where(field => field.InternalName == "Editor" || field.InternalName == "Modified"));
-                userContext.ExecuteQuery();
+                userContext.ExecuteQueryRetry();
 
                 foreach (Field oField in fields)
                 {
@@ -251,7 +281,7 @@ namespace PeoplePickerRemediation.Console
                     }
 
                 }
-                userContext.ExecuteQuery();
+                userContext.ExecuteQueryRetry();
 
 
             }
@@ -276,7 +306,7 @@ namespace PeoplePickerRemediation.Console
                 _context.Load(item.ParentList);
                 _context.Load(item.File);
                 _context.Load(item.Folder);
-                _context.ExecuteQuery();
+                _context.ExecuteQueryRetry();
 
                 Peoplepickeroutput.ListName = item.ParentList.Title;
                 Peoplepickeroutput.WebUrl = web.Url;
@@ -299,7 +329,7 @@ namespace PeoplePickerRemediation.Console
                     string originalFileContents = SafeGetFileAsString(web, item.File.ServerRelativeUrl);
                     if (String.IsNullOrEmpty(originalFileContents))
                     {
-                        Logger.LogErrorMessage(String.Format("Could not get contents of file: {0}", item.File.ServerRelativeUrl), false);
+                        Logger.LogErrorMessage(String.Format("Could not get contents of InfoPath Form File [{0}]", item.File.ServerRelativeUrl), false);
                         return;
                     }
 
@@ -313,7 +343,7 @@ namespace PeoplePickerRemediation.Console
                
                 bool fileupdated = false;
 
-                Logger.LogInfoMessage(String.Format("Got InfoPath Form File {0} from{1} Library", fileName, listName), true);
+                Logger.LogInfoMessage(String.Format("Got InfoPath Form File [{0}] from [{1}] Library", fileName, listName), true);
 
                 // convert XDocument into string
                 string xmlData = xmlDoc.ToString();
@@ -406,7 +436,7 @@ namespace PeoplePickerRemediation.Console
                                         }
                                         else
                                         {
-                                            Logger.LogInfoMessage(String.Format("UPN not found for {0}", samaccountname), true);
+                                            Logger.LogInfoMessage(String.Format("UPN not found for [{0}]", samaccountname), true);
                                         }
                                     }
                                     catch (Exception ex)
@@ -449,30 +479,30 @@ namespace PeoplePickerRemediation.Console
                             writer.Write(updateXml);
                             writer.Flush();
                             memoryStream.Position = 0;
-                            Logger.LogInfoMessage(String.Format("Saving contents of InfoPath File [{0}] of Web [{1}] ...", fileName, webUrl), false);
+                            Logger.LogInfoMessage(String.Format("Saving contents of InfoPath Form File [{0}] of Web [{1}] ...", fileName, webUrl), false);
                             // Approach to save File contents depends on Auth Model chosen
                             if (Program.UseAppModel == true)
                             {
                                 Folder targetFolder = null;
 
-                                Logger.LogInfoMessage(String.Format("Getting folder of File [{0}] of Web [{1}] ...", fileName, webUrl), false);
+                                Logger.LogInfoMessage(String.Format("Getting folder of InfoPath Form File [{0}] of Web [{1}] ...", fileName, webUrl), false);
                                 try
                                 {
                                     targetFolder = web.GetFolderByServerRelativeUrl(folderServerRelativeUrl);
                                     web.Context.Load(targetFolder);
-                                    web.Context.ExecuteQuery();
+                                    web.Context.ExecuteQueryRetry();
                                     Logger.LogInfoMessage(String.Format("Got folder"), false);
                                 }
                                 catch (Exception ex)
                                 {
-                                    Logger.LogErrorMessage(String.Format("ProcessItem() failed for File [{0}] in the Form Library {1}] of Web [{2}]: Reason={3}; Error={4}", fileName, listName, webUrl,
+                                    Logger.LogErrorMessage(String.Format("ProcessItem() failed for InfoPath Form File [{0}] in the Form Library {1}] of Web [{2}]: Reason={3}; Error={4}", fileName, listName, webUrl,
                                         "Upload Folder was not Found.",
                                         "[" + ex.Message + "] | [" + ex.HResult + "] | [" + ex.Source + "] | [" + ex.StackTrace + "] | [" + ex.TargetSite + "]"), false);
                                     lstPeoplepickeroutput.Add(LogExceptionMessages(Peoplepickeroutput, ex));
                                     return;
                                 }
 
-                                Logger.LogInfoMessage(String.Format("Uploading file [{0}] ...", fileName), false);
+                                Logger.LogInfoMessage(String.Format("Uploading InfoPath Form File [{0}] ...", fileName), false);
                                 try
                                 {
                                     targetFolder.UploadFile(fileName, memoryStream, true);
@@ -480,7 +510,7 @@ namespace PeoplePickerRemediation.Console
                                 }
                                 catch (Exception ex)
                                 {
-                                    Logger.LogErrorMessage(String.Format("ProcessItem() failed for File [{0}] in the Form Library {1}] of Web [{2}]: Reason={3}; Error={4}", fileName, listName, webUrl,
+                                    Logger.LogErrorMessage(String.Format("ProcessItem() failed for InfoPath Form File [{0}] in the Form Library {1}] of Web [{2}]: Reason={3}; Error={4}", fileName, listName, webUrl,
                                         "File Upload Failed.",
                                         "[" + ex.Message + "] | [" + ex.HResult + "] | [" + ex.Source + "] | [" + ex.StackTrace + "] | [" + ex.TargetSite + "]"), false);
                                     lstPeoplepickeroutput.Add(LogExceptionMessages(Peoplepickeroutput, ex));
@@ -496,31 +526,31 @@ namespace PeoplePickerRemediation.Console
                                 }
                                 catch (Exception ex)
                                 {
-                                    Logger.LogErrorMessage(String.Format("ProcessItem() failed for File [{0}] in the Form Library {1}] of Web [{2}]: Reason={3}; Error={4}", fileName, listName, webUrl,
+                                    Logger.LogErrorMessage(String.Format("ProcessItem() failed for InfoPath Form File [{0}] in the Form Library {1}] of Web [{2}]: Reason={3}; Error={4}", fileName, listName, webUrl,
                                         "File Upload Failed.",
                                         "[" + ex.Message + "] | [" + ex.HResult + "] | [" + ex.Source + "] | [" + ex.StackTrace + "] | [" + ex.TargetSite + "]"), false);
                                     lstPeoplepickeroutput.Add(LogExceptionMessages(Peoplepickeroutput, ex));
                                     return;
                                 }
                             }
+                            Logger.LogInfoMessage(String.Format("Saved contents of InfoPath Form File [{0}] in FormLibrary [{1}] of Web [{2}]", fileUrl, listName, webUrl), true);
 
-                            Logger.LogInfoMessage(String.Format("Saved contents of File [{0}] in FormLibrary [{1}] of Web [{2}]", fileUrl, listName, webUrl), true);
                             try
                             {
                                 _context.Load(item);
-                                _context.ExecuteQuery();
+                                _context.ExecuteQueryRetry();
 
                                 item["Editor"] = fuLastModifiedUser;
                                 item["Modified"] = lastModifiedTimeStamp.ToString();
                                 item.Update();
-                                _context.ExecuteQuery();
+                                _context.ExecuteQueryRetry();
                                 Peoplepickeroutput.Status = Constants.SuccessStatus;
                                 Peoplepickeroutput.ErrorDetails = Constants.NotApplicable;
                             }
                             catch (Exception ex)
                             {
-                                Logger.LogErrorMessage(String.Format("ProcessItem() failed for InfoPath Form Library [{0}] of Web [{1}]: Reason={2}; Error={3}", listName, webUrl,
-                                "ited update failed for old Editor & Modified.",
+                                Logger.LogErrorMessage(String.Format("ProcessItem() failed for InfoPath Form File [{0}] in the Form Library {1}] of Web [{2}]: Reason={3}; Error={4}", fileName, listName, webUrl,
+                                "Editor & Modified field update failed.",
                                 "[" + ex.Message + "] | [" + ex.HResult + "] | [" + ex.Source + "] | [" + ex.StackTrace + "] | [" + ex.TargetSite + "]"), false);
                                 lstPeoplepickeroutput.Add(LogExceptionMessages(Peoplepickeroutput, ex));
                                 return;
@@ -561,14 +591,14 @@ namespace PeoplePickerRemediation.Console
 
             if (string.IsNullOrEmpty(ldapQuery))
             {
-                System.Console.WriteLine("Local AD LDAP Query is empty or null");
+                System.Console.WriteLine("The required AppSettings[LocalAdLdapQuery] element is empty or null");
                 return false;
             }
 
             return true;
         }
 
-        public static string GetUserPrinicpalNameFromDirectorySeracher(string accountId)
+        public static string GetUserPrinicpalNameFromDirectorySearcher(string accountId)
         {
             string samaccountname = string.Empty;
 
@@ -602,7 +632,7 @@ namespace PeoplePickerRemediation.Console
             mySearcher.CacheResults = false;
             SearchResultCollection result = mySearcher.FindAll();
 
-            if (result.Count > 0)
+            if (result != null && result.Count > 0)
             {
                 return GetProperty(result[0], "userprincipalname");
             }
@@ -635,7 +665,7 @@ namespace PeoplePickerRemediation.Console
             }
         }
     }
-    public class PeoplePickerEdiorModified
+    public class PeoplePickerEditorModified
     {
         public bool isEditorfieldModified { get; set; }
         public bool isModifiedFieldModified { get; set; }

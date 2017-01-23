@@ -1,4 +1,4 @@
 WebUrl,ListName,ItemID,Users,Groups,Status,ErrorDetails
-https://bertonline.sharepoint.com/sites/rajatest1,InfoPathFormLib1,1,abc;i:0#.f|membership|abc@onmicrosoft.com;xyz;i:0#.f|membership|xyz@onmicrosoft.com;user1;i:0#.f|membership|user1@onmicrosoft.com,,Success,N/A
-https://bertonline.sharepoint.com/sites/rajatest1,InfoPathFormLib1,2,user1;i:0#.f|membership|user1@onmicrosoft.com;user2;i:0#.f|membership|user2@onmicrosoft.com,,Success,N/A
-https://bertonline.sharepoint.com/sites/rajatest1/pdf,FormLib1,1,user3;i:0#.f|membership|user3@onmicrosoft.com;abc;i:0#.f|membership|abc@onmicrosoft.com;,,Success,N/A
+https://contoso.sharepoint.com/sites/test1,InfoPathFormLib1,1,abc;i:0#.f|membership|abc@contoso.onmicrosoft.com;xyz;i:0#.f|membership|xyz@contoso.onmicrosoft.com;user1;i:0#.f|membership|user1@contoso.onmicrosoft.com,,Success,N/A
+https://contoso.sharepoint.com/sites/test1,InfoPathFormLib1,2,user1;i:0#.f|membership|user1@contoso.onmicrosoft.com;user2;i:0#.f|membership|user2@contoso.onmicrosoft.com,,Success,N/A
+https://contoso.sharepoint.com/sites/test1/pdf,FormLib1,1,user3;i:0#.f|membership|user3@contoso.onmicrosoft.com;abc;i:0#.f|membership|abc@contoso.onmicrosoft.com;,,Success,N/A

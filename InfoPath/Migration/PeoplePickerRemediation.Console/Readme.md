@@ -66,6 +66,35 @@ Example is shown in the below screen shot:
 
 ![](http://i.imgur.com/NT51RMx.png)
 
+## Processing Libraries with Associated Workflows and/or Event Receivers ##
+Updating files in these types of libraries will trigger event receivers and workflows, which might lead to unexpected side effects.
+By default, the utility will ignore these libraries.
+Specify how you wish to handle Form Libraries that have associated Workflows and/or Event Receivers as follows:
+
+```XML
+<appSettings>
+    <!-- 
+    Note: A library with both EventReceivers and Workflows will be processed ONLY if BOTH of the following values are set to "Yes"
+    <add key="UpdateUserInfoEvenIfEventReceiversEnabled" value="??" />
+      Yes - process the library even if it has an associated event receiver (note: this will result in associated event receivers being executed)
+      No  - skip the library if it has an associatedevent receiver
+    <add key="UpdateUserInfoEvenIfWorkflowsEnabled" value="??" />
+      Yes - process the library even if it has an associated workflow (note: this will result in associated Workflows being started)
+      No  - skip the library if it has an associated workflow
+    -->
+    <add key="UpdateUserInfoEvenIfEventReceiversEnabled" value="No" />
+    <add key="UpdateUserInfoEvenIfWorkflowsEnabled" value="No" />
+</appSettings>
+```
+
+### Recommendations ###
+- Execute a first pass of this utility across all of your form libraries, leaving these values set to "No". 
+- Review the resulting log file(s) and identify those libraries that were skipped.
+- Evaluate the workflows and/or event receivers of those libraries.
+- Determine if it is safe to trigger those workflows and/or event receivers.
+- Mitigate the effects of those workflows and/or event receivers by disabling or removing them as needed.
+- Execute a second pass on those libraries, setting these values to "Yes" as necessary.
+
 ## Other Inputs to be provided on Command prompt ##
 The console will also prompt the user for the input file path.
 
