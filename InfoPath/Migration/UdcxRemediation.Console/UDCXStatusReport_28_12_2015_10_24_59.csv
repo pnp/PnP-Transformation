@@ -1,3 +1,3 @@
-Status;ErrorDetails;DirName;LeafName;Authentication;SiteUrl;WebUrl
-Success;;sites/rajdev/DataConnections;Country.udcx;<udc:SSO AppId='' CredentialType='' xmlns:udc='http://schemas.microsoft.com/office/infopath/2006/udc' />;https://intranet.poc.com/sites/rajdev;https://intranet.poc.com/sites/rajdev
-Success;;sites/RajTest1/DataConnLib;List1.udcx;<udc:SSO AppId='' CredentialType='' xmlns:udc='http://schemas.microsoft.com/office/infopath/2006/udc' />;https://intranet.poc.com/sites/RajTest1;https://intranet.poc.com/sites/RajTest1
+Status,ErrorDetails,DirName,LeafName,Authentication,SiteUrl,WebUrl
+Success,,sites/test1/DataConnections,Country.udcx,<udc:SSO AppId='' CredentialType='' xmlns:udc='http://schemas.microsoft.com/office/infopath/2006/udc' />,https://contoso.sharepoint.com/sites/test1,https://contoso.sharepoint.com/sites/test1
+Success,,sites/test2/DataConnLib,List1.udcx,<udc:SSO AppId='' CredentialType='' xmlns:udc='http://schemas.microsoft.com/office/infopath/2006/udc' />,https://contoso.sharepoint.com/sites/test2,https://contoso.sharepoint.com/sites/test2

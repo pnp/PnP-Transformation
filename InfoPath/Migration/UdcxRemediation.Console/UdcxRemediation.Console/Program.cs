@@ -63,7 +63,7 @@ namespace UdcxRemediation.Console
             string inputFilePath = GetInputFilePath();
             CommentUDCXFileNodes.DoWork(inputFilePath);
 
-            System.Console.WriteLine("Completed");
+            System.Console.WriteLine("Execution has completed");
             System.Console.ReadLine();
         }
 
@@ -75,28 +75,30 @@ namespace UdcxRemediation.Console
             do
             {
                 retryFilePathInput = false;
-                System.Console.WriteLine("\n\n" + @"Please enter the Path conataining the UDCX Report: ");
+                System.Console.WriteLine(@"Please enter the Path containing the UDCX Report: ");
                 System.Console.WriteLine(@"- Give the path in the following format [Folder path containing the UDCX Report]\[CSV File Name]");
-                System.Console.WriteLine(@"- Example: E:\UdcxReport\Report.csv" + "\n");
+                System.Console.WriteLine(@"- Example: E:\UdcxReport\Report.csv");
 
                 inputFilePath = System.Console.ReadLine();
 
                 if (inputFilePath == "")
                 {
                     retryFilePathInput = true;
-                    System.Console.WriteLine("\n" + @"Please make sure the File Path is not empty" + "\n");
+                    System.Console.WriteLine(@"Please make sure the File Path is not empty");
                 }
                 else
                 {
                     if (!File.Exists(inputFilePath))
                     {
                         retryFilePathInput = true;
-                        System.Console.WriteLine("\n" + @"Please make sure the File Path is in the valid format" + "\n");
+                        System.Console.WriteLine("");
+                        System.Console.WriteLine(@"Please make sure the File Path is in the valid format");
                     }
                 }
             }
             while (retryFilePathInput);
 
+            System.Console.WriteLine("");
             return inputFilePath;
         }
 
@@ -155,6 +157,8 @@ namespace UdcxRemediation.Console
             while (key.Key != ConsoleKey.Enter);
 
             AdminPassword = Helper.CreateSecureString(password.TrimEnd('\r'));
+            System.Console.WriteLine("");
+            System.Console.WriteLine("");
         }
     }
 }
