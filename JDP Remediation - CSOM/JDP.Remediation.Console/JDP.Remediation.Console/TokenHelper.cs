@@ -1,4 +1,5 @@
 using Microsoft.IdentityModel;
+using Microsoft.IdentityModel.SecurityTokenService;
 using Microsoft.IdentityModel.S2S.Protocols.OAuth2;
 using Microsoft.IdentityModel.S2S.Tokens;
 using Microsoft.SharePoint.Client;
@@ -179,7 +180,7 @@ namespace JDP.Remediation.Console
         /// <param name="targetPrincipalName">Name of the target principal to retrieve an access token for</param>
         /// <param name="targetHost">Url authority of the target principal</param>
         /// <param name="targetRealm">Realm to use for the access token's nameid and audience</param>
-        /// <param name="redirectUri">Redirect URI registerd for this app</param>
+        /// <param name="redirectUri">Redirect URI registered for this add-in</param>
         /// <returns>An access token with an audience of the target principal</returns>
         public static OAuth2AccessTokenResponse GetAccessToken(
             string authorizationCode,
@@ -212,6 +213,26 @@ namespace JDP.Remediation.Console
             {
                 oauth2Response =
                     client.Issue(AcsMetadataParser.GetStsUrl(targetRealm), oauth2Request) as OAuth2AccessTokenResponse;
+            }
+            catch (RequestFailedException)
+            {
+                if (!string.IsNullOrEmpty(SecondaryClientSecret))
+                {
+                    oauth2Request =
+                    OAuth2MessageFactory.CreateAccessTokenRequestWithAuthorizationCode(
+                        clientId,
+                        SecondaryClientSecret,
+                        authorizationCode,
+                        redirectUri,
+                        resource);
+
+                    oauth2Response =
+                        client.Issue(AcsMetadataParser.GetStsUrl(targetRealm), oauth2Request) as OAuth2AccessTokenResponse;
+                }
+                else
+                {
+                    throw;
+                }
             }
             catch (WebException wex)
             {
@@ -258,6 +279,19 @@ namespace JDP.Remediation.Console
             {
                 oauth2Response =
                     client.Issue(AcsMetadataParser.GetStsUrl(targetRealm), oauth2Request) as OAuth2AccessTokenResponse;
+            }
+            catch (RequestFailedException)
+            {
+                if (!string.IsNullOrEmpty(SecondaryClientSecret))
+                {
+                    oauth2Request = OAuth2MessageFactory.CreateAccessTokenRequestWithRefreshToken(clientId, SecondaryClientSecret, refreshToken, resource);
+                    oauth2Response =
+                        client.Issue(AcsMetadataParser.GetStsUrl(targetRealm), oauth2Request) as OAuth2AccessTokenResponse;
+                }
+                else
+                {
+                    throw;
+                }
             }
             catch (WebException wex)
             {
@@ -306,6 +340,21 @@ namespace JDP.Remediation.Console
                 oauth2Response =
                     client.Issue(AcsMetadataParser.GetStsUrl(targetRealm), oauth2Request) as OAuth2AccessTokenResponse;
             }
+            catch (RequestFailedException)
+            {
+                if (!string.IsNullOrEmpty(SecondaryClientSecret))
+                {
+                    oauth2Request = OAuth2MessageFactory.CreateAccessTokenRequestWithClientCredentials(clientId, SecondaryClientSecret, resource);
+                    oauth2Request.Resource = resource;
+
+                    oauth2Response =
+                        client.Issue(AcsMetadataParser.GetStsUrl(targetRealm), oauth2Request) as OAuth2AccessTokenResponse;
+                }
+                else
+                {
+                    throw;
+                }
+            }
             catch (WebException wex)
             {
                 using (StreamReader sr = new StreamReader(wex.Response.GetResponseStream()))
@@ -352,9 +401,9 @@ namespace JDP.Remediation.Console
         }
 
         /// <summary>
-        /// Creates a client context based on the properties of an app event
+        /// Creates a client context based on the properties of an add-in event
         /// </summary>
-        /// <param name="properties">Properties of an app event</param>
+        /// <param name="properties">Properties of an add-in event</param>
         /// <param name="useAppWeb">True to target the app web, false to target the host web</param>
         /// <returns>A ClientContext ready to call the app web or the parent web</returns>
         public static ClientContext CreateAppEventClientContext(SPRemoteEventProperties properties, bool useAppWeb)
@@ -379,7 +428,7 @@ namespace JDP.Remediation.Console
         /// </summary>
         /// <param name="targetUrl">Url of the target SharePoint site</param>
         /// <param name="authorizationCode">Authorization code to use when retrieving the access token from ACS</param>
-        /// <param name="redirectUri">Redirect URI registerd for this app</param>
+        /// <param name="redirectUri">Redirect URI registered for this add-in</param>
         /// <returns>A ClientContext ready to call targetUrl with a valid access token</returns>
         public static ClientContext GetClientContextWithAuthorizationCode(
             string targetUrl,
@@ -397,7 +446,7 @@ namespace JDP.Remediation.Console
         /// <param name="targetPrincipalName">Name of the target SharePoint principal</param>
         /// <param name="authorizationCode">Authorization code to use when retrieving the access token from ACS</param>
         /// <param name="targetRealm">Realm to use for the access token's nameid and audience</param>
-        /// <param name="redirectUri">Redirect URI registerd for this app</param>
+        /// <param name="redirectUri">Redirect URI registered for this add-in</param>
         /// <returns>A ClientContext ready to call targetUrl with a valid access token</returns>
         public static ClientContext GetClientContextWithAuthorizationCode(
             string targetUrl,
@@ -442,7 +491,7 @@ namespace JDP.Remediation.Console
         /// </summary>
         /// <param name="targetUrl">Url of the target SharePoint site</param>
         /// <param name="contextTokenString">Context token received from the target SharePoint site</param>
-        /// <param name="appHostUrl">Url authority of the hosted app.  If this is null, the value in the HostedAppHostName
+        /// <param name="appHostUrl">Url authority of the hosted add-in.  If this is null, the value in the HostedAppHostName
         /// of web.config will be used instead</param>
         /// <returns>A ClientContext ready to call targetUrl with a valid access token</returns>
         public static ClientContext GetClientContextWithContextToken(
@@ -460,7 +509,7 @@ namespace JDP.Remediation.Console
         }
 
         /// <summary>
-        /// Returns the SharePoint url to which the app should redirect the browser to request consent and get back
+        /// Returns the SharePoint url to which the add-in should redirect the browser to request consent and get back
         /// an authorization code.
         /// </summary>
         /// <param name="contextUrl">Absolute Url of the SharePoint site</param>
@@ -478,7 +527,7 @@ namespace JDP.Remediation.Console
         }
 
         /// <summary>
-        /// Returns the SharePoint url to which the app should redirect the browser to request consent and get back
+        /// Returns the SharePoint url to which the add-in should redirect the browser to request consent and get back
         /// an authorization code.
         /// </summary>
         /// <param name="contextUrl">Absolute Url of the SharePoint site</param>
@@ -499,7 +548,7 @@ namespace JDP.Remediation.Console
         }
 
         /// <summary>
-        /// Returns the SharePoint url to which the app should redirect the browser to request a new context token.
+        /// Returns the SharePoint url to which the add-in should redirect the browser to request a new context token.
         /// </summary>
         /// <param name="contextUrl">Absolute Url of the SharePoint site</param>
         /// <param name="redirectUri">Uri to which SharePoint should redirect the browser to with a context token</param>
@@ -609,9 +658,9 @@ namespace JDP.Remediation.Console
         }
 
         /// <summary>
-        /// Determines if this is a high trust app.
+        /// Determines if this is a high trust add-in.
         /// </summary>
-        /// <returns>True if this is a high trust app.</returns>
+        /// <returns>True if this is a high trust add-in.</returns>
         public static bool IsHighTrustApp()
         {
             return SigningCredentials != null;
@@ -658,7 +707,7 @@ namespace JDP.Remediation.Console
         private static string AcsHostUrl = "accesscontrol.windows.net";
 
         //
-        // Hosted app configuration
+        // Hosted add-in configuration
         //
         private static readonly string ClientId = string.IsNullOrEmpty(WebConfigurationManager.AppSettings.Get("ClientId")) ? WebConfigurationManager.AppSettings.Get("HostedAppName") : WebConfigurationManager.AppSettings.Get("ClientId");
         private static readonly string IssuerId = string.IsNullOrEmpty(WebConfigurationManager.AppSettings.Get("IssuerId")) ? ClientId : WebConfigurationManager.AppSettings.Get("IssuerId");

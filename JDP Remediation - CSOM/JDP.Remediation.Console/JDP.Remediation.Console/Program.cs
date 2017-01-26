@@ -41,13 +41,13 @@ namespace JDP.Remediation.Console
             System.Console.WriteLine();
             System.Console.WriteLine();
             System.Console.ForegroundColor = System.ConsoleColor.White;
-            System.Console.WriteLine("#### JDP Remediation Tool ####");
+            System.Console.WriteLine("#### JDP Remediation Console ####");
             System.Console.ResetColor();
             System.Console.ForegroundColor = System.ConsoleColor.Yellow;
-            System.Console.WriteLine("Type 1, 2, 3 or 4 and press Enter to select the respective operation to execute:");
+            System.Console.WriteLine("Please type an operation number and press [Enter] to execute the specified operation:");
             System.Console.WriteLine("1. Transformation");
             System.Console.WriteLine("2. Clean-Up");
-            System.Console.WriteLine("3. Self Service Report");
+            System.Console.WriteLine("3. Self-Service Reports");
             System.Console.WriteLine("4. Exit");
             System.Console.ResetColor();
             System.Console.WriteLine();
@@ -79,8 +79,8 @@ namespace JDP.Remediation.Console
                         {
                             
                             System.Console.ForegroundColor = System.ConsoleColor.Green;
-                            System.Console.WriteLine("Following are the options for Selected Option 1: \"Transformation\"");
-                            System.Console.WriteLine("Type 1, 2, 3 or 4 and press Enter to select the respective operation to execute:");
+                            System.Console.WriteLine("Your selected Operation [1: \"Transformation\"] supports the following operations.");
+                            System.Console.WriteLine("Please type an operation number and press [Enter] to execute the specified operation:");
                             System.Console.WriteLine("1. Add OOTB Web Part or App Part to a page");
                             System.Console.WriteLine("2. Replace FTC Web Part with OOTB Web Part or App Part on a page");
                             System.Console.WriteLine("3. Replace MasterPage");
@@ -111,8 +111,8 @@ namespace JDP.Remediation.Console
                         {
                             
                             System.Console.ForegroundColor = System.ConsoleColor.Magenta;
-                            System.Console.WriteLine("Following are the options for Selected Option 2: \"Clean-Up\"");
-                            System.Console.WriteLine("Type 1, 2, 3, 4, 5, 6 or 7 and press Enter to select the respective operation to execute:");
+                            System.Console.WriteLine("Your selected Operation [2: \"Clean-Up\"] supports the following operations.");
+                            System.Console.WriteLine("Please type an operation number and press [Enter] to execute the specified operation:");
                             System.Console.WriteLine("1. Delete Missing Setup Files");
                             System.Console.WriteLine("2. Delete Missing Features");
                             System.Console.WriteLine("3. Delete Missing Event Receivers");
@@ -153,16 +153,17 @@ namespace JDP.Remediation.Console
                         do
                         {
                             System.Console.ForegroundColor = System.ConsoleColor.DarkCyan;
-                            System.Console.WriteLine("Following are the options for Selected Option 3: \"Self Service Report\"");
-                            System.Console.WriteLine("Type 1, 2, 3, 4, 5, 6, 7 or 8 and press Enter to select the respective operation to execute:");
+                            System.Console.WriteLine("Your selected Operation [3: \"Self-Service Reports\"] supports the following operations.");
+                            System.Console.WriteLine("Please type an operation number and press [Enter] to execute the specified operation:");
                             System.Console.WriteLine("1. Generate List Template Report with FTC Analysis");
                             System.Console.WriteLine("2. Generate Site Template Report with FTC Analysis");
                             System.Console.WriteLine("3. Generate Site Column/Custom Field & Content Type Usage Report");
                             System.Console.WriteLine("4. Generate Non-Default Master Page Usage Report");
                             System.Console.WriteLine("5. Generate Site Collection Report (PPE-Only)");
-                            System.Console.WriteLine("6. Get Web Part Usage Report ");
-                            System.Console.WriteLine("7. Get Web Part Properties ");
-                            System.Console.WriteLine("8. Exit ");
+                            System.Console.WriteLine("6. Generate Web Part Usage Report");
+                            System.Console.WriteLine("7. Generate Web Part Properties Report");
+                            System.Console.WriteLine("8. Generate Security Group Report");
+                            System.Console.WriteLine("9. Exit ");
                             System.Console.ResetColor();
                             input1 = System.Console.ReadLine();
                             switch (input1)
@@ -203,12 +204,16 @@ namespace JDP.Remediation.Console
                                     WebPartProperties.DoWork();
                                     break;
                                 case "8":
+                                    GenerateSecurityGroupReport.DoWork();
+                                    break;
+                                case "9":
                                     break;
                                 default:
                                     break;
                             }
-                        } while (input1.ToUpper(System.Globalization.CultureInfo.CurrentCulture) != "8");
+                        } while (input1.ToUpper(System.Globalization.CultureInfo.CurrentCulture) != "9");
                         break;
+
                     case "4":
                         break;
 
@@ -234,8 +239,8 @@ namespace JDP.Remediation.Console
                 System.Console.ForegroundColor = System.ConsoleColor.Cyan;
                 System.Console.WriteLine(@"Please enter the Admin account: ");
                 System.Console.ForegroundColor = System.ConsoleColor.Yellow;
-                System.Console.WriteLine(@"- Use [domain\alias] for SPO-D & On-Prem farms");
-                System.Console.WriteLine(@"- Use [alias@domain.com] for SPO-MT & vNext farms");
+                System.Console.WriteLine(@"- Use [domain\alias] format for SPO-D & On-Prem farms");
+                System.Console.WriteLine(@"- Use [alias@domain.com] format for SPO-MT & vNext farms");
                 System.Console.ResetColor();
 
                 account = System.Console.ReadLine();

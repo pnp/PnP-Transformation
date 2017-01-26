@@ -1,4 +1,4 @@
-# JDP Remediation - CSOM #
+﻿# JDP Remediation - CSOM #
 
 ### Summary ###
 This sample shows an JDP Remediation - CSOM application that is used to perform FTC cleanup post to solution retraction.
@@ -33,7 +33,7 @@ On executing the Console Application, we get 3 choices of Operations, which are 
     
 	1. Transformation  
 	2. Clean-Up  
-	3. Self Service Report 
+	3. Self-Service Reports 
 	4. Exit  
 
 ![](\images/ChoiceOfOperations.PNG) 
@@ -247,7 +247,7 @@ A header row is expected to have following columns:
 - DeleteWebparts-yyyyMMdd_hhmmss.log
 
 
-## 3 - Self Service Report ##
+## 3 - Self-Service Reports ##
 On selecting **3rd Choice of Operation**, we get the following operations as shown in the below screenshot:
 
 ![](\images/ChoiceOfOperation3.PNG) 
@@ -259,23 +259,21 @@ These operations are listed and explained as below:
 3. Generate Site Column and Content Type Usage Report  
 4. Generate Non-Default Master Page Usage Report  
 5. Generate Site Collection Report (PPE Only)  
-6. Get Web Part Usage Report>  
-7. Get Web Part Properties  
+6. Generate Web Part Usage Report  
+7. Generate Web Part Properties Report
+8. Generate Security Group Report
 8. Exit 
 
 ### 1. Generate List Template Report with FTC Analysis ###
-
-This operation searches for the Customized elements **(Content Types, Site Columns and Event Receivers)** after extracting the downloaded list templates.
-On choosing this option, we would be asked how to proceed for this operation as shown below 
-
+This operation downloads List Templates (as directed), extracts the files from each template, and searches the files for instances of the following Customized elements: **(Content Types, Site Columns and Event Receivers)**. Upon choosing this option, the user is prompted for how to proceed as shown below:
 	1)	Process with Auto-generated Site Collection Report  
 	2)	Process with PreMT/Discovery ListTemplate Report  
 	3)	Process with SiteCollectionUrls separated by comma (,)
 
-This operation is helpful in trying to easily see which List Template has which customized elements. 
+This operation is helpful in determining the customized elements present in each List Template.
 
 **Input**
-
+This operation reads the following input files:
 - Web Application Url `(Mandatory for Option 1, not for other Options)`
 - Single or Multiple Site Collection Urls `(Mandatory for Option 3, not for other Options)`
 - PreMT_AllListTemplatesInGallery_Usage.csv `(Mandatory for Option 2, not for others)`
@@ -285,88 +283,130 @@ OR  AllListTemplatesInGallery_Usage.csv`(Mandatory for Option 2, not for others)
 - ContentTypes.csv `(Mandatory for all Options)`
 
 **Output**
-
+This operation generates the following output files:
 - ListTemplateCustomization_Usage.csv
 - SiteCollections.txt `(Output for only Option 1)`
 - DownloadAndModifyListTemplate-*yyyymmdd*-*hhhhmmss*.log 
 
-> **Note:** If any of the input files *(ContentTypes.csv, CustomFields.csv, EventReceivers.csv)* is not present in the input folder provided by the user, or the file has no entries then corresponding element/s would not be searched to get the customization details in the list templates.
+> **Note:** If any of the input files *(ContentTypes.csv, CustomFields.csv, EventReceivers.csv)* are not present in the specified input folder, or a given file has no entries, the operation will not be able to search the list templates for the corresponding custom elements.
 
-> **Example:** If user has provided only *ContentTypes.csv and CustomFields.csv* in input folder, and *EventReceivers.csv* is not provide in input folder, then  *isCustomEventReceiver* column will have `NO INPUT FILE` value in output report as user has not provided this input file. 
+> **Example:** If user has provided only *ContentTypes.csv and CustomFields.csv* in input folder, and *EventReceivers.csv* is not present, the *isCustomEventReceiver* column of the report will have a value of `NO INPUT FILE`. 
 
 ### 2. Generate Site Template Report with FTC Analysis ###
-
-This operation searches for the Customized elements **(Content Types, Site Columns, Features and Event Receivers)** after extracting the downloaded site templates.
-On choosing this option, we would be asked how to proceed for this operation as shown below .
-
+This operation downloads Site Templates (as directed), extracts the files from each template, and searches the files for instances of the following Customized elements: **(Content Types, Site Columns, Features and Event Receivers)**. Upon choosing this option, the user is prompted for how to proceed as shown below:
 	1) Process with Auto-generated Site Collection Report  
 	2) Process with PreMT/Discovery SiteTemplate Report  
 	3) Process with SiteCollectionUrls separated by comma (,)
 
-This operation is helpful in trying to easily see which Site Template has which customized elements. 
-
+This operation is helpful in determining the customized elements present in each Site Template.
 
 **Input**
-
+This operation reads the following input files, based on the selected option:
 - Web Application Url `(Mandatory for Option 1, not for other Options)`
 - Single or Multiple Site Collection Urls `(Mandatory for Option 3, not for other Options)`
-- PreMT_AllSiteTemplatesInGallery_Usage.csv `(Mandatory for Option 2, not for other Options)`	
-OR  AllSiteTemplatesInGallery_Usage.csv `(Mandatory for Option 2, not for other Options)`
+- PreMT_AllSiteTemplatesInGallery_Usage.csv `(Mandatory for Option 2, not for other Options)` 
+OR  
+- AllSiteTemplatesInGallery_Usage.csv `(Mandatory for Option 2, not for other Options)`
 - ContentTypes.csv `(Mandatory for all Options)`
 - CustomFields.csv `(Mandatory for all Options)`
 - EventReceivers.csv `(Mandatory for all Options)`
 - Features.csv `(Mandatory for all Options)`
 
-
 **Output**
-
+This operation generates the following output files:
 - SiteTemplateCustomization_Usage.csv
 - SiteCollections.txt `(Output for only Option 1)`
 - DownloadAndModifySiteTemplate-yyyymmdd-hhhhmmss.log 
 
+> **Note:** If any of the input files *(Features.csv, ContentTypes.csv, CustomFields.csv, EventReceivers.csv)* are not present in the specified input folder, or if a given file has no entries, the operation will not be able to search the site templates for the corresponding custom elements.
 
-> **Note:** If any of the input files *(Features.csv, ContentTypes.csv, CustomFields.csv, EventReceivers.csv)* is not present in the input folder provided by the user, or the file has no entries then corresponding element/s would not be searched to get the customization details in the site templates.
-
-> **Example:** If user has provided only *Features.csv, ContentTypes.csv and CustomFields.csv* in input folder, and *EventReceivers.csv* is not provide in input folder, then  *isCustomEventReceiver* column will have `NO INPUT FILE` value in output report as user has not provided this input file. 
+> **Example:** If user has provided only *Features.csv, ContentTypes.csv and CustomFields.csv* in the input folder, and *EventReceivers.csv* is not present, the *isCustomEventReceiver* column of the report will have a value of `NO INPUT FILE`. 
 
 ### 3. Generate Site Column/Custom Fields & Content Type Usage Report ###
-This operation reads a list of site collection URLs from an input file and scans each site collection, looking for any web or list that is using either a custom Content Type or custom Site Column of interest.  It also looks for local Content Types that have been derived from the custom Content Types of interest.  
+This operation reads a list of site collection Urls from an input file and scans each site collection. It reports any web or list that is using either a custom Content Type or custom Site Column of interest.  It also reports any local Content Type that has been derived from a custom Content Type of interest.  
 
 This report is helpful in trying to remediate the Missing Content Type and Missing Site Column reports.  This report tells you where within each site collection that the content types and site columns are still in use.  
 
-This functionality reads an input file (*Sites.txt, CustomFields.csv and ContentTypes.csv*). Generates result in output files -   ***SiteColumnORFieldAndContentTypeUsage- yyyyMMdd_hhmmss.csv*** and ***GenerateColumnAndTypeUsageReport-yyyyMMdd_hhmmss.log*** (verbose log file).
+**Input**
+This operation reads the following input files:
+- Sites.txt (no header; one fully-qualified, absolute site collection Url per line)
+- CustomFields.csv (header: ID,Name)
+- ContentTypes.csv (header: ContentTypeID,ContentTypeName)
+
+**Output**
+This operation generates the following output files:
+- SiteColumnORFieldAndContentTypeUsage- yyyyMMdd_hhmmss.csv
+- GenerateColumnAndTypeUsageReport-yyyyMMdd_hhmmss.log (verbose log file)
 
 ### 4. Generate Non-Default Master Page Usage Report ###
-This operation reads a list of site collection URLs from an input file and scans each site collection, looking for any web that is using a non-default SP2013 Master Page (i.e., something other than `“seattle.master”`) as either its System or Site master page.  
+This operation reads a list of site collection Urls from an input file and scans each site collection. It reports those webs that are using a non-default SP2013 Master Page (i.e., something other than `“seattle.master”`) as either its System or Site master page.  
 
 > **Note:**
-If both the Master Pages of **CustomMasterUrl** and **MasterUrl** are **“Seattle.master”**, that records are not displayed in the output usage file
+If both Master Page settings (**CustomMasterUrl** and **MasterUrl**) are **“Seattle.master”**, no records are displayed for the web in the output usage file.
 
-> If any one of the Master Pages of **CustomMasterUrl** or **MasterUrl** is **“Seattle.master”**, those records will be displayed in the output usage file.
+> If either Master Page setting (**CustomMasterUrl** or **MasterUrl**) is **“Seattle.master”**, a corresponding record is displayed for the web in the output usage file.
 
+**Input**
+This operation reads the following input files:
+- Sites.txt (no header; one fully-qualified, absolute site collection Url per line)
 
-This functionality reads an input file (`Sites.txt`), which contains a fully-qualified, absolute site collection URL. Generates result in output files - ***NonDefaultMasterPageUsage- yyyyMMdd_hhmmss.csv***  and ***GenerateNonDefaultMasterPageUsageReport -yyyyMMdd_hhmmss.log*** (verbose log file).
+**Output**
+This operation generates the following output files:
+- NonDefaultMasterPageUsage- yyyyMMdd_hhmmss.csv
+- GenerateNonDefaultMasterPageUsageReport -yyyyMMdd_hhmmss.log (verbose log file)
 
 ### 5. Generate Site Collection Report (PPE Only) ###
-This operation generates a text file containing a list of all site collections found across all web applications in the target farm.  
+This operation reports all site collections found across all web applications in the target farm.  
  
-This functionality does not use any input file and generates result in output text format. If at any time the details/report of all the Site Collection of any farm are required, using this functionality will give the desired output - ***SiteCollectionReport- yyyyMMdd_hhmmss.txt***, ***SiteCollectionReport- yyyyMMdd_hhmmss.txt*** and ***GenerateSiteCollectionReport-yyyyMMdd_hhmmss.log*** (verbose log file)
+**Input**
+This operation does not use any input files; instead, it prompts the user for the following parameters:
+- the fully-qualified, absolute URL of an existing site collection in the target farm
 
-### 6. Get Web Part Usage Report ###
+**Output**
+This operation generates the following output files:
+- SiteCollectionReport- yyyyMMdd_hhmmss.txt
+- GenerateSiteCollectionReport-yyyyMMdd_hhmmss.log (verbose log file)
 
-This operation iterates through all the Pages in root folder of the web, *“Pages”* and *“Site Pages”* Library and gives the usage of the given Web Part.
+### 6. Generate Web Part Usage Report ###
+This operation iterates through all Pages present in the *“root folder”*, the *“Pages”* library, and the *“Site Pages”* library of the given web and reports the usage of the given Web Part.
  
-This functionality does not use any input file, but asks user for input of the following parameters: *WebUrl and WebPart Type* 
+**Input**
+This functionality does not use any input file; instead, it prompts the user for the following parameters: 
+- WebUrl 
+- WebPartType
 
-If at any time the user needs to get the usage of any web part type on any Web Url, using this functionality, it will give the desired output -  ***WebPartUsage-yyyyMMdd_hhmmss.csv*** and the log ***WebPartUsage-yyyyMMdd_hhmmss.log*** (verbose log file).
+**Output**
+This operation generates the following output files:
+- WebPartUsage-yyyyMMdd_hhmmss.csv
+- WebPartUsage-yyyyMMdd_hhmmss.log (verbose log file)
 
-### 7. Get Web Part Properties ###
-
-This operation will Returns the properties of the given Web Part in Xml format.
+### 7. Generate Web Part Properties Report ###
+This operation reports the properties of the given Web Part in Xml format.
  
-This functionality does not use any input file, but asks user for input of the following parameters: *WebUrl, Server Relative PageUrl, WebPartID*
+**Input**
+This functionality does not use any input file; instead, it prompts the user for the following parameters: 
+- WebUrl
+- ServerRelativePageUrl
+- WebPartID
 
-If at any time the user needs to get the web part properties, using this functionality, it will give the Property Xml file for the corresponding Web Part -  ***WebPartID(provided in input)__WebPartProperties.xml*** and the log ***WebpartProperties-yyyyMMdd_hhmmss.log*** (verbose log file).
+**Output**
+This operation generates the following output files:
+- WebPartID(provided in input)__WebPartProperties.xml
+- WebpartProperties-yyyyMMdd_hhmmss.log (verbose log file)
+
+### 8. Generate Security Group Report ###
+This operation reads a list of site collection URLs from an input file and scans each site collection, and reports those that have granted permissions to one or more Security Groups of interest.
+
+**Input**
+This operation reads the following input files:
+- Sites.txt (no header; one fully-qualified, absolute site collection Url per line)
+- SecurityGroups.txt (no header; one security group per line in the following format: <domain>\<groupName>)
+
+**Output**
+This operation generates the following output files:
+- GenerateSecurityGroupReport-yyyyMMdd_hhmmss.csv
+- GenerateSecurityGroupReport-yyyyMMdd_hhmmss.log (verbose log file)
+
 
 
 

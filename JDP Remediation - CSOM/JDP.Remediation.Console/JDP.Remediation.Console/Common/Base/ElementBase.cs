@@ -315,4 +315,10 @@ namespace JDP.Remediation.Console.Common.Base
     {
         public string SiteCollectionUrl { get; set; }
     }
+
+    public class GenerateSecurityGroupOutput
+    {
+        public string SecurityGroupName { get; set; }
+        public string SiteCollectionUrl { get; set; }
+    }
 }
