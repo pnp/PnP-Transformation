@@ -112,6 +112,9 @@ namespace JDP.Remediation.Console
 
         #endregion ListTemplate and SiteTemplate
 
+        //Generate Security Group Reports
+        public static readonly string SecurityGroupsInputFileName = "securityGroups.txt";
+
         public static readonly string[] LegacyMasterPageFilesToDelete = 
         { 
             "Sample.master"
