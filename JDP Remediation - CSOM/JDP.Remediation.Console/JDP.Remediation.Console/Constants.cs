@@ -35,8 +35,8 @@ namespace JDP.Remediation.Console
         //private static readonly string portalWebAppRoot = "https://intranet.poc.com";
         //public static readonly string PortalRootSiteUrl = portalWebAppRoot + "/";
         public static readonly string WEBPART_SERVICE = "/_vti_bin/webpartpages.asmx";
-        public static readonly string PropertyBagInheritMaster = "__InheritMasterUrl";
-        public static readonly string PropertyBagInheritCustomMaster = "__InheritCustomMasterUrl";
+        public static readonly string PropertyBagInheritMaster = "__InheritsMasterUrl";
+        public static readonly string PropertyBagInheritCustomMaster = "__InheritsCustomMasterUrl";
         public static readonly string SOURCE_WEBPART_XML_DIR = "SourceWebPartXmls";
         internal const string WEBPART_PROPERTIES_FILENAME = "WebPartProperties.xml";
 
@@ -51,6 +51,9 @@ namespace JDP.Remediation.Console
 
         public static readonly string Success = "Success";
         public static readonly string Failure = "Failure";
+
+        public static readonly string LockedMasterPagesFilesInputFileName = "LockedMasterPageFiles.csv";
+        public static readonly string DeviceChannelMappingFileName = "__DeviceChannelMappings.aspx";
 
         public static readonly string MissingSetupFilesInputFileName = "PreMT_MissingSetupFile.csv";
         public static readonly string MissingWorkflowAssociationsInputFileName = "PreMT_MissingWorkflowAssociations.csv";
@@ -76,7 +79,7 @@ namespace JDP.Remediation.Console
         public static readonly string DeleteWebpartStatus = "DeleteWebparts_SuccessFailure-";
 
         //ColumnORFieldAndTypeUsage
-        public static readonly string ContentTypeAndCustomFieldFileName = "SiteColumnORFieldAndContentTypeUsage-";
+        public static readonly string ContentTypeAndCustomFieldFileName = "SiteColumnOrFieldAndContentTypeUsage-";
         public static readonly string ContentTypes = "ContentType";
         public static readonly string CustomFields = "SiteColumn/CustomField";
 

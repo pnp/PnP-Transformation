@@ -100,6 +100,7 @@
     </Compile>
     <Compile Include="ReplaceMasterPage.cs" />
     <Compile Include="ReplaceWebPart.cs" />
+    <Compile Include="ResetDeviceChannelMappingFiles.cs" />
     <Compile Include="SharePointContext.cs" />
     <Compile Include="TokenHelper.cs" />
     <Compile Include="Web References\WebPartPagesService\Reference.cs">

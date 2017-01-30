@@ -329,8 +329,8 @@ namespace JDP.Remediation.Console
 
                 mpi.MasterPageUrl = web.MasterUrl;
                 mpi.CustomMasterPageUrl = web.CustomMasterUrl;
-                mpi.InheritMaster = web.AllProperties[Constants.PropertyBagInheritMaster].ToString().ToBoolean();
-                mpi.InheritCustomMaster = web.AllProperties[Constants.PropertyBagInheritCustomMaster].ToString().ToBoolean();
+                mpi.InheritMaster = web.GetPropertyBagValueString(Constants.PropertyBagInheritMaster, "False").ToBoolean();
+                mpi.InheritCustomMaster = web.GetPropertyBagValueString(Constants.PropertyBagInheritCustomMaster, "False").ToBoolean();
             }
             catch (Exception ex)
             {
@@ -354,8 +354,8 @@ namespace JDP.Remediation.Console
 
                 web.MasterUrl = mpFilePath;
                 web.CustomMasterUrl = mpFilePath;
-                web.AllProperties[Constants.PropertyBagInheritMaster] = ((!isRoot && inheritMaster) ? "True" : "False");
-                web.AllProperties[Constants.PropertyBagInheritCustomMaster] = ((!isRoot && inheritMaster) ? "True" : "False");
+                web.SetPropertyBagValue(Constants.PropertyBagInheritMaster, ((!isRoot && inheritMaster) ? "True" : "False"));
+                web.SetPropertyBagValue(Constants.PropertyBagInheritCustomMaster, ((!isRoot && inheritMaster) ? "True" : "False"));
                 web.Update();
                 web.Context.ExecuteQuery();
 
@@ -382,8 +382,8 @@ namespace JDP.Remediation.Console
 
                 web.MasterUrl = mpi.MasterPageUrl;
                 web.CustomMasterUrl = mpi.CustomMasterPageUrl;
-                web.AllProperties[Constants.PropertyBagInheritMaster] = ((!isRoot && mpi.InheritMaster) ? "True" : "False");
-                web.AllProperties[Constants.PropertyBagInheritCustomMaster] = ((!isRoot && mpi.InheritCustomMaster) ? "True" : "False");
+                web.SetPropertyBagValue(Constants.PropertyBagInheritMaster, ((!isRoot && mpi.InheritMaster) ? "True" : "False"));
+                web.SetPropertyBagValue(Constants.PropertyBagInheritCustomMaster, ((!isRoot && mpi.InheritCustomMaster) ? "True" : "False"));
                 web.Update();
                 web.Context.ExecuteQuery();
 
@@ -839,5 +839,71 @@ namespace JDP.Remediation.Console
                 return new string[0];
             }
         }
+
+        public static string SafeGetFileAsString(Web web, string serverRelativeMappingFilePath)
+        {
+            try
+            {
+                return web.GetFileAsString(serverRelativeMappingFilePath);
+            }
+            catch
+            {
+                return String.Empty;
+            }
+        }
+
+        public static string UploadDeviceChannelMappingFile(Web web, string serverRelativeMappingFilePath, string fileContents, string description)
+        {
+            try
+            {
+                Logger.LogInfoMessage(String.Format("Uploading Device Channel Mapping File: {0} ...", serverRelativeMappingFilePath), false);
+
+                // grab a reference to the MP Gallery where the device channel mapping file resides.
+                List mpGallery = web.GetCatalog((int)ListTemplateType.MasterPageCatalog);
+                Folder mpGalleryRoot = mpGallery.RootFolder;
+                web.Context.Load(mpGallery);
+                web.Context.Load(mpGalleryRoot);
+                web.Context.ExecuteQuery();
+
+                // get the file and check-out if necessary
+                File dcmFile = GetFileFromWeb(web, serverRelativeMappingFilePath);
+                if (dcmFile != null)
+                {
+                    web.CheckOutFile(serverRelativeMappingFilePath);
+                }
+
+                // prepare the file contents for upload
+                Byte[] fileBytes = System.Text.Encoding.UTF8.GetBytes(fileContents);
+
+                // Use CSOM to upload the file
+                FileCreationInformation newFile = new FileCreationInformation();
+                newFile.Content = fileBytes;
+                newFile.Overwrite = true;
+                newFile.Url = serverRelativeMappingFilePath;
+
+                File uploadFile = mpGalleryRoot.Files.Add(newFile);
+                web.Context.Load(uploadFile);
+                web.Context.ExecuteQuery();
+
+                // check-in and approve as necessary
+                if (mpGallery.ForceCheckout || mpGallery.EnableVersioning)
+                {
+                    web.CheckInFile(uploadFile.ServerRelativeUrl, CheckinType.MajorCheckIn, description);
+                    if (mpGallery.EnableModeration)
+                    {
+                        web.ApproveFile(uploadFile.ServerRelativeUrl, description);
+                    }
+                }
+
+                Logger.LogSuccessMessage(String.Format("Uploaded Device Channel Mapping File: {0}", uploadFile.ServerRelativeUrl), false);
+                return uploadFile.ServerRelativeUrl;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogErrorMessage(String.Format("UploadDeviceChannelMappingFile() failed for {0}: Error={1}", serverRelativeMappingFilePath, ex.Message), false);
+                return String.Empty;
+            }
+        }
+
     }
 }
