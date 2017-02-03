@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JDP.Remediation.Console.Common.Base
 {
-    public class Elementbase
+    public class ElementBase
     {
         public string ContentDatabase { get; set; }
         public string WebApplication { get; set; }
@@ -49,7 +49,7 @@ namespace JDP.Remediation.Console.Common.Base
         public string WebUrl { get; set; }
         public string ExecutionDateTime { get; set; }
     }
-    public class MissingEventReceiversInput : Elementbase
+    public class MissingEventReceiversInput : ElementBase
     {
         public string Assembly { get; set; }
         public string EventName { get; set; }
@@ -90,7 +90,7 @@ namespace JDP.Remediation.Console.Common.Base
         public string WebPartType { get; set; }
         public string StorageKey { get; set; }
     }
-    public class MissingFeaturesInput : Elementbase
+    public class MissingFeaturesInput : ElementBase
     {
         public string FeatureId { get; set; }
         //public string FeatureTitle { get; set; }
@@ -109,7 +109,7 @@ namespace JDP.Remediation.Console.Common.Base
         public string Status { get; set; }
         public string ExecutionDateTime { get; set; }
     }
-    public class MissingSetupFilesInput : Elementbase
+    public class MissingSetupFilesInput : ElementBase
     {
         public string SetupFileDirName { get; set; }
         //public string SetupFileExtension { get; set; }
@@ -127,7 +127,7 @@ namespace JDP.Remediation.Console.Common.Base
         public string ExecutionDateTime { get; set; }
     }
 
-    public class MissingWorkflowAssociationsInput : Elementbase
+    public class MissingWorkflowAssociationsInput : ElementBase
     {
         public string DirName { get; set; }
         public string LeafName { get; set; }
@@ -176,14 +176,14 @@ namespace JDP.Remediation.Console.Common.Base
         public string Assembly { get; set; }
         public string Class { get; set; }
     }
-    public class PreMTMissingListTemplatesInGalleryInput : Elementbase
+    public class PreMTMissingListTemplatesInGalleryInput : ElementBase
     {
         public string ListTemplateID { get; set; }
         public string ListTemplateName { get; set; }
         public string ListGalleryPath { get; set; }
         public string TimeLastModified { get; set; }
     }
-    public class CustomizationHeadersBase : Elementbase
+    public class CustomizationHeadersBase : ElementBase
     {
         public string IsCustomizationPresent { get; set; }
         public string IsCustomizedContentType { get; set; }
@@ -321,4 +321,24 @@ namespace JDP.Remediation.Console.Common.Base
         public string SecurityGroupName { get; set; }
         public string SiteCollectionUrl { get; set; }
     }
+
+    public class LockedMasterPageFilesInput : ElementBase
+    {
+        public string SetupFileDirName { get; set; }
+        public string SetupFileExtension { get; set; }
+        public string SetupFileName { get; set; }
+    }
+    public class LockedMasterPageFilesOutput
+    {
+        public string SetupFileDirName { get; set; }
+        public string SetupFileName { get; set; }
+        public string Status { get; set; }
+        public string WebUrl { get; set; }
+        public string WebApplication { get; set; }
+        public string ExecutionDateTime { get; set; }
+        public string MappingFile { get; set; }
+        public string MappingBackup { get; set; }
+        public string MappingMasterPageRef { get; set; }
+    }
+
 }
