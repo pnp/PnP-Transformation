@@ -89,6 +89,7 @@
     <Compile Include="GenerateSiteCollectionReport.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="ManageMaintenanceBanners.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="GenerateColumnAndTypeUsageReport.cs" />
     <Compile Include="GenerateNonDefaultMasterPageUsageReport.cs" />
@@ -246,6 +247,7 @@
     <Content Include="Dlls\Microsoft.Deployment.Compression.Cab.dll" />
     <Content Include="Dlls\Microsoft.Deployment.Compression.dll" />
     <Content Include="Dlls\Mono.Cecil.dll" />
+    <Content Include="Scripts\embedMaintenanceBanner.js" />
     <None Include="Web References\WebPartPagesService\webpartpages.disco" />
   </ItemGroup>
   <ItemGroup>

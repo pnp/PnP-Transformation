@@ -85,7 +85,8 @@ namespace JDP.Remediation.Console
                             System.Console.WriteLine("2. Replace FTC Web Part with OOTB Web Part or App Part on a page");
                             System.Console.WriteLine("3. Replace MasterPage");
                             System.Console.WriteLine("4. Reset Device Channel Mapping Files");
-                            System.Console.WriteLine("5. Exit");
+                            System.Console.WriteLine("5. Manage [Add|Remove] Maintenance Banners");
+                            System.Console.WriteLine("6. Exit");
                             System.Console.ResetColor();
                             input1 = System.Console.ReadLine();
                             switch (input1)
@@ -103,11 +104,14 @@ namespace JDP.Remediation.Console
                                     ResetDeviceChannelMappingFiles.DoWork();
                                     break;
                                 case "5":
+                                    ManageMaintenanceBanners.DoWork();
+                                    break;
+                                case "6":
                                     break;
                                 default:
                                     break;
                             }
-                        } while (input1.ToUpper(System.Globalization.CultureInfo.CurrentCulture) != "5");
+                        } while (input1.ToUpper(System.Globalization.CultureInfo.CurrentCulture) != "6");
                         break;
 
                     case "2":

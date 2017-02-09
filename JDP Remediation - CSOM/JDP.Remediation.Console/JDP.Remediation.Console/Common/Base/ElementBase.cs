@@ -341,4 +341,13 @@ namespace JDP.Remediation.Console.Common.Base
         public string MappingMasterPageRef { get; set; }
     }
 
+    public class ManageMaintenanceBannersOutput
+    {
+        public string SiteCollectionUrl { get; set; }
+        public string BannerOperation { get; set; }
+        public string ScriptLinkName { get; set; }
+        public string ScriptLinkFile { get; set; }
+        public string Status { get; set; }
+    }
+
 }

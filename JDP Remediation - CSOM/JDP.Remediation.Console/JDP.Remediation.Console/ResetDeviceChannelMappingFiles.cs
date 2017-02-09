@@ -57,9 +57,11 @@ namespace JDP.Remediation.Console
             string inputFileSpec = String.Empty;
             if (!ReadInputFile(ref inputFileSpec))
             {
+                System.Console.ForegroundColor = System.ConsoleColor.Red;
                 Logger.LogErrorMessage(String.Format("Input file [{0}] does not exist.", inputFileSpec), true);
                 Logger.LogInfoMessage(String.Format("Scan aborted {0}", DateTime.Now.ToString()), true);
                 Logger.CloseLog();
+                System.Console.ResetColor();
                 return;
             }
 
@@ -67,9 +69,11 @@ namespace JDP.Remediation.Console
             IEnumerable<LockedMasterPageFilesInput> objInputLockedMasterPageFiles = ImportCSV.ReadMatchingColumns<LockedMasterPageFilesInput>(inputFileSpec, Constants.CsvDelimeter);
             if (objInputLockedMasterPageFiles == null || objInputLockedMasterPageFiles.Count() == 0)
             {
+                System.Console.ForegroundColor = System.ConsoleColor.Red;
                 Logger.LogErrorMessage(String.Format("Input file [{0}] is empty.", inputFileSpec), true);
                 Logger.LogInfoMessage(String.Format("Scan aborted {0}", DateTime.Now.ToString()), true);
                 Logger.CloseLog();
+                System.Console.ResetColor();
                 return;
             }
 
@@ -86,7 +90,7 @@ namespace JDP.Remediation.Console
                 Logger.LogErrorMessage(String.Format("ResetDeviceChannelMappingFiles() failed: Error={0}", ex.Message), true);
                 ExceptionCsv.WriteException(
                     Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, 
-                    "SetupFile", 
+                    "MappingFile", 
                     ex.Message, ex.ToString(), "DoWork", ex.GetType().ToString(), 
                     "Exception occured while processing input file."
                     );
@@ -233,8 +237,8 @@ namespace JDP.Remediation.Console
             {
                 Logger.LogErrorMessage(String.Format("ResetMappingFile() failed for file {0}: Error={1}", targetFilePath, ex.Message), false);
                 ExceptionCsv.WriteException(
-                    webAppUrl, siteUrl, webUrl, 
-                    "SetupFile", 
+                    webAppUrl, siteUrl, webUrl,
+                    "MappingFile", 
                     ex.Message, ex.ToString(), "ResetMappingFile", ex.GetType().ToString(), 
                     String.Format("ResetMappingFile() failed for file {0}", targetFilePath)
                     );

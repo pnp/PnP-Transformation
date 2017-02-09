@@ -72,7 +72,8 @@ These operations are listed below and explained in the following sections:
 2. Replace FTC Web Part with OOTB Web Part/App Part on a page 
 3. Replace Master Page  
 4. Reset Device Channel Mapping Files
-5. Exit
+5. Manage [Add|Remove] Maintenance Banners
+6. Exit
 
 ### 1. Add OOTB Web Part or App Part to a page ###
 This operation adds a specified WebPart (OOTB or AppPart) to a specified page present in the specified web site.
@@ -195,6 +196,44 @@ This operation generates the following output files:
 
 - ResetDeviceChannelMappingFiles-yyyyMMdd\_hhmmss.csv
 - ResetDeviceChannelMappingFiles-yyyyMMdd\_hhmmss.log (verbose log file)
+
+### 5. Manage [Add|Remove] Maintenance Banners ###
+
+This operation reads a list of site collection Urls from an input file and performs the specified Maintenance Banner Operation [Add or Remove] on each site collection.
+
+Upon choosing this option, the user is prompted for how to proceed as shown below:
+
+	1)	Add Maintenance Banner to Sites  
+	2)	Remove Maintenance Banner from Sites  
+	3)	Exit to Transformation Menu
+
+This operation is helpful in alerting site collection users to the fact that important maintenance activities are either in progress or upcoming. 
+
+The operation leverages a centrally-managed maintenance banner message that is contained in the `embedMaintenanceBanner.js` file.  Before executing this operation, you should edit this file to specify the desired message.  Do not change the name of this file.
+
+See [embedMaintenanceBanner.js](/JDP%20Remediation%20-%20CSOM/JDP.Remediation.Console/JDP.Remediation.Console/Scripts/embedMaintenanceBanner.js) for an example of this file. Use of this file results in a sample banner as shown below:
+![](\images/MaintenanceBanner.PNG) 
+
+Be sure to upload the file to a centrally-managed library, typically a folder (e.g., `scripts` or `js`) that resides beneath the `Style Library` of your root portal site.  You will be prompted for the Url of this folder if you select the **Add** operation.
+
+**Input**
+
+If Option 1 `Add Maintenance Banner to Sites` is selected, this operation prompts the user for the following parameters:
+
+- CDN Library Folder Url
+	- The absolute Url of the CDN Library Folder that contains the following JS file: embedMaintenanceBanner.js 
+	- Example: [https://portal.contoso.com/style library/cdn/scripts](https://portal.contoso.com/style%20library/cdn/scripts)
+
+Regardless of the option selected, the operation also reads the following input files:
+
+- Sites.txt (no header; one fully-qualified, absolute site collection Url per line)
+
+**Output**
+
+This operation generates the following output files:
+
+- ManageMaintenanceBanners-yyyyMMdd\_hhmmss.csv
+- ManageMaintenanceBanners-yyyyMMdd\_hhmmss.log (verbose log file)
 
 ## 2 - Clean-Up ##
 When you select the **Clean-up** category, you are presented with a list of operations as shown below:
@@ -578,6 +617,7 @@ This operation generates the following output files:
 - GenerateSecurityGroupReport-yyyyMMdd\_hhmmss.log (verbose log file)
 
 
+<img src="https://telemetry.sharepointpnp.com/pnp-transformation/JDP Remediation - CSOM/JDP.Remediation.Console" /> 
 
 
 
