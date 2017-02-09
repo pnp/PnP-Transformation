@@ -211,7 +211,8 @@ This operation is helpful in alerting site collection users to the fact that imp
 
 The operation leverages a centrally-managed maintenance banner message that is contained in the `embedMaintenanceBanner.js` file.  Before executing this operation, you should edit this file to specify the desired message.  Do not change the name of this file.
 
-See [embedMaintenanceBanner.js](/JDP%20Remediation%20-%20CSOM/JDP.Remediation.Console/JDP.Remediation.Console/Scripts/embedMaintenanceBanner.js) for an example of this file.
+See [embedMaintenanceBanner.js](/JDP%20Remediation%20-%20CSOM/JDP.Remediation.Console/JDP.Remediation.Console/Scripts/embedMaintenanceBanner.js) for an example of this file. Use of this file results in a sample banner as shown below:
+![](\images/MaintenanceBanner.PNG) 
 
 Be sure to upload the file to a centrally-managed library, typically a folder (e.g., `scripts` or `js`) that resides beneath the `Style Library` of your root portal site.  You will be prompted for the Url of this folder if you select the **Add** operation.
 
