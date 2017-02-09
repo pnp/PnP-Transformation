@@ -221,7 +221,7 @@ If Option 1 `Add Maintenance Banner to Sites` is selected, this operation prompt
 
 - CDN Library Folder Url
 	- The absolute Url of the CDN Library Folder that contains the following JS file: embedMaintenanceBanner.js 
-	- Example: https://portal.contoso.com/style library/cdn/scripts
+	- Example: [https://portal.contoso.com/style library/cdn/scripts](https://portal.contoso.com/style%20library/cdn/scripts)
 
 Regardless of the option selected, the operation also reads the following input files:
 
