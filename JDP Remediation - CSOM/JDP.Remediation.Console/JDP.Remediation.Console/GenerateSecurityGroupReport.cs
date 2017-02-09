@@ -56,17 +56,21 @@ namespace JDP.Remediation.Console
             string securityGroupsInputFileSpec = Environment.CurrentDirectory + "\\" + Constants.SecurityGroupsInputFileName;
             if (!System.IO.File.Exists(securityGroupsInputFileSpec))
             {
+                System.Console.ForegroundColor = System.ConsoleColor.Red;
                 Logger.LogErrorMessage(String.Format("Input file {0} is not available", securityGroupsInputFileSpec), true);
                 Logger.LogInfoMessage(String.Format("Scan aborted {0}", DateTime.Now.ToString()), true);
                 Logger.CloseLog();
+                System.Console.ResetColor();
                 return;
             }
             securityGroups = Helper.ReadInputFile(securityGroupsInputFileSpec, false);
             if (securityGroups.Length == 0)
             {
+                System.Console.ForegroundColor = System.ConsoleColor.Red;
                 Logger.LogErrorMessage(String.Format("Input file {0} is empty", securityGroupsInputFileSpec), true);
                 Logger.LogInfoMessage(String.Format("Scan aborted {0}", DateTime.Now.ToString()), true);
                 Logger.CloseLog();
+                System.Console.ResetColor();
                 return;
             }
             Logger.LogInfoMessage(String.Format("Loaded a total of {0} security groups ...", securityGroups.Length), true);
@@ -74,9 +78,11 @@ namespace JDP.Remediation.Console
             string inputFileSpec = Environment.CurrentDirectory + "\\" + Constants.UsageReport_SitesInputFileName;
             if (!System.IO.File.Exists(inputFileSpec))
             {
+                System.Console.ForegroundColor = System.ConsoleColor.Red;
                 Logger.LogErrorMessage(String.Format("Input file {0} is not available", inputFileSpec), true);
                 Logger.LogInfoMessage(String.Format("Scan aborted {0}", DateTime.Now.ToString()), true);
                 Logger.CloseLog();
+                System.Console.ResetColor();
                 return;
             }
 
@@ -134,6 +140,12 @@ namespace JDP.Remediation.Console
                         catch (Exception ex)
                         {
                             Logger.LogErrorMessage(String.Format("ProcessSite() failed for Security Group [{0}]: Error={1}", g.Title, ex.Message), false);
+                            ExceptionCsv.WriteException(
+                                "N/A", siteUrl, "N/A",
+                                "SecurityGroup",
+                                ex.Message, ex.ToString(), "ProcessSite", ex.GetType().ToString(),
+                                String.Format("ProcessSite() failed for Security Group [{0}]", g.Title)
+                                );
                         }
                     }
                 }
@@ -141,6 +153,12 @@ namespace JDP.Remediation.Console
             catch (Exception ex)
             {
                 Logger.LogErrorMessage(String.Format("ProcessSite() failed for site [{0}]: Error={1}", siteUrl, ex.Message), false);
+                ExceptionCsv.WriteException(
+                    "N/A", siteUrl, "N/A",
+                    "SecurityGroup",
+                    ex.Message, ex.ToString(), "ProcessSite", ex.GetType().ToString(),
+                    String.Format("ProcessSite() failed for site [{0}]", siteUrl)
+                    );
             }
         }
     }

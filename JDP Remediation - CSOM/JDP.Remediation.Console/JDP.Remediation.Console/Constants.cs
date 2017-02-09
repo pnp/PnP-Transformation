@@ -122,5 +122,10 @@ namespace JDP.Remediation.Console
         { 
             "Sample.master"
         };
+
+        // Maintenance Banner
+        public static readonly string EmbedJsFileName = "embedMaintenanceBanner.js";
+        public static readonly string ScriptLinkLocation = "ScriptLink";
+        public static readonly string ScriptLinkDescription = "MaintenanceBanner";
     }
 }
