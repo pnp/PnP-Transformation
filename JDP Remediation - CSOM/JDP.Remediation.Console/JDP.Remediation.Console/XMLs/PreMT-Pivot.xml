@@ -1,0 +1,527 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<PivotConfig>
+  <PivotReportOutput>PreMT_PivotReport.xlsx</PivotReportOutput>
+  <Style DefaultFontSize="10" DefaultFontColor="Black" DefaultFontFamily="Calibri" DefaultBgColor="White" DefaultRowHeight="12.75" DefaultColumnWidth="50">
+    <TOCStyle>
+      <TOCHeading FontSize="14" FontFamily="Calibri" FontColor="DarkBlue"/>
+      <TOCTitle FontSize="12" BgColor="NavyBlue" FontColor="White" FontFamily="Calibri"/>
+      <TOCDescription FontSize="12" BgColor="NavyBlue" FontColor="White" FontFamily="Calibri" ColumnWidth="150"/>
+      <Style FontSize="10" FontColor="Black" FontFamily="Calibri"></Style>
+    </TOCStyle>
+    <ComponentStyle>
+      <DescriptionTitle FontSize="14" FontFamily="Calibari" FontColor="White" BgColor="NavyBlue" ColumnWidth="50"/>
+      <Description FontSize="10" FontFamily="Calibri" FontColor="Black" BgColor="White" RowHeight="90"/>
+    </ComponentStyle>
+    <SourceFileStyle>
+      <SourceFileHeading FontSize="10" FontColor="Black"/>
+      <SourceFileName FontSize="10" FontColor="Blue"/>
+      <BackToIndex FontFamily="Calibri" FontSize="10"/>
+    </SourceFileStyle>
+  </Style>
+  <TOC>
+    <TOCHeading>Table Of Content</TOCHeading>
+    <TOCTitle>Title</TOCTitle>
+    <TOCDescription>Description</TOCDescription>
+  </TOC>
+  <SourceFile>
+    <SourceFileHeading>SourceFile: </SourceFileHeading>
+    <SourceFileName></SourceFileName>
+    <BackToIndex>Back To Index</BackToIndex>
+  </SourceFile>
+  <SummaryView>
+    <ShortDescription>
+      <![CDATA[Summary View Report is divided into two section:
+      a.	Web Application View
+      b.	Chart View]]>
+    </ShortDescription>
+    <Description>
+      <![CDATA[Summary view is a holistic & consolidated view for all the web application which will provide the information about the totals of  the customization usage stored in a bunch of independent Discovery Usage reports. Summary view will facilitate to take a decision which web application and customization need to transform first based on the complexity and business need. You would not need to open each individual usage reports to analyze the data. Some time Discovery Usage reports can often contain large amounts of data which itself would also be a tedious work to analyze the data.
+      Summary View Report is divided into two section:
+      a.	Web Application View – This is a tabular kind of view which will provide the information of each component count against each web application.
+      b.	Chart View: Chart view is a kind of Pie Chart Distribution which will provide the distribution view of each component across all the web application.]]>
+    </Description>
+    <FontSize>10</FontSize>
+    <FontName>Calibri</FontName>
+    <FontColor>Black</FontColor>
+    <StartingRow>4</StartingRow>
+    <StartingColumn>1</StartingColumn>
+    <CellIndex>A</CellIndex>
+    <GrandTotalLabel>Grand Total</GrandTotalLabel>
+    <SummaryViewHeading Text="Summary View" Row="1" Column="1" Cell="A1" DescriptionStartCell="B1" DescriptionEndCell="P1" FontSize="14" FontColor="White" BgColor="NavyBlue" RowHeight="80"></SummaryViewHeading>
+    <SummaryViewColumnHeader Text="WebApplication" FontSize="10" FontColor="White" BgColor="NavyBlue"></SummaryViewColumnHeader>
+    <Chart Style="345" LayoutType="7" Color="13" Width="285" Height="195">
+      <ChartType>pie</ChartType>
+      <ChartType active="1">3dpie</ChartType>
+      <ChartType>line</ChartType>
+      <ChartType>3dline</ChartType>
+      <ChartType>3dcolumn</ChartType>
+      <ChartType>clusteredcolumn</ChartType>
+      <ChartType>3dclusteredcolumn</ChartType>
+    </Chart>
+  </SummaryView>
+  <Component Name="Assembly" InputFileName="PreMT_MissingAssembly.csv" InputDataSheetName="PreMT_MissingAssembly" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[
+      The file PreMT_MissingAssembly.csv, would be used as an input, due to which a Pivot View would be created for Assembly to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle >Description</DescriptionTitle>
+    <Description>
+      <![CDATA[
+      This is a Missing Assembly Pivot View which is used to store the summary of a "PreMT_MissingAssembly.csv" report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way.
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>EventReceiver</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="EventReceiver" Label="EventReceiver" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="ConfigDBFeature" InputFileName="PreMT_MissingConfigDBFeatures.csv" InputDataSheetName="PreMT_MissingConfigDBFeatures" SummaryViewColumn="WebApplicationId">
+    <ShortDescription>
+      <![CDATA[The file PreMT_MissingConfigDBFeatures.csv, would be used as an input, due to which a Pivot View would be created for ConfigDBFeature to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle >Description</DescriptionTitle>
+    <Description>
+      <![CDATA[This is a Missing ConfigDBFeature Pivot View which is used to store the summary of a "PreMT_MissingConfigDBFeatures.csv" report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way.
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>ConfigDBName</Slicer>
+        <Slicer>FeatureId</Slicer>
+        <Slicer>FeatureTitle</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>ConfigDBName</Filter>
+        <Filter>FeatureTitle</Filter>
+      </Filters>
+      <ValueColumn Name="FeatureId" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="FeatureTitle" Label="FeatureTitle" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="ContentType" InputFileName="PreMT_MissingContentType.csv" InputDataSheetName="PreMT_MissingContentType" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The file PreMT_MissingContentType.csv, would be used as an input, due to which a Pivot View would be created for ContentType to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle>Description</DescriptionTitle>
+    <Description>
+      <![CDATA[This is a Missing Content Type Pivot View which is used to store the summary of a "PreMT_MissingContentType.csv" report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way.
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+        <Slicer>isFromFeature</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="ContentTypeName" Label="Content Type Name" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="ContentTypeEventReceivers" InputFileName="PreMT_AllContentTypeEventReceivers_Usage.csv" InputDataSheetName="PreMT_AllContentTypeEventReceivers_Usage" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The file PreMT_AllContentTypeEventReceivers_Usage.csv, would be used as an input, due to which a Pivot View would be created for ContentType EventReceivers to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle>Description</DescriptionTitle>
+    <Description>
+      <![CDATA[This is a Missing ContentType EventReceivers Pivot View which is used to store the summary of a "PreMT_AllContentTypeEventReceivers_Usage.csv" report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way.
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+        <Slicer>ContentTypeName</Slicer>
+        <Slicer>EventReceiver_Assembly</Slicer>
+        <Slicer>EventReceiver_Class</Slicer>
+        <Slicer>ListTitle</Slicer>
+        <Slicer>Source</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="ContentTypeName" Label="Content Type Name" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="CThavingFeatureIDTag" InputFileName="PreMT_CThavingFeatureIDTag_Definition.csv" InputDataSheetName="PreMT_CThavingFeatureIDTag_Definition" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The file PreMT_CThavingFeatureIDTag_Definition.csv, would be used as an input, due to which a Pivot View would be created for CThavingFeatureIDTag to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle>Description</DescriptionTitle>
+    <Description>
+      <![CDATA[This is a Missing CThavingFeatureIDTag Definition Pivot View which is used to store the summary of a "PreMT_CThavingFeatureIDTag_Definition.csv" report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way.
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>IsFromFeature</Slicer>
+        <Slicer>ResourceDir</Slicer>
+        <Slicer>SolutionName</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+      </Filters>
+      <ValueColumn Name="Scope" Function="Count"></ValueColumn>
+      <Rows>
+        <Row Column="ResourceDir" Label="ResourceDir" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="Feature" InputFileName="PreMT_MissingFeature.csv" InputDataSheetName="PreMT_MissingFeature" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The file PreMT_MissingFeature.csv, would be used as an input, due to which a Pivot View would be created for Feature to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle>Description</DescriptionTitle>
+    <Description>
+      <![CDATA[This is a Missing Feature Pivot View which is used to store the summary of a "PreMT_MissingFeature.csv" report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way.
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+        <Slicer>Scope</Slicer>
+        <Slicer>WebUrl</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="FeatureTitle" Label="FeatureTitle" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="FieldType" InputFileName="PreMT_MissingFieldTypes.csv" InputDataSheetName="PreMT_MissingFieldTypes" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The file PreMT_MissingFieldTypes.csv, would be used as an input, due to which a Pivot View would be created for FieldType to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle>Description</DescriptionTitle>
+    <Description>
+      <![CDATA[This is a Missing FieldType Pivot View which is used to store the summary of a "PreMT_MissingFieldTypes.csv" report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way.
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+        <Slicer>isFromFeature</Slicer>
+        <Slicer>CustomFieldTitle</Slicer>
+        <Slicer>CustomFieldType</Slicer>
+        <Slicer>Source</Slicer>
+        <Slicer>CustomFieldListTitle</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="CustomFieldTitle" Label="CustomField Title" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="Lists" InputFileName="PreMT_MissingLists.csv" InputDataSheetName="PreMT_MissingLists" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The file PreMT_MissingLists.csv, would be used as an input, due to which a Pivot View would be created for Lists to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle>Description</DescriptionTitle>
+    <Description>
+      <![CDATA[This is a Missing Lists Pivot View which is used to store the summary of a "PreMT_MissingLists.csv" report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way.
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+        <Slicer>ServerTemplate</Slicer>
+        <Slicer>ListTitle</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="ListTitle" Label="ListTitle" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="CustomMasterPages" InputFileName="PreMT_MasterPage_Usage.csv" InputDataSheetName="PreMT_MasterPage_Usage" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The file PreMT_MasterPage_Usage.csv, would be used as an input, due to which a Pivot View would be created for Custom Master Pages to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle>Description</DescriptionTitle>
+    <Description>
+      <![CDATA[This is a Missing Custom Master Pages Pivot View which is used to store the summary of a "PreMT_MasterPage_Usage.csv" report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way.
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>CustomMasterUrlStatus</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="CustomMasterLeafName" Label="Custom Master LeafName" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="MasterPages" InputFileName="PreMT_MasterPage_Usage.csv" InputDataSheetName="PreMT_MasterPage_Usage" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The file PreMT_MasterPage_Usage.csv, would be used as an input, due to which a Pivot View would be created for Master Pages to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle>Description</DescriptionTitle>
+    <Description>
+      <![CDATA[This is a Missing Master Pages Pivot View which is used to store the summary of a "PreMT_MasterPage_Usage.csv" report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way.
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>MasterUrlStatus</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="MasterLeafName" Label="Master LeafName" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="SetupFile" InputFileName="PreMT_MissingSetupFile.csv" InputDataSheetName="PreMT_MissingSetupFile" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The file PreMT_MissingSetupFile.csv, would be used as an input, due to which a Pivot View would be created for SetupFile to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle>Description</DescriptionTitle>
+    <Description>
+      <![CDATA[This is a Missing SetupFile Pivot View which is used to store the summary of a "PreMT_MissingSetupFile.csv" report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way.
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+        <Slicer>SetupFileExtension</Slicer>
+        <Slicer>SetupFileName</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="SetupFileName" Label="SetupFileName" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="SiteColumn" InputFileName="PreMT_MissingSiteColumn.csv" InputDataSheetName="PreMT_MissingSiteColumn" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The file PreMT_MissingSiteColumn.csv, would be used as an input, due to which a Pivot View would be created for SiteColumn to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle>Description</DescriptionTitle>
+    <Description>
+      <![CDATA[This is a Missing SiteColumn Pivot View which is used to store the summary of a "PreMT_MissingSiteColumn.csv" report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way.
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+        <Slicer>isFromFeature</Slicer>
+        <Slicer>CustomFieldInternalName</Slicer>
+        <Slicer>CustomFieldType</Slicer>
+        <Slicer>SolutionId</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="CustomFieldInternalName" Label="CustomField Internal Name" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="SiteDefinition" InputFileName="PreMT_MissingSiteDefinition.csv" InputDataSheetName="PreMT_MissingSiteDefinition" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The file PreMT_MissingSiteDefinition.csv, would be used as an input, due to which a Pivot View would be created for SiteDefinition to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle>Description</DescriptionTitle>
+    <Description>
+      <![CDATA[This is a Missing SiteDefinition Pivot View which is used to store the summary of a "PreMT_MissingSiteDefinition.csv" report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way.
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+        <Slicer>SiteDefinitionId</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="SiteDefinitionId" Label="SiteDefinitionId" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="WebParts" InputFileName="PreMT_MissingWebPart.csv" InputDataSheetName="PreMT_MissingWebPart" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The file PreMT_MissingWebPart.csv, would be used as an input, due to which a Pivot View would be created for WebParts to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle>Description</DescriptionTitle>
+    <Description>
+      <![CDATA[This is a Missing WebParts Pivot View which is used to store the summary of a "PreMT_MissingWebPart.csv" report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way.
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="WebPartType" Label="WebPartType" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="MissingWorkflowAssociations" InputFileName="PreMT_MissingWorkflowAssociations.csv" InputDataSheetName="PreMT_MissingWorkflowAssociations" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The file PreMT_MissingWorkflowAssociations.csv, would be used as an input, due to which a Pivot View would be created for WorkflowAssociations to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle>Description</DescriptionTitle>
+    <Description>
+      <![CDATA[This is a Missing WorkflowAssociations Pivot View which is used to store the summary of a "PreMT_MissingWorkflowAssociations.csv" report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way.
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="LeafName" Label="Leaf Name" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="ListTemplatesInGallery" InputFileName="PreMT_AllListTemplatesInGallery_Usage.csv" InputDataSheetName="PreMT_AllListTemplatesInGallery_Usage" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The file PreMT_AllListTemplatesInGallery_Usage.csv, would be used as an input, due to which a Pivot View would be created for List Templates In Gallery to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle>Description</DescriptionTitle>
+    <Description>
+      <![CDATA[This is a Missing List Templates In Gallery Pivot View which is used to store the summary of a "PreMT_AllListTemplatesInGallery_Usage.csv" report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way.
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="ListTemplateName" Label="ListTemplate Name" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="SiteTemplatesInGallery" InputFileName="PreMT_AllSiteTemplatesInGallery_Usage.csv" InputDataSheetName="PreMT_AllSiteTemplatesInGallery_Usage" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The file PreMT_AllSiteTemplatesInGallery_Usage.csv, would be used as an input, due to which a Pivot View would be created for Site Templates In Gallery to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle>Description</DescriptionTitle>
+    <Description>
+      <![CDATA[This is a Missing Site Templates In Gallery Pivot View which is used to store the summary of a "PreMT_AllSiteTemplatesInGallery_Usage.csv" report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way.
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="SiteTemplateName" Label="SiteTemplate Name" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+</PivotConfig>

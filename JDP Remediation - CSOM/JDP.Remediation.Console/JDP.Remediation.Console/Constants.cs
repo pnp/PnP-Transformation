@@ -127,5 +127,23 @@ namespace JDP.Remediation.Console
         public static readonly string EmbedJsFileName = "embedMaintenanceBanner.js";
         public static readonly string ScriptLinkLocation = "ScriptLink";
         public static readonly string ScriptLinkDescription = "MaintenanceBanner";
+
+
+        //Pivot Constants
+
+        /// <summary>
+        // Excel/CSV Cell CharacterLimit. According to Microsoft's documentation: 
+        // https://support.office.com/en-us/article/Excel-specifications-and-limits-1672b34d-7043-467e-8e27-269d656771c3
+        // Excel cannot read more than 32767 characters in a single cell
+        // Total number of characters that a cell can contain: 32,767 characters
+        /// </summary>
+
+        public static readonly long MergingFileSizeinKb = 700001;//700 MB
+
+        //Pivot Configuration
+        public static string SliceAndDiceSheet_Suffix = "_SDView";
+        public static int SheetNameMaxLength = 31;
+        public static string DTFileName = "Discovery Usage";
+        public static string PreMTFileName = "Pre Migration Scan";
     }
 }
