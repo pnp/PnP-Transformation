@@ -235,7 +235,7 @@ namespace JDP.Remediation.Console
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage(String.Format("ResetMappingFile() failed for file {0}: Error={1}", targetFilePath, ex.Message), false);
+                Logger.LogErrorMessage(String.Format("ResetMappingFile() failed for file {0}: Error={1}", targetFilePath, ex.Message), true);
                 ExceptionCsv.WriteException(
                     webAppUrl, siteUrl, webUrl,
                     "MappingFile", 

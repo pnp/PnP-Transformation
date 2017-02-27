@@ -173,7 +173,8 @@ namespace JDP.Remediation.Console
                             System.Console.WriteLine("6. Generate Web Part Usage Report");
                             System.Console.WriteLine("7. Generate Web Part Properties Report");
                             System.Console.WriteLine("8. Generate Security Group Report");
-                            System.Console.WriteLine("9. Exit ");
+                            System.Console.WriteLine("9. Generate Pivot Reports ");
+                            System.Console.WriteLine("10. Exit ");
                             System.Console.ResetColor();
                             input1 = System.Console.ReadLine();
                             switch (input1)
@@ -217,11 +218,14 @@ namespace JDP.Remediation.Console
                                     GenerateSecurityGroupReport.DoWork();
                                     break;
                                 case "9":
+                                    GeneratePivotReport.DoWork();
+                                    break;
+                                case "10":
                                     break;
                                 default:
                                     break;
                             }
-                        } while (input1.ToUpper(System.Globalization.CultureInfo.CurrentCulture) != "9");
+                        } while (input1.ToUpper(System.Globalization.CultureInfo.CurrentCulture) != "10");
                         break;
 
                     case "4":

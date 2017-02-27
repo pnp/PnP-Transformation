@@ -1,7 +1,14 @@
 # JDP.Remediation.Console #
 
 ### Summary ###
-This sample shows an JDP Remediation - CSOM application that is used to perform FTC cleanup post to solution retraction.
+This sample demonstrates the JDP Remediation Console, which is a CSOM-based Windows Console application that can assist an overall effort to remove Farm Solution-based customizations and components from a SharePoint farm.  It allows the user to perform operations from the following general categories:
+
+-  **Transformation**
+	- Transform site collections to remove and/or replace various Farm Solution-based customizations and components within the target SharePoint farm prior to Farm Solution retraction
+-  **Clean-up**
+	- Remove various Farm Solution-based customizations and components that have been left behind (i.e., orphaned) within the target SharePoint farm after Farm Solution retraction
+-  **Self-Service Reporting** 
+	- Generate various reports to locate Farm Solution-based customizations and components within the target SharePoint farm
 
 ### Applies to ###
 -  Office 365 Dedicated (D)
@@ -54,15 +61,8 @@ In these cases, the easiest and fastest way to improve performance is to partiti
 
 
 ## Commands ##
+This sample demonstrates the JDP Remediation Console, which is a CSOM-based Windows Console application that can assist an overall effort to remove Farm Solution-based customizations and components from a SharePoint farm.  It allows the user to perform operations from the following general categories:
 
-As soon as you run this application, you would need to provide some inputs to execute this console application to get your desired results.
-
-- You will have to provide Admin account details- ***User Name*** and ***Password***
-- You will also have to select the corresponding selection of the operation you want to perform.
-
-	**Example**, if you want to execute `"Clean-Up" operations`, you'll have to enter **2** and enter **4** to `Quit` the application.
-
-On executing the Console Application, we get **3 choices of Operations**, which are listed as below:
 
 	1. Transformation  
 	2. Clean-Up  
@@ -74,6 +74,23 @@ The same are shown in the screen-shot below:
 
 ![](\images/ChoiceOfOperations.PNG)
 
+-  **Transformation**
+	- Transform site collections to remove and/or replace various Farm Solution-based customizations and components within the target SharePoint farm prior to Farm Solution retraction
+-  **Clean-up**
+	- Remove various Farm Solution-based customizations and components that have been left behind (i.e., orphaned) within the target SharePoint farm after Farm Solution retraction
+-  **Self-Service Reporting** 
+	- Generate various reports to locate Farm Solution-based customizations and components within the target SharePoint farm
+	
+When you start this application, you are prompted to provide Admin account credentials (***User Name*** and ***Password***)
+
+You would need to provide some inputs to execute this console application to get your desired results. Simply select the category of the operation you want to perform.
+
+**Examples**:
+
+- To execute `"Clean-Up"` operations, enter **2**.
+- To `"Exit"` the application, enter **4**.
+
+
 ## 1 - Transformation ##
 
 On selecting **1st Choice of Operation**, we get the following operations as shown in the below screen-shot:
@@ -84,12 +101,12 @@ These operations are listed and explained as below:
 
 ### 1. Add OOTB Web Part or App Part to a page ###
 
-This operation adds the web part to the given page present in the given web site.  
+This operation adds a specified WebPart (OOTB or AppPart) to a specified page present in the specified web site.  
 > **Note**: Web Part should be present in the Web Part Gallery.
  
 **Input**
 
-On selecting this operation, we will be asked for number of parameters as explained below:
+This operation does not use an input file; instead, it prompts the user for the following parameters: 
 
 ![](\images/\AddOOTBtoPage.PNG) 
 
@@ -108,13 +125,11 @@ On selecting this operation, we will be asked for number of parameters as explai
 - **WebPart File Name**
 	* Here we need to provide the `WebPart Name` which we need to add.  
 	**Example:** webPartName.webpart
-
-> **Note:** This webpart should be present in the WebPart Gallery of the given WebUrl
-
 - **WebPart XmlFile Path:**
 	* Here we need to provide the `Xmlfile path of the web part` we need to add  
 	**Example:** “E:\ProjectTest\Configured_5a170911-91dd-4643-adb6-289565f12867_TargetContentQuery.xml”
 
+> **Note:** This webpart should be present in the WebPart Gallery of the given WebUrl
 
 **Output**
 
@@ -157,32 +172,34 @@ On selecting this operation, we will be asked for number of parameters as explai
 
 
 ### 2. Replace FTC Web Part with OOTB Web Part or App on a page ###
-This operation will read the input file from PreMT-Scan or Discovery output file for Web Parts components *(i.e. PreMT_MissingWebPart.csv or WebPartsUsage_Usage.csv respectively)*. It will replace old WebPart (Custom) with new WebPart (OOTB or AppPart) in the given page. First it will delete the existing WebPart present in the page, then will add the new WebPart.  
+This operation will read the input file from PreMT-Scan or Discovery output file for Web Parts components *(i.e. PreMT_MissingWebPart.csv or WebPartsUsage_Usage.csv respectively)*. This operation reads an input file and replaces existing WebParts (Custom) with new WebParts (OOTB or AppPart) on the specified pages.  Operationally, it deletes an existing WebPart before adding the new WebPart.  
 
-On selecting this Operation, we get the following options as shown in the below screenshot:
+The operation also prompts the user for the following parameters (shown in the below screenshot):
 
 ![](\images/\ReplaceFTCWebpart.PNG) 
 
-> Before running this function, please run GetWebPartProperties function (Self Service Report > Operation 3), so that the XMLs for both source and target WebParts is available, to run delete and add function.  
+> Before running this function, please run Generate WebPart Properties Report function (3: Self Service Report > 7: Generate WebPart Properties Report), so that the XMLs for both source and target WebParts is available, to run delete and add function.  
 
 > **Note:** Web Part should be present in the Web Part Gallery.
  
 
 **Input**
 
-- **`PreMT_MissingWebPart.csv`** file of the Pre-Migration scan. 
+This operation reads **either** of the following input files:
+
+- **PreMT_MissingWebPart.csv** `generated by the Pre-Migration scan`. 
 
  * A header row is expected with the following format:  
 		* *WebPartId, WebPartType, PageUrl, StorageKey, ZoneID, ZoneIndex, WebUrl*
 
 ***OR***
 
-- **`WebPartsUsage_Usage.csv`** file of the Discovery scan. 
+- **WebPartsUsage_Usage.csv** `generated by the Discovery scan`. 
 
 	* A header row is expected with the following format:
 		* *WebPartId, WebPartType, PageUrl, StorageKey, ZoneID, ZoneIndex, WebUrl*
 
-Also it asks user for input of the following parameters:
+The operation also prompts the user for the following parameters:
 
 - **Input File Path:**
 	* Here we need to the file path of the above mentioned input file  
@@ -197,7 +214,7 @@ Also it asks user for input of the following parameters:
 	* Here we need to provide the zone ID of the web part we need to add  
 	**Example:**    “LeftColumnZone"
 - **WebPart XmlFile Path:**
-	* Here we need to provide the Path of the Xml file corresponding to Web Part  
+	* Here we need to provide the Path of the Xml file corresponding to Web Part. This Xml you can generate by running operation - *"Generate WebPart Properties Report function" (3: Self Service Report > 7: Generate WebPart Properties Report)*  
 	**Example:** “E:\ProjectTest\Configured_5a170911-91dd-4643-adb6-289565f12867_TargetContentQuery.xml”
 
 **Output**
@@ -243,13 +260,13 @@ Also it asks user for input of the following parameters:
 
 ### 3. Replace MasterPage ###
 
-This operation reads WebUrls from master page reports generated either from PreMT or Discovery or reads WebUrl from user. And reads custom master page to be replaced either with MasterUrl or CustomMasterUrl or both with Out Of the Box master page
+This operation reads an input file (or user input) to obtain a list of one or more WebUrls.  It then examines the Master Page settings (*Site Master Page*, *System Master Page*, or *Both*) of each web and replaces settings that reference the user-specified custom master page with settings that reference the user-specified OOTB master page.
 
 On choosing this option, we would be asked how to proceed for this operation as shown below 
 
 ![](\images/\ReplaceMasterPage.PNG)
 
-There are two approaches as shown in the figure:
+Upon choosing this option, the user is prompted for how to proceed as shown below:
   
 *Please select any of following options:*
 
@@ -276,17 +293,31 @@ Also it asks user for input of the following parameters:
 
 **Input**
 
-- **Web Url** `(Mandatory for Option 2, not required for other Options)`
-- **PreMT\_MasterPage\_Usage.csv**  `(Mandatory for Option 1, not for others)`
-	* This is a CSV that follows the format and content of the PreMT\_MasterPage\_Usage.csv file of the Pre-Migration scan. A header row is expected to have following columns:
+
+- If Option 1 `Process with Input file` is selected, this operation reads **either** of the following input files:
+	- **PreMT\_MasterPage\_Usage.csv**  `(Mandatory for Option 1, not for others)`. 
+This is a CSV that follows the format and content of the PreMT\_MasterPage\_Usage.csv file of the Pre-Migration scan. A header row is expected to have following columns:
 		* PageUrl, SiteCollection, WebUrl, MasterUrl, CustomMasterUrl
 
 		**OR**  
 
-- **MasterPage_Usage.csv** `(Mandatory for Option 1, not for others)`
-	* This is a CSV that follows the format and content of the MasterPage_Usage.csv file of the Discovery. A header row is expected to have following columns:
+	- **MasterPage\_Usage.csv** `(Mandatory for Option 1, not for others)`. 
+	This is a CSV that follows the format and content of the MasterPage_Usage.csv file of the Discovery. A header row is expected to have following columns:
 		* PageUrl, SiteCollection, WebUrl, MasterUrl, CustomMasterUrl
-		
+
+
+- **Web Url** `(Mandatory for Option 2, not required for other Options)`.
+	Regardless of the option selected, the operation also prompts the user for the Master Page setting(s) to replace:
+	
+	- The Site (aka CustomMasterUrl) Master Page only
+	- The System (aka MasterUrl) Master Page only
+	- Both the Site and System Master Pages
+	
+	As each WebUrl is processed, the operation also prompts the user for the following:
+	
+	- The custom Master Page file to be replaced
+	- The OOTB Master Page file to use as the replacement
+
 **Output**
 
 - **ReplaceMasterPage-yyyyMMdd_hhmmss.log** 
@@ -324,27 +355,107 @@ Also it asks user for input of the following parameters:
 			* **Success:** If value of this column is “Success” it implies that the replacement of the master page was successful
 			* **Failure:** If value of this column is “Failure” it implies that the replacement of the master page was not successful due to some error. 
 
+### 4. Reset Device Channel Mapping Files ###
+
+This operation reads a list of "locked" custom master pages from an input file. It then updates the Device Channel Mappings file of the web that contains the master page file to ensure all references to the custom master page have been removed.  Each reference in the mapping file is reset to use the name of the Site Master Page currently in use on the web.
+
+![](\images/\ResetDeviceChannelMapping.PNG)
+
+- **Note:** this operation also saves a backup of the original Mappings file.
+
+This operation is helpful in trying to remediate the Missing Setup Files reports, especially when trying to delete custom master pages from a Master Page Gallery.  Even though all webs of the target SharePoint environment may have been reset to use OOTB master pages (e.g., seattle.master), initial attempts to delete custom master page files will often fail with the following error:
+
+- This item cannot be deleted because it is still referenced by other pages
+
+This error typically occurs because the Device Channel Mappings file of the web still holds a reference to the custom master page file. 
+
+Use the **PreMT\_MissingSetupFile.csv** file generated by the Pre-Migration scan as a basis of the input file for this operation; simply copy/include only those rows that refer to master page files that cannot be deleted.
+
+**Input**
+
+This operation reads the following input files:
+ 
+- LockedMasterPageFiles.csv `filtered version of PreMT_MissingSetupFile.csv file generated by the Pre-Migration scan`
+	- A header row is expected with the following format: 
+	- *ContentDatabase, SetupFileDirName, SetupFileExtension, SetupFileName, SetupFilePath, SiteCollection, UpgradeStatus, WebApplication, WebUrl*
+
+**Output**
+
+This operation generates the following output files:
+
+- ResetDeviceChannelMappingFiles-yyyyMMdd\_hhmmss.csv
+- ResetDeviceChannelMappingFiles-yyyyMMdd\_hhmmss.log (verbose log file)
+
+### 5. Manage [Add|Remove] Maintenance Banners ###
+
+This operation reads a list of site collection Urls from an input file and performs the specified Maintenance Banner Operation [Add or Remove] on each site collection.
+
+![](\images/\ManageMaintenanceBanners.PNG)
+
+Upon choosing this option, the user is prompted for how to proceed as shown below:
+
+	1)	Add Maintenance Banner to Sites  
+	2)	Remove Maintenance Banner from Sites  
+	3)	Exit to Transformation Menu
+
+This operation is helpful in alerting site collection users to the fact that important maintenance activities are either in progress or upcoming. 
+
+The operation leverages a centrally-managed maintenance banner message that is contained in the `embedMaintenanceBanner.js` file.  Before executing this operation, you should edit this file to specify the desired message.  Do not change the name of this file.
+
+See [embedMaintenanceBanner.js](/JDP%20Remediation%20-%20CSOM/JDP.Remediation.Console/JDP.Remediation.Console/Scripts/embedMaintenanceBanner.js) for an example of this file. Use of this file results in a sample banner as shown below:
+![](\images/MaintenanceBanner.PNG) 
+
+Be sure to upload the file to a centrally-managed library, typically a folder (e.g., `scripts` or `js`) that resides beneath the `Style Library` of your root portal site.  You will be prompted for the Url of this folder if you select the **Add** operation.
+
+**Input**
+
+If Option 1 `Add Maintenance Banner to Sites` is selected, this operation prompts the user for the following parameters:
+
+- CDN Library Folder Url
+	- The absolute Url of the CDN Library Folder that contains the following JS file: embedMaintenanceBanner.js 
+	- Example: [https://portal.contoso.com/style library/cdn/scripts](https://portal.contoso.com/style%20library/cdn/scripts)
+
+![](\images/MaintenanceBannerOption1.PNG) 
+
+Regardless of the option selected, the operation also reads the following input files:
+
+- Sites.txt (no header; one fully-qualified, absolute site collection Url per line)
+
+**Output**
+
+This operation generates the following output files:
+
+- ManageMaintenanceBanners-yyyyMMdd\_hhmmss.csv
+- ManageMaintenanceBanners-yyyyMMdd\_hhmmss.log (verbose log file)
 
 ## 2 - Clean-Up ##
 
-On selecting 2nd Choice of Operation, we get the following operations as shown in the below screenshot:
+When you select the **Clean-up** category, you are presented with a list of operations as shown below:
 
 ![](\images/\ChoiceOfOperations2.PNG) 
 
-These operations are listed and explained as below:
+These operations are listed below and explained in the following sections:
+
+1. Delete Missing Setup Files  
+2. Delete Missing Features  
+3. Delete Missing Event Receivers  
+4. Delete Workflow Associations  
+5. Delete List Templates  
+6. Delete Missing WebParts  
+7. Exit 
+
 
 ### 1. Delete Missing Setup Files ###
-This operation reads a list of setup file definitions from an input file and                <span style="color:red;">deletes</span> the associated setup file from the target SharePoint environment.  
-
+This operation reads a list of setup file definitions from an input file and deletes the associated setup files from the target SharePoint environment.   
 
 On selecting this Operation, we get the following options as shown in the below screenshot:
 
 ![](\images/\SetupFileCleanUp.PNG) 
 
-This operation is helpful in trying to remediate the Missing Setup Files report of the Pre-Migration Scan.  It attempts to remove all specified setup files from the target SharePoint environment.
+This operation is helpful in trying to remediate the Missing Setup Files report.  It attempts to remove all specified setup files from the target SharePoint environment.
 
 #### Input ####
-- **PreMT_MissingSetupFile.csv**
+- **PreMT_MissingSetupFile.csv** `generated by the Pre-Migration scan`
   * This is a CSV that follows the format and content of the PreMT_MissingSetupFile.csv file of the Pre-Migration scan. A header row is expected with the following format:
       * ContentDatabase, SetupFileDirName, SetupFileExtension, SetupFileName, SetupFilePath, SiteCollection, UpgradeStatus, WebApplication, WebUrl
 
@@ -407,17 +518,20 @@ On selecting this Operation, we get the following options as shown in the below 
 
 ![](\images/\FeatureCleanUp.PNG) 
 
-This operation is helpful in trying to remediate the Missing Feature report of the Pre-Migration Scan.  It attempts to remove all specified features from the target SharePoint environment.
+This operation is helpful in trying to remediate the Missing Feature report.  It attempts to remove all specified features from the target SharePoint environment.
 
 
 #### Input ####
-- **PreMT_MissingFeature.csv**
+
+This operation reads **either** of the following input files:
+
+- **PreMT_MissingFeature.csv** `generated by the Pre-Migration scan`
 	* This is a CSV that follows the format and content of the PreMT_MissingFeature.csv file of the Pre-Migration scan. A header row is expected with the following format:
     	* FeatureId, Scope, ContentDatabase, WebApplication, SiteCollection, WebUrl
 
-OR
+	**OR**
 
-- **Features_Usage.csv**
+- **Features_Usage.csv** `generated by the Discovery scan` 
 	* This is a CSV that follows the format and content of the Features_Usage.csv file of the Discovery scan. A header row is expected with the following format:
     	* FeatureId, Scope, ContentDatabase, WebApplication, SiteCollection, WebUrl
     	
@@ -461,17 +575,20 @@ On selecting this Operation, we get the following options as shown in the below 
 
 ![](\images/\ERCleanUp.PNG) 
 
-This operation is helpful in trying to remediate the Missing Event Receiver report of the Pre-Migration Scan.  It attempts to remove all specified event receivers from the target SharePoint environment.
+This operation is helpful in trying to remediate the Missing Event Receiver reports.  It attempts to remove all specified event receivers from the target SharePoint environment.
 
 
 #### Input ####
-- **PreMT_MissingEventReceiver.csv**
+
+This operation reads **either** of the following input files:
+
+- **PreMT_MissingEventReceiver.csv** `generated by the Pre-Migration scan`
   * This is a CSV that follows the format and content of the **PreMT_MissingEventReceiver.csv** file of the Pre-Migration scan. A header row is expected with the following format:
       * Assembly, ContentDatabase, HostId, HostType, SiteCollection, WebApplication, WebUrl
 
-OR
+	**OR**
 
-- **EventReceivers_Usage.csv**
+- **EventReceivers_Usage.csv** `generated by the Discovery scan`
   * This is a CSV that follows the format and content of the **EventReceivers_Usage.csv** file of the Discovery scan. A header row is expected with the following format:
       * Assembly, ContentDatabase, HostId, HostType, SiteCollection, WebApplication, WebUrl
       
@@ -506,7 +623,7 @@ OR
 			* **Success:** If value of this column is “Success” it implies that the deletion of the event receiver was successful
 			* **Failure:** If value of this column is “Failure” it implies that the deletion of the event receiver was not successful due to some error. 
 
-### 4. Delete Missing Workflow Associations ###
+### 4. Delete Workflow Associations ###
 This operation reads a list of workflow association files from an input file and deletes them from the sites, webs, and lists of the target SharePoint environment.
 
 
@@ -518,9 +635,9 @@ This operation is helpful in trying to remediate the Workflow Associations repor
 
 
 #### Input ####
-- **PreMT_MissingWorkflowAssociaitons.csv**
-  * This is a CSV that follows the format and content of the **PreMT_MissingWorkflowAssociaitons.csv** file of the Pre-Migration scan. A header row is expected with the following format:
-      * ContentDatabase, DirName, Extension, ExtensionForFile, Id, LeafName, ListId, SetupPath, SiteCollection, WebApplication, WebUrl, WFSVC_ListFile, SetupPath, SiteCollection, WebApplication, WebUrl, WFSVC_ListFile
+- **PreMT_MissingWorkflowAssociaitons.csv** `generated by the Pre-Migration scan`
+  * This is a CSV that follows the format and content of the PreMT_MissingWorkflowAssociaitons.csv file of the Pre-Migration scan. A header row is expected with the following format:
+      * *ContentDatabase, DirName, Extension, ExtensionForFile, Id, LeafName, ListId, SetupPath, SiteCollection, WebApplication, WebUrl, WFSVC_ListFile, SetupPath, SiteCollection, WebApplication, WebUrl, WFSVC_ListFile*
 
 #### Output ####
 - **DeleteWorkflowAssociations-yyyyMMdd_hhmmss.log**
@@ -559,23 +676,25 @@ This operation is helpful in trying to remediate the Workflow Associations repor
 			* **Failure:** If value of this column is “Failure” it implies that the deletion of the workflow associations was not successful due to some error. 
 
 		
-### 5. Delete All List Template based on Pre-Scan OR Discovery Output OR Output generated by (Self Service > Operation 1) ###
+### 5. Delete List Templates ###
 This operation reads a list of list templates having customized elements, from an input file generated by **Operation-Generate List Template Report with FTC Analysis**, or from the list templates in gallery reports generated either from PreMT or Discovery, and deletes them from the sites, webs, and lists of the target SharePoint environment.
 
 On selecting this Operation, we get the following options as shown in the below screenshot:
 
 ![](\images/\ListTemplateCleanUp.PNG) 
 
-This operation is helpful in trying to remediate the Missing List Templates in Gallery report of the Pre-Migration Scan.  It attempts to remove all specified list templates from the target SharePoint environment.
+This operation is helpful in trying to remediate the All List Templates in Gallery report of the Pre-Migration or Discovery Scan.  It attempts to remove all specified list templates from the target SharePoint environment.
  
 
 #### Input ####
 
-- PreMT\_AllListTemplatesInGallery_Usage.csv `(from PreMT Tool)`  
+This operation reads **either** of the following input files:
+
+- PreMT\_AllListTemplatesInGallery_Usage.csv `(generated by the Pre-Migration scan)`  
 OR
-- AllListTemplatesInGallery_Usage.csv `(from Discovery Tool) `  
+- AllListTemplatesInGallery_Usage.csv `(generated by the Discovery scan) `  
 OR
-- ListTemplateCustomization_Usage.csv `(Output from Operation-Generate List Template Report with FTC Analysis)`  
+- ListTemplateCustomization_Usage.csv `(generated by the 'Generate List Template Report with FTC Analysis' operation of JDP Tool)`  
 
 #### Output ####
 
@@ -615,23 +734,32 @@ OR
 			* **Failure:** If value of this column is “Failure” it implies that the deletion of the list template was not successful due to some error. 
 
 ### 6. Delete Missing WebParts ###
-This operation reads PageUrls from web part report generated either from PreMT or Discovery and deletes webparts based on Webpart type. User will be prompted to enter Webpart type to delete which kind of webparts to delete form input report file or he can enter `all` to delete all webparts in input report file. 
+This operation reads a list of WebParts from an input file and deletes WebParts of the specified type from the sites, webs, and lists of the target SharePoint environment. 
+
+- If the specified WebPart type is **all**, all WebParts listed in the input file are deleted
+- Otherwise, only WebParts listed in the input file of the **specified type** are deleted
+
+This operation is helpful in trying to remediate the Missing Web Parts reports.  It attempts to remove specified webparts from the target SharePoint environment.
 
 On choosing this option, we would be asked how to proceed for this operation as shown in the below image:
 
 ![](\images/\WebPartCleanUp.PNG)
+
+The operation also prompts the user for the following parameters:
 
 - **WebPart Type**
 	* Here we need to the give the Web Part Type that we want to delete  
 	**Example:**  “WebPartType"
 
 #### Input ####
+This operation reads **either** of the following input files:
 
-- **PreMT_MissingWebPart.csv** `(from PreMT Tool)`  
+- **PreMT_MissingWebPart.csv** `(generated by the Pre-Migration scan)`  
 	* This is a CSV that follows the format and content of the `PreMT_MissingWebPart.csv` file of the Pre-Migration scan. A header row is expected to have following columns
 		* PageUrl, WebUrl, StorageKey, WebPartType  
 **OR**
-- **WebParts_Usage.csv** `(from Discovery Tool) `
+
+- **WebParts_Usage.csv** `(generated by the Discovery scan) `
 	* This is a CSV that follows the format and content of the `WebParts_Usage.csv` file of the Discovery. A header row is expected to have following columns
 		* PageUrl, WebUrl, StorageKey, WebPartType 
 
@@ -672,14 +800,28 @@ On choosing this option, we would be asked how to proceed for this operation as 
 			* Remediation: none; the web does not exist
 
 ## 3 - Self Service Report ##
-On selecting 3rd Choice of Operation, we get the following operations as shown in the below screenshot:
+When you select the **Self-Service Reports** category, you are presented with a list of operations as shown below:
 
 ![](\images/\ChoiceOfOperation3.PNG) 
 
-### 1. Generate List Template Report with FTC Analysis ###
-This operation searches for the Customized elements **(Content Types, Site Columns and Event Receivers)** after extracting the downloaded list templates, and also mentions the Content Types in the output file separated by ‘;’ having the Custom Event Receivers in them.
+These operations are listed below and explained in the following sections:
 
-On choosing this option, we would be asked how to proceed for this operation as shown below 
+1. Generate List Template Report with FTC Analysis  
+2. Generate Site Template Report with FTC Analysis  
+3. Generate Site Column and Content Type Usage Report  
+4. Generate Non-Default Master Page Usage Report  
+5. Generate Site Collection Report (PPE Only)  
+6. Generate Web Part Usage Report  
+7. Generate Web Part Properties Report
+8. Generate Security Group Report
+9. Generate Pivot Reports
+10. Exit
+
+
+### 1. Generate List Template Report with FTC Analysis ###
+This operation downloads List Templates (as directed), extracts the files from each template, and searches the files for instances of the following Customized elements: **(Content Types, Site Columns, and Event Receivers)**.
+
+Upon choosing this option, the user is prompted for how to proceed as shown below: 
 
 ![](\images/\GenerateListTemplateReport.PNG)
 
@@ -688,28 +830,45 @@ On choosing this option, we would be asked how to proceed for this operation as 
 	3)	Process with SiteCollectionUrls separated by comma (,)
 	4)	Exit to Self Service Report Menu
 
+This operation is helpful in determining the customized elements present in each List Template.
+
 There are three approaches as shown in the above figure. Please select any of following options:
 
 1. **Process with Auto-generated Site Collection Report:**
 Here, a web Application Url is provided as an input along with the Customized elements files (Content Types, Site Columns and Event Receivers) from Solution Analyzer of Discovery Tool / Or manually created files.
-	> There is no need to provide PreMT-Scan or Discovery file for List Templates in Gallery components (i.e. PreMT_AllListTemplatesInGallery_Usage.csv or AllListTemplatesInGallery_Usage.csv respectively)
+	> There is no need to provide PreMT-Scan or Discovery file for List Templates in Gallery components (i.e. PreMT\_AllListTemplatesInGallery\_Usage.csv or AllListTemplatesInGallery\_Usage.csv respectively)
 
 2. **Process with PreMT/Discovery ListTemplate Report:**
-Here, PreMT-Scan or Discovery file for List Templates in Gallery components (i.e. PreMT_AllListTemplatesInGallery_Usage.csv or AllListTemplatesInGallery_Usage.csv respectively) is to be mandatorily provided as an input along with the Customized elements files (Content Types, Site Columns and Event Receivers) from Solution Analyzer of Discovery Tool / Or manually created files.
+Here, PreMT-Scan or Discovery file for List Templates in Gallery components (i.e. PreMT\_AllListTemplatesInGallery\_Usage.csv or AllListTemplatesInGallery\_Usage.csv respectively) is to be mandatory provided as an input along with the Customized elements files (Content Types, Site Columns and Event Receivers) from Solution Analyzer of Discovery Tool / Or manually created files.
 
 3. **Process with SiteCollectionUrls separated by comma (,):**
 Here, single Site Collection Url (or multiple site collection Urls separated by comma ‘,’) is provided as an input along with the Customized elements files (Content Types, Site Columns and Event Receivers) from Solution Analyzer of Discovery Tool / Or manually created files.
-	> There is no need to provide PreMT-Scan or Discovery file for List Templates in Gallery components (i.e. PreMT_AllListTemplatesInGallery_Usage.csv or AllListTemplatesInGallery_Usage.csv respectively)
+	> There is no need to provide PreMT-Scan or Discovery file for List Templates in Gallery components (i.e. PreMT\_AllListTemplatesInGallery\_Usage.csv or AllListTemplatesInGallery\_Usage.csv respectively)
 
 #### Input ####
 
-- Web Application Url `(Mandatory for Option 1, not for other Options)`
-- Single or Multiple Site Collection Urls `(Mandatory for Option 3, not for other Options)`
-- PreMT\_AllListTemplatesInGallery_Usage.csv `(Mandatory for Option 2, not for others)`
-	OR  AllListTemplatesInGallery_Usage.csv`(Mandatory for Option 2, not for others)`
-- CustomFields.csv `(Mandatory for all Options)`
-- EventReceivers.csv `(Mandatory for all Options)`
-- ContentTypes.csv `(Mandatory for all Options)`
+If Option 1 `Process with Auto-generated Site Collection Report` is selected, this operation prompts the user for following:
+
+- Web Application Url
+
+If Option 2 `Process with PreMT/Discovery ListTemplate Report` is selected, this operation reads **either** of the following input files:
+
+- PreMT\_AllListTemplatesInGallery\_Usage.csv `generated by the Pre-Migration scan`
+	- A header row is expected with the following format:
+	- *ContentDatabase,ListGalleryPath,ListTemplateCreatedDate,ListTemplateID,ListTemplateName,SiteCollection,WebApplication,WebUrl*
+- AllListTemplatesInGallery\_Usage.csv `generated by the Discovery scan`  
+	- A header row is expected with the following format:
+	- *ContentDatabase,ListGalleryPath,ListTemplateCreatedDate,ListTemplateID,ListTemplateName,SiteCollection,WebApplication,WebUrl*
+
+If Option 3 `SiteCollectionUrls separated by comma (,)` is selected, this operation prompts the user for following:
+
+- Path to file containing a comma-delimited list of one or more fully-qualified, absolute Site Collection Urls
+
+Regardless of the option selected, the operation also reads the following input files:
+
+- CustomFields.csv 
+- EventReceivers.csv
+- ContentTypes.csv
 
 
 #### Output ####
@@ -744,7 +903,7 @@ Here, single Site Collection Url (or multiple site collection Urls separated by 
 			* **NO INPUT FILE:** This implies that “EventReceivers.csv” file was not available in input folder or that file was not valid
 		* **CTHavingCustomEventReceiver:** Lists out the Names of Content Types with ‘;’ separated values, which are having the custom Event Receivers present in them. If no Custom Event Receivers is present, then ‘N/A’ would be displayed.
 
-- **SiteCollections.txt** `(Output for only Option 1)`
+- **SiteCollections.txt** `(generated only for Option 1 Process with Auto-generated Site Collection Report)`
 	- This is file will list all the Site Collections that will be processed for the Web Application Url.
 - **DownloadAndModifyListTemplate-yyyymmdd-hhhhmmss.log**
 	* This is the verbose log file of the scan.  
@@ -769,14 +928,15 @@ Here, single Site Collection Url (or multiple site collection Urls separated by 
 			* Cause: The specified web (subweb, subsite, etc.) does not exist
 			* Remediation: none; the web does not exist
 
-> **Note:** If any of the input files *(ContentTypes.csv, CustomFields.csv, EventReceivers.csv)* is not present in the input folder provided by the user, or the file has no entries then corresponding element/s would not be searched to get the customization details in the list templates.
-
-> **Example:** If user has provided only *ContentTypes.csv and CustomFields.csv* in input folder, and *EventReceivers.csv* is not provide in input folder, then  *isCustomEventReceiver* column will have `NO INPUT FILE` value in output report as user has not provided this input file. 
+> **Note:** 
+> If any of the input files *(ContentTypes.csv, CustomFields.csv, EventReceivers.csv)* are not present in the specified input folder, or a given file has no entries, the operation will not be able to search the list templates for the corresponding custom elements.
+> 
+> **Example:** If user has provided only *ContentTypes.csv and CustomFields.csv* in input folder, and *EventReceivers.csv* is not present, the *isCustomEventReceiver* column of the report will have a value of `NO INPUT FILE`. 
 
 ### 2. Generate Site Template Report with FTC Analysis ###
-This operation searches for the Customized elements **(Content Types, Site Columns, Features and Event Receivers)** after extracting the downloaded site templates, and also mentions the Content Types in the output file separated by ‘;’ having the Custom Event Receivers in them.
+This operation downloads Site Templates (as directed), extracts the files from each template, and searches the files for instances of the following Customized elements: **(Content Types, Site Columns, Features, and Event Receivers)**. 
 
-On choosing this option, we would be asked how to proceed for this operation as shown below 
+Upon choosing this option, the user is prompted for how to proceed as shown below:
 
 ![](\images/\GenerateSiteTemplateReport.PNG)
 
@@ -785,31 +945,31 @@ On choosing this option, we would be asked how to proceed for this operation as 
 	3)	Process with SiteCollectionUrls separated by comma (,)
 	4)	Exit to Self Service Report Menu
 
+This operation is helpful in determining the customized elements present in each Site Template.
+
 There are three approaches as shown in the above figure. Please select any of following options:
 
 1. **Process with Auto-generated Site Collection Report:**
 Here, a web Application Url is provided as an input along with the Customized elements files (Content Types, Site Columns, Features and Event Receivers) from Solution Analyzer of Discovery Tool / Or manually created files.
  
-	> There is no need to provide PreMT-Scan or Discovery file for Site Templates in Gallery components (i.e. PreMT_AllSiteTemplatesInGallery_Usage.csv or AllSiteTemplatesInGallery_Usage.csv respectively)
+	> There is no need to provide PreMT-Scan or Discovery file for Site Templates in Gallery components (i.e. PreMT\_AllSiteTemplatesInGallery\_Usage.csv or AllSiteTemplatesInGallery\_Usage.csv respectively)
 
 2. **Process with PreMT/Discovery SiteTemplate Report:**
-Here, PreMT-Scan or Discovery file for Site Templates in Gallery components (i.e. PreMT_AllSiteTemplatesInGallery_Usage.csv or AllSiteTemplatesInGallery_Usage.csv respectively) is to be mandatorily provided as an input along with the Customized elements files (Content Types, Site Columns, Features and Event Receivers) from Solution Analyzer of Discovery Tool / Or manually created files. 
+Here, PreMT-Scan or Discovery file for Site Templates in Gallery components (i.e. PreMT\_AllSiteTemplatesInGallery\_Usage.csv or AllSiteTemplatesInGallery\_Usage.csv respectively) is to be mandatorily provided as an input along with the Customized elements files (Content Types, Site Columns, Features and Event Receivers) from Solution Analyzer of Discovery Tool / Or manually created files. 
 
 3. **Process with SiteCollectionUrls separated by comma (,):**
 Here, single Site Collection Url (or multiple site collection Urls separated by comma ‘,’) is provided as an input along with the Customized elements files (Content Types, Site Columns, Features and Event Receivers) from Solution Analyzer of Discovery Tool / Or manually created files. 
 
-	> There is no need to provide PreMT-Scan or Discovery file for Site Templates in Gallery components (i.e. PreMT_AllSiteTemplatesInGallery_Usage.csv or AllSiteTemplatesInGallery_Usage.csv respectively)
-
- This operation is helpful in trying to easily see which Site Template has which customized elements. 
+	> There is no need to provide PreMT-Scan or Discovery file for Site Templates in Gallery components (i.e. PreM\T_AllSiteTemplatesInGallery\_Usage.csv or AllSiteTemplatesInGallery\_Usage.csv respectively)
 
 
 #### Input ####
 
 - Web Application Url `(Mandatory for Option 1, not for other Options)`
 - Single or Multiple Site Collection Urls `(Mandatory for Option 3, not for other Options)`
-- PreMT\_AllSiteTemplatesInGallery_Usage.csv `(Mandatory for Option 2, not for other Options)`	
+- PreMT\_AllSiteTemplatesInGallery\_Usage.csv `(Mandatory for Option 2, not for other Options)`	
 	OR    
-AllSiteTemplatesInGallery_Usage.csv `(Mandatory for Option 2, not for other Options)`
+AllSiteTemplatesInGallery\_Usage.csv `(Mandatory for Option 2, not for other Options)`
 - ContentTypes.csv `(Mandatory for all Options)`
 - CustomFields.csv `(Mandatory for all Options)`
 - EventReceivers.csv `(Mandatory for all Options)`
@@ -877,14 +1037,15 @@ AllSiteTemplatesInGallery_Usage.csv `(Mandatory for Option 2, not for other Opti
 			* Cause: The specified web (subweb, subsite, etc.) does not exist
 			* Remediation: none; the web does not exist
 
-> **Note:** If any of the input files *(Features.csv, ContentTypes.csv, CustomFields.csv, EventReceivers.csv)* is not present in the input folder provided by the user, or the file has no entries then corresponding element/s would not be searched to get the customization details in the site templates.
+> **Note:** 
+> If any of the input files *(Features.csv, ContentTypes.csv, CustomFields.csv, EventReceivers.csv)* are not present in the specified input folder, or if a given file has no entries, the operation will not be able to search the site templates for the corresponding custom elements.
+> 
+> **Example:** If user has provided only *Features.csv, ContentTypes.csv and CustomFields.csv* in the input folder, and *EventReceivers.csv* is not present, the *isCustomEventReceiver* column of the report will have a value of `NO INPUT FILE`. 
 
-> **Example:** If user has provided only *Features.csv, ContentTypes.csv and CustomFields.csv* in input folder, and *EventReceivers.csv* is not provide in input folder, then  *isCustomEventReceiver* column will have `NO INPUT FILE` value in output report as user has not provided this input file.
+### 3. Generate Site Column & Content Type Usage Report ###
+This operation reads a list of site collection Urls from an input file and scans each site collection. It reports any web or list that is using either a custom Content Type or custom Site Column of interest.  It also reports any local Content Type that has been derived from a custom Content Type of interest.  
 
-### 3. Generate Site Column/Custom Fields & Content Type Usage Report ###
-This operation reads a list of site collection URLs from an input file and scans each site collection, looking for any web or list that is using either a custom Content Type or custom Site Column of interest.  It also looks for local Content Types that have been derived from the custom Content Types of interest.  
-
-This report is helpful in trying to remediate the Missing Content Type and Missing Site Column reports of the Pre-Migration scan as well.  This report tells you where within each site collection that the content types and site columns are *still in use*.
+This report is helpful in trying to remediate the Missing Content Type and Missing Site Column reports.  This report tells you where within each site collection that the content types and site columns are still in use. 
 
 **General Remediation:**  
 
@@ -959,12 +1120,15 @@ This report is helpful in trying to remediate the Missing Content Type and Missi
       * None
     
 ### 4. Generate Non-Default Master Page Usage Report ###
-This operation reads a list of site collection URLs from an input file and scans each site collection, looking for any web that is using a non-default SP2013 Master Page (i.e., something other than `seattle.master`) as either its System or Site master page. 
-
-On choosing this option, we would be asked how to proceed for this operation as shown below 
+This operation reads a list of site collection Urls from an input file and scans each site collection. It reports those webs that are using a non-default SP2013 Master Page (i.e., something other than `“seattle.master”`) as either its System (MasterUrl) or Site (CustomMasterUrl) Master Page.  
 
 ![](\images/\GenerateNonDefaultMasterPageUsageReport.PNG)
 
+> **Note:**
+> 
+> If both Master Page settings (**CustomMasterUrl** and **MasterUrl**) are **“Seattle.master”**, no records are displayed for the web in the output usage file.
+> 
+> If either Master Page setting (**CustomMasterUrl** or **MasterUrl**) is **“Seattle.master”**, a corresponding record is displayed for the web in the output usage file.
 
 #### Input ####
 - **Sites.txt**
@@ -981,10 +1145,7 @@ On choosing this option, we would be asked how to proceed for this operation as 
 	  * **MasterUrl:** Specifies the Master Url of the Master Page.
 	  * **SiteCollection:** Specifies the Url of the Site Collection of the Master Page.
 	  * **WebUrl:** Specifies the Web Url of the Master Page.
-> **Note:**
-> If both the Master Pages of CustomMasterUrl and MasterUrl are `“Seattle.master”`, that records are not displayed in the output usage file
 
-> If any one of the Master Pages of CustomMasterUrl or MasterUrl is `“Seattle.master”`, those records will be displayed in the output usage file.
 
 - **GenerateNonDefaultMasterPageUsageReport-yyyyMMdd_hhmmss.log**
   * This is the verbose log file of the scan.
@@ -996,15 +1157,16 @@ On choosing this option, we would be asked how to proceed for this operation as 
   * Error messages of interest:
       * None
 ### 5. Generate Site Collection Report (PPE-Only) ###
-This operation generates a text file containing a list of all site collections found across all web applications in the target farm. 
+This operation reports all site collections found across all web applications in the target farm.  
 
 On choosing this option, we would be asked how to proceed for this operation as shown below 
 
 ![](\images/\GenerateSiteCollectionReport.PNG)
 
 #### Input ####
-- No Input file required.
-- Web/Site Url from the farm for which you require the Site Collection Urls.
+This operation does not use an input files; instead, it prompts the user for the following parameters:
+
+- the fully-qualified, absolute URL of an existing site collection in the target farm
 
 #### Output ####
 - **GenerateSiteCollectionReport-yyyyMMdd_hhmmss.txt**
@@ -1023,12 +1185,12 @@ On choosing this option, we would be asked how to proceed for this operation as 
 > 
 > This operation leverages the Search Index; as such, it might take up to 20-minutes for a newly-created site to appear in the report. 
 
-### 6. Get Web Part Usage Report ###
+### 6. Generate Web Part Usage Report ###
 
-This operation iterates through all the Pages in root folder of the web, **“Pages”** and **“Site Pages”** Library and gives the usage of the given Web Part.
+This operation iterates through all Pages present in the *“root folder”*, the *“Pages”* library, and the *“Site Pages”* library of the given web and reports the usage of the given Web Part.
 
 #### Input ####
-On selecting this operation, we will be asked for number of parameters as explained below:
+This operation does not use an input file; instead, it prompts the user for the following parameters: 
 
 ![](\images/\GenerateWebPartUsage.PNG)
 
@@ -1072,14 +1234,14 @@ On selecting this operation, we will be asked for number of parameters as explai
 			* Cause: The specified web (subweb, subsite, etc.) does not exist
 			* Remediation: none; the web does not exist
 
-### 7. Get Web Part Properties ###
+### 7. Generate Web Part Properties Report ###
 
 This operation will Returns the properties of the given Web Part in Xml format.
 
 ![](\images/\GenerateWebPartProperties.PNG)
 
 #### Input ####
-On selecting this operation, we will be asked for number of parameters as explained below:
+This operation does not use an input file; instead, it prompts the user for the following parameters: 
 
 - **Web Url:**
 	* Here we need to provide the Web Url where WebPart is present  
@@ -1119,8 +1281,136 @@ On selecting this operation, we will be asked for number of parameters as explai
 			* Remediation: none; the web does not exist
 
 
+### 8. Generate Security Group Report ###
+This operation reads a list of site collection URLs from an input file and scans each site collection. It reports those site collections that have granted permissions to one or more Security Groups of interest.
 
 
+**Input**
+
+This operation reads the following input files:
+
+- Sites.txt (no header; one fully-qualified, absolute site collection Url per line)
+- SecurityGroups.txt (no header; one security group per line in the following format: ***domain\groupName***)
+
+**Output**
+
+This operation generates the following output files:
+
+- GenerateSecurityGroupReport-yyyyMMdd\_hhmmss.csv
+- GenerateSecurityGroupReport-yyyyMMdd\_hhmmss.log (verbose log file)
+
+### 9. Generate Pivot Reports ###
+This operation generates an excel report which contains all the details about the input CSV data (Pre-Migration Report and Discovery Usage Reports), with graphical representation using pivot table and slicers in excel sheet. 
+
+![](\images/\GeneratePivotReport.PNG)
+
+This operation reads any input file (.csv format) and shows the data present in it in a user-friendly manner using the features of Excel such as pivot, graph (pie chart or bar chart or etc..), filter, slicer, summary, and count of any specific data by using any specific condition. 
+
+Upon choosing this option, the user is prompted for how to proceed as shown below:
+
+	1)	Discovery Usage Files  
+	2)	PreMigration Scan Files  
+
+This operation is helpful in showing the customized elements present in each Reports in pivot view and graphical representation.
+
+**Input**
+
+If **Option 1** `Discovery Usage Files` is selected, this operation prompts the user for following:
+
+- Complete Path of Discovery Usage Report/Files
+
+The following Discovery Usage Files needs to be present in the provided path or folder. If any file is not present then Pivot view not be created for that file or component. 
+
+**Discovery Usage Files/Reports (CSV)**
+
+- AllListTemplatesInGallery_Usage.csv
+- AllSiteTemplatesInGallery_Usage.csv
+- AllContentTypeEventReceivers_Usage.csv
+- ContentType_Usage.csv
+- CTFixDefinitionNULL_Usage.csv
+- CThavingFeatureIDTag\_Definition_Usage.csv
+- CustomFields_Usage.csv
+- MasterPage_Usage.csv
+- CustomWorkflows_Usage.csv
+- EventReceivers_Usage.csv
+- Features_Usage.csv
+- GhostedCustomFields_Usage.csv
+- ListTemplates_Usage.csv
+- PageLayouts\_AvailableCustomPageLayout_Usage.csv
+- PageLayouts\_CustomPageLayOutUsageInPages_Usage.csv
+- SandBoxSolSaveAsTemplate_Usage.csv
+- SandboxSolutions_Usage.csv
+- SiteDefinitions_Usage.csv
+- WebParts_Usage.csv
+
+
+**Discovery-Pivot.xml (mandatory)**
+> This file should be present in the above provided path. This XML having the xml tags for all Discovery Reports.
+> 
+> This XML file is present in the path: [Discovery-Pivot.xml](/JDP%20Remediation%20-%20CSOM/JDP.Remediation.Console/JDP.Remediation.Console/XMLs/Discovery-Pivot.xml)
+> 
+
+If **Option 2** `Pre Migration Scan Files` is selected, this operation prompts the user for following:
+
+- Complete Path of Discovery Usage Report/Files
+
+The following Pre Migration Scan Files needs to be present in the provided path or folder. If any file is not present then Pivot view not be created for that file or component. 
+
+**Pre Migration Scan Files/Reports (CSV)**
+
+- PreMT\_AllContentTypeEventReceivers_Usage.csv
+- PreMT\_AllListTemplatesInGallery_Usage.csv
+- PreMT\_AllSiteTemplatesInGallery_Usage.csv
+- PreMT\_CThavingFeatureIDTag_Definition.csv
+- PreMT\_MissingAssembly.csv
+- PreMT\_MissingConfigDBFeatures.csv
+- PreMT\_MissingContentType.csv
+- PreMT\_MissingFeature.csv
+- PreMT\_MissingFieldTypes.csv
+- PreMT\_MissingLists.csv
+- PreMT\_MasterPage_Usage.csv
+- PreMT\_MissingSetupFile.csv
+- PreMT\_MissingSiteColumn.csv
+- PreMT\_MissingSiteDefinition.csv
+- PreMT\_MissingWebPart.csv
+- PreMT\_MissingWorkflowAssociations.csv
+
+
+**PreMT-Pivot.xml (mandatory)**
+> This file should be present in the above provided path. This XML having the xml tags for all Pre Migration Reports.
+> 
+> This XML file is present in the path: [PreMT-Pivot.xml](/JDP%20Remediation%20-%20CSOM/JDP.Remediation.Console/JDP.Remediation.Console/XMLs/PreMT-Pivot.xml)
+> 
+
+
+**Output**
+
+These operations generates the following output files:
+
+`Output of Option 1 operation`
+
+- DiscoveryPivotReport.xlsx 
+- DT_GeneratePivotReport-yyyyMMdd\_hhmmss.log (verbose log file)
+
+
+`Output of Option 2 operation`
+
+- PreMT_PivotReport.xlsx
+- PreMT_GeneratePivotReport-yyyyMMdd\_hhmmss.log (verbose log file)
+
+This operation shows the data in a user-friendly manner using the features of Excel such as pivot, graph (pie chart or bar chart or etc..), filter, slicer, summary, and count of any specific data by using any specific condition. 
+
+> **Example 1:** 
+
+![](\images/\Pivot_PieChart.PNG)
+
+
+
+> **Example 2:**
+ 
+![](\images/\Pivot_Slice.PNG)
+
+<img src="https://telemetry.sharepointpnp.com/pnp-transformation/JDP Remediation - CSOM/JDP.Remediation.Console" /> 
 
 
 

@@ -1,0 +1,9 @@
+﻿Assembly,ContentDatabase,EventReceiver,SiteCollection,UpgradeStatus,WebApplication,WebUrl
+"Disable Event Receiver, Version=1.0.0.0, Culture=neutral, PublicKeyToken=822f2bad4502f763",Portal_Content_02,No,N/A,False,https://intranet.poc.com/,N/A
+"ERTest1, Version=1.0.0.0, Culture=neutral, PublicKeyToken=76afc09f91670160",Portal_Content_02,No,N/A,False,https://intranet.poc.com/,N/A
+"Hyatt.Contracts.Metadata, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0580ec200726b6a6",Portal_Content_02,No,N/A,False,https://intranet.poc.com/,N/A
+"Kiewit.ProjectDocument.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b04f506398cfc969",Portal_Content_02,No,N/A,False,https://intranet.poc.com/,N/A
+"CustomER5, Version=1.0.0.0, Culture=neutral, PublicKeyToken=870096716e42e73b",Team_Content_01,No,N/A,False,https://teams.poc.com/,N/A
+"CustomEventReceivers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ec71488dbe30bb74",Team_Content_01,Yes,N/A,False,https://teams.poc.com/,N/A
+"CustomEventReceiverTwo, Version=1.0.0.0, Culture=neutral, PublicKeyToken=3984d11ff539b921",Team_Content_01,Yes,N/A,False,https://teams.poc.com/,N/A
+"GrpUserAddedER, Version=1.0.0.0, Culture=neutral, PublicKeyToken=7110a69e8001ea48",Team_Content_01,Yes,N/A,False,https://teams.poc.com/,N/A
