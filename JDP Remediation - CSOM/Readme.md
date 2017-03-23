@@ -634,7 +634,7 @@ This operation is helpful in showing the customized elements present in each Rep
 
 If **Option 1** `Discovery Usage Files` is selected, this operation prompts the user for following:
 
-![](images/\PivotOption1.PNG) 
+![](images/PivotOption1.PNG) 
 
 - Complete Path of Discovery Usage Report/Files
 
