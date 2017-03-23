@@ -1,0 +1,618 @@
+﻿<?xml version="1.0" encoding="utf-8" ?> 
+<PivotConfig>
+  <PivotReportOutput>DiscoveryPivotReport.xlsx</PivotReportOutput>
+  <Style DefaultFontSize="10" DefaultFontColor="Black" DefaultFontFamily="Calibri" DefaultBgColor="White" DefaultRowHeight="12.75" DefaultColumnWidth="50">
+    <TOCStyle>
+      <TOCHeading FontSize="14" FontFamily="Calibri" FontColor="DarkBlue"/>
+      <TOCTitle FontSize="12" BgColor="NavyBlue" FontColor="White" FontFamily="Calibri"/>
+      <TOCDescription FontSize="12" BgColor="NavyBlue" FontColor="White" FontFamily="Calibri" ColumnWidth="150"/>
+      <Style FontSize="10" FontColor="Black" FontFamily="Calibri"></Style>
+    </TOCStyle>
+    <ComponentStyle>
+      <DescriptionTitle FontSize="14" FontFamily="Calibari" FontColor="White" BgColor="NavyBlue" ColumnWidth="50"/>
+      <Description FontSize="10" FontFamily="Calibri" FontColor="Black" BgColor="White" RowHeight="90"/>
+    </ComponentStyle>
+    <SourceFileStyle>
+      <SourceFileHeading FontSize="10" FontColor="Black"/>
+      <SourceFileName FontSize="10" FontColor="Blue"/>
+      <BackToIndex FontFamily="Calibri" FontSize="10"/>
+    </SourceFileStyle>
+  </Style>
+  <TOC>
+    <TOCHeading >Table Of Content</TOCHeading>
+    <TOCTitle>Title</TOCTitle>
+    <TOCDescription>Description</TOCDescription>
+  </TOC>
+  <SourceFile>
+    <SourceFileHeading>SourceFile: </SourceFileHeading>
+    <SourceFileName></SourceFileName>
+    <BackToIndex>Back To Index</BackToIndex>
+  </SourceFile>
+  <SummaryView>
+    <ShortDescription>
+      <![CDATA[Summary View Report is divided into two section:
+      a.	Web Application View
+      b.	Chart View]]>
+    </ShortDescription>
+    <Description>
+      <![CDATA[Summary view is a holistic & consolidated view for all the web application which will provide the information about the totals of  the customization usage stored in a bunch of independent Discovery Usage reports. Summary view will facilitate to take a decision which web application and customization need to transform first based on the complexity and business need. You would not need to open each individual usage reports to analyze the data. Some time Discovery Usage reports can often contain large amounts of data which itself would also be a tedious work to analyze the data.
+      Summary View Report is divided into two section:
+      a.	Web Application View – This is a tabular kind of view which will provide the information of each component count against each web application.
+      b.	Chart View: Chart view is a kind of Pie Chart Distribution which will provide the distribution view of each component across all the web application.]]>
+    </Description>
+    <FontSize>10</FontSize>
+    <FontName>Calibri</FontName>
+    <FontColor>Black</FontColor>
+    <StartingRow>4</StartingRow>
+    <StartingColumn>1</StartingColumn>
+    <CellIndex>A</CellIndex>
+    <GrandTotalLabel>Grand Total</GrandTotalLabel>
+    <SummaryViewHeading Text="Summary View" Row="1" Column="1" Cell="A1" DescriptionStartCell="B1" DescriptionEndCell="P1" FontSize="14" FontColor="White" BgColor="NavyBlue" RowHeight="80"></SummaryViewHeading>
+    <SummaryViewColumnHeader Text="WebApplication" FontSize="10" FontColor="White" BgColor="NavyBlue"></SummaryViewColumnHeader>
+    <Chart Style="345" LayoutType="7" Color="13" Width="285" Height="195">
+      <ChartType>pie</ChartType>
+      <ChartType active="1">3dpie</ChartType>
+      <ChartType>line</ChartType>
+      <ChartType>3dline</ChartType>
+      <ChartType>3dcolumn</ChartType>
+      <ChartType>clusteredcolumn</ChartType>
+      <ChartType>3dclusteredcolumn</ChartType>
+    </Chart>
+  </SummaryView>
+  <Component Name="ContentTypeEventReceivers" InputFileName="AllContentTypeEventReceivers_Usage.csv" InputDataSheetName="AllContentTypeEventReceivers_Usage" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The file AllContentTypeEventReceivers_Usage.csv, would be used as an input, due to which a Pivot View would be created for ContentType EventReceivers to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle >Description</DescriptionTitle>
+    <Description >
+      <![CDATA[  This is a ContentType Event Receivers Usage Pivot View which is used to store the summary of a "AllContentTypeEventReceivers_Usage.csv" report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way. 
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+        <Slicer>ContentTypeName</Slicer>
+        <Slicer>EventReceiver_Assembly</Slicer>
+        <Slicer>EventReceiver_Class</Slicer>
+        <Slicer>ListTitle</Slicer>
+        <Slicer>Source</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="ContentTypeName" Label="ContentTypeName" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="AllListTemplatesInGallery" InputFileName="AllListTemplatesInGallery_Usage.csv" InputDataSheetName="AllListTemplatesInGallery_Usage" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The usage file AllListTemplatesInGallery_Usage.csv, would be used as an input, due to which a Pivot View would be created for List Templates In Gallery to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle >Description</DescriptionTitle>
+    <Description >
+      <![CDATA[This is a List Templates In Gallery Usage Pivot View which is used to store the summary of a "AllListTemplatesInGallery_Usage.csv" Discovery report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way. 
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="ListTemplateName" Label="ListTemplateName" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="AllSiteTemplatesInGallery" InputFileName="AllSiteTemplatesInGallery_Usage.csv" InputDataSheetName="AllSiteTemplatesInGallery_Usage" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The usage file AllLSiteTemplatesInGallery_Usage.csv, would be used as an input, due to which a Pivot View would be created for Site Templates In Gallery to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle >Description</DescriptionTitle>
+    <Description >
+      <![CDATA[This is a Site Templates In Gallery Usage Pivot View which is used to store the summary of a "AllSiteTemplatesInGallery_Usage.csv" Discovery report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way. 
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="SiteTemplateName" Label="SiteTemplateName" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="ContentType" InputFileName="ContentType_Usage.csv" InputDataSheetName="ContentType_Usage" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The usage file ContentType_Usage.csv, would be used as an input, due to which a Pivot View would be created for ContentType to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle >Description</DescriptionTitle>
+    <Description>
+      <![CDATA[  This is a Content Type Usage Pivot View which is used to store the summary of a "ContentType_Usage.csv" Disocvery report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way. 
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+        <Slicer>isFromFeature</Slicer>
+        <Slicer>ListTitle</Slicer>
+        <Slicer>ListStatus</Slicer>
+        <Slicer>SolutionName</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="ContentTypeName" Label="Content Type Name" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="CTFixDefinitionNULL_Instances" InputFileName="CTFixDefinitionNULL_Usage.csv" InputDataSheetName="CTFixDefinitionNULL_Usage" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The file CTFixDefinitionNULL_Instances, would be used as an input, due to which a Pivot View would be created for CTFixDefinitionNULL_Instances to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle >Description</DescriptionTitle>
+    <Description >
+      <![CDATA[  This is a Content Type Definition Null Pivot View which is used to store the summary of a "CTFixDefinitionNULL_Instance.csv" report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way. 
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+        <Slicer>ContentTypeName</Slicer>
+        <Slicer>Source</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="ContentTypeName" Label="ContentTypeName" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="CThavingFeatureIDTag_Definition" InputFileName="CThavingFeatureIDTag_Definition_Usage.csv" InputDataSheetName="CThavingFeatureIDTag_Definition_Usage" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The file CThavingFeatureIDTag_Definition_Usage.csv, would be used as an input, due to which a Pivot View would be created for CThavingFeatureIDTag to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle >Description</DescriptionTitle>
+    <Description >
+      <![CDATA[  This is a CThavingFeatureIDTag Definition Usage Pivot View which is used to store the summary of a "CThavingFeatureIDTag_Definition_Usage.csv" report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way. 
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>IsFromFeature</Slicer>
+        <Slicer>ResourceDir</Slicer>
+        <Slicer>SolutionName</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+      </Filters>
+      <ValueColumn Name="Scope" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="ResourceDir" Label="ResourceDir" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="CustomField" InputFileName="CustomFields_Usage.csv" InputDataSheetName="CustomFields_Usage" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The usage file CustomFields_Usage.csv, would be used as an input, due to which a Pivot View would be created for CustomField to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle >Description</DescriptionTitle>
+    <Description >
+      <![CDATA[ This is a CustomField Usage Pivot View which is used to store the summary of a "CustomFields_Usage.csv" Disocvery report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way. 
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+        <Slicer>isFromFeature</Slicer>
+        <Slicer>ContentTypeName</Slicer>
+        <Slicer>CustomFieldType</Slicer>
+        <Slicer>Source</Slicer>
+        <Slicer>SolutionName</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="CustomFieldInternalName" Label="CustomField InternalName" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="CustomMasterPages" InputFileName="MasterPage_Usage.csv" InputDataSheetName="MasterPage_Usage" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The usage file MasterPage_Usage.csv, would be used as an input, due to which a Pivot View would be created for Custom Master Pages to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle >Description</DescriptionTitle>
+    <Description >
+      <![CDATA[ This is a Custom Master Pages Usage Pivot View which is used to store the summary of a "MasterPage_Usage.csv" Disocvery report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>CustomMasterUrlStatus</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="CustomMasterLeafName" Label="Custom Master LeafName" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="CustomWorkflow" InputFileName="CustomWorkflows_Usage.csv" InputDataSheetName="CustomWorkflows_Usage" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The usage file CustomWorkflows_Usage.csv, would be used as an input, due to which a Pivot View would be created for CustomWorkflow to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle>Description</DescriptionTitle>
+    <Description>
+      <![CDATA[ This is a CustomWorkflow Usage Pivot View which is used to store the summary of a "CustomWorkflows_Usage.csv" Disocvery report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way. 
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+        <Slicer>WorkFlowName</Slicer>
+        <Slicer>ListTitle</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="WorkFlowName" Label="WorkFlowName" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="EventReceivers" InputFileName="EventReceivers_Usage.csv" InputDataSheetName="EventReceivers_Usage" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The usage file EventReceivers_Usage.csv, would be used as an input, due to which a Pivot View would be created for EventReceivers to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle >Description</DescriptionTitle>
+    <Description >
+      <![CDATA[ This is a EventReceivers Usage Pivot View which is used to store the summary of a "EventReceivers_Usage.csv" Disocvery report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way. 
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+        <Slicer>HostType</Slicer>
+        <Slicer>EventReceiver_Type</Slicer>
+        <Slicer>EventReceiver_ListBaseTemplate</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="EventName" Label="EventName" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="Feature" InputFileName="Features_Usage.csv" InputDataSheetName="Features_Usage" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The usage file Features_Usage.csv, would be used as an input, due to which a Pivot View would be created for Features to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle >Description</DescriptionTitle>
+    <Description >
+      <![CDATA[ This is a Feature Usage Pivot View which is used to store the summary of a "Features_Usage.csv" Disocvery report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way. 
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+        <Slicer>Scope</Slicer>
+        <Slicer>WebUrl</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="FeatureTitle" Label="FeatureTitle" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="GhostedCustomFields_Instances" InputFileName="GhostedCustomFields_Usage.csv" InputDataSheetName="GhostedCustomFields_Usage" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The file GhostedCustomFields_Instances.csv, would be used as an input, due to which a Pivot View would be created for GhostedCustomFields_Instances to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle >Description</DescriptionTitle>
+    <Description >
+      <![CDATA[ This is a GhostedCustomFields_Instances Pivot View which is used to store the summary of a "GhostedCustomFields_Instances.csv" report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way. 
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+        <Slicer>CustomFieldTitle</Slicer>
+        <Slicer>CustomFieldType</Slicer>
+        <Slicer>isFromFeature</Slicer>
+        <Slicer>Source</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="CustomFieldTitle" Label="CustomFieldTitle" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="ListTemplates" InputFileName="ListTemplates_Usage.csv" InputDataSheetName="ListTemplates_Usage" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The usage file ListTemplates_Usage.csv, would be used as an input, due to which a Pivot View would be created for ListTemplates to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle >Description</DescriptionTitle>
+    <Description >
+      <![CDATA[ This is a ListTemplates Usage Pivot View which is used to store the summary of a "ListTemplates_Usage.csv" Disocvery report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way. 
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+        <Slicer>ListBaseType</Slicer>
+        <Slicer>ListTemplateName</Slicer>
+        <Slicer>EnableVersioning</Slicer>
+        <Slicer>UniqueItemPermissionsEnabled</Slicer>
+        <Slicer>ItemCount</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="ListTitle" Label="ListTitle" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="MasterPages" InputFileName="MasterPage_Usage.csv" InputDataSheetName="MasterPage_Usage" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The usage file MasterPage_Usage.csv, would be used as an input, due to which a Pivot View would be created for Master Pages to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle >Description</DescriptionTitle>
+    <Description >
+      <![CDATA[ This is a Master Pages Usage Pivot View which is used to store the summary of a "MasterPage_Usage.csv" Disocvery report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way. 
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>MasterUrlStatus</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="MasterLeafName" Label="Master LeafName" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="PageLayoutUsage" InputFileName="PageLayouts_AvailableCustomPageLayout_Usage.csv" InputDataSheetName="PageLayouts_AvailableCustomPage" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The usage file PageLayouts_AvailableCustomPageLayout_Usage.csv, would be used as an input, due to which a Pivot View would be created for AvailableCustomPageLayout to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle >Description</DescriptionTitle>
+    <Description >
+      <![CDATA[ This is a PageLayoutUsage Usage Pivot View which is used to store the summary of a "PageLayouts_AvailableCustomPageLayout_Usage.csv" Disocvery report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way. 
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+        <Slicer>PageLayout_AssociatedContentType</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="PageLayout_Name" Label="PageLayout_Name" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="PageLayOutUsageInPages" InputFileName="PageLayouts_CustomPageLayOutUsageInPages_Usage.csv" InputDataSheetName="PageLayouts_CustomPageLayOutUsa" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The usage file PageLayouts_CustomPageLayOutUsage.csv, would be used as an input, due to which a Pivot View would be created for CustomPageLayOutUsageInPages to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle >Description</DescriptionTitle>
+    <Description >
+      <![CDATA[ This is a PageLayOutUsageInPages Usage Pivot View which is used to store the summary of a "PageLayouts_CustomPageLayOutUsageInPages_Usage.csv" Disocvery report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way. 
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+        <Slicer>PageLayoutName</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="PageName" Label="PageName" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="SandBoxSolSaveAsTemplate" InputFileName="SandBoxSolSaveAsTemplate_Usage.csv" InputDataSheetName="SandBoxSolSaveAsTemplate_Usage" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The usage file SandBoxSolSaveAsTemplate_Usage.csv, would be used as an input, due to which a Pivot View would be created for SandBoxSolSaveAsTemplate to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle >Description</DescriptionTitle>
+    <Description >
+      <![CDATA[ This is a SandBoxSolSaveAsTemplate Usage Pivot View which is used to store the summary of a "SandBoxSolSaveAsTemplate_Usage.csv" Disocvery report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way. 
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>WebUrl</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>WebUrl</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="SolutionName" Label="SolutionName" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="SandboxSolutions" InputFileName="SandboxSolutions_Usage.csv" InputDataSheetName="SandboxSolutions_Usage" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The usage file SandboxSolutions.csv, would be used as an input, due to which a Pivot View would be created for SandboxSolutions to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle >Description</DescriptionTitle>
+    <Description >
+      <![CDATA[ This is a SandboxSolutions Usage Pivot View which is used to store the summary of a "SandboxSolutions.csv" Discovery report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way. 
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+        <Slicer>HasAssembly</Slicer>
+        <Slicer>SolutionType</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebApplication" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="SandboxSolutionName" Label="SandboxSolutionName" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="SiteDefinitions_Instances" InputFileName="SiteDefinitions_Usage.csv" InputDataSheetName="SiteDefinitions_Usage" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The file SiteDefinitions_Instances.csv, would be used as an input, due to which a Pivot View would be created for SiteDefinitions_Instances to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle >Description</DescriptionTitle>
+    <Description >
+      <![CDATA[ This is a SiteDefinitions_Instances Pivot View which is used to store the summary of a "SiteDefinitions_Instances.csv" report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way. 
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+        <Slicer>SiteDefinitionId</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="SiteDefinitionId" Label="SiteDefinitionId" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+  <Component Name="WebParts" InputFileName="WebParts_Usage.csv" InputDataSheetName="WebParts_Usage" SummaryViewColumn="WebApplication">
+    <ShortDescription>
+      <![CDATA[The usage file WebParts_Usage.csv, would be used as an input, due to which a Pivot View would be created for WebParts to provide the information in a tabular format. Pivot View will contain Filters as well as Slicers both to provide facility to end user for selection of data with different views.
+      ]]>
+    </ShortDescription>
+    <DescriptionTitle >Description</DescriptionTitle>
+    <Description >
+      <![CDATA[This is a WebParts Usage Pivot View which is used to store the summary of a "WebParts_Usage.csv" Disocvery report data set in a condensed manner & having pre-defined data fields, filters and slicers to help to group the data accordingly. Pivot View allow to take a large amount of data and work on it in such a way that you need to view only a few data fields. Pivot View helps in making a concise summary out of thousands of rows and columns of raw data and as well as will provide help to make precise and quick decisions for transformation approach of a particular component. You can also select your own set of available data fields, filters and slicers accordingly to summarize data by dragging the columns to different sections of the view. Slicers will allow to filter the pivot table data in an interactive and easy way. 
+      ]]>
+    </Description>
+    <Item Type="PivotView">
+      <SlicersStyling Style="SlicerStyleDark4" Height="" Width=""></SlicersStyling>
+      <Slicers>
+        <Slicer>WebApplication</Slicer>
+        <Slicer>SiteCollection</Slicer>
+      </Slicers>
+      <Filters>
+        <Filter>WebApplication</Filter>
+        <Filter>SiteCollection</Filter>
+      </Filters>
+      <ValueColumn Name="WebUrl" Function="Count"> </ValueColumn>
+      <Rows>
+        <Row Column="WebPartType" Label="WebPartType" Order="1"></Row>
+      </Rows>
+    </Item>
+  </Component>
+</PivotConfig>

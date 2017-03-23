@@ -85,11 +85,16 @@
     <Compile Include="DeleteMissingWorkflowAssociations.cs" />
     <Compile Include="DownloadAndModifyListTemplate.cs" />
     <Compile Include="DownloadAndModifySiteTemplate.cs" />
+    <Compile Include="GeneratePivotReport.cs" />
     <Compile Include="GenerateSecurityGroupReport.cs" />
     <Compile Include="GenerateSiteCollectionReport.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="ManageMaintenanceBanners.cs" />
+    <Compile Include="PivotHelper\ChartHelper.cs" />
+    <Compile Include="PivotHelper\CommonHelper.cs" />
+    <Compile Include="PivotHelper\PivotViewHelper.cs" />
+    <Compile Include="PivotHelper\SummaryViewHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="GenerateColumnAndTypeUsageReport.cs" />
     <Compile Include="GenerateNonDefaultMasterPageUsageReport.cs" />
@@ -131,6 +136,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Deployment.Compression, Version=3.0.0.0, Culture=neutral, PublicKeyToken=ce35f76fcda82bad, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Dlls\Microsoft.Deployment.Compression.dll</HintPath>
@@ -145,78 +151,46 @@
     <Reference Include="Microsoft.IdentityModel.Extensions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=69c3241e6f0468ca, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Office.Client.Policy, Version=16.1.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.SharePointOnline.CSOM.16.1.6008.1200\lib\net45\Microsoft.Office.Client.Policy.dll</HintPath>
+    <Reference Include="Microsoft.Office.Client.Policy, Version=15.0.0.0" />
+    <Reference Include="Microsoft.Office.Client.TranslationServices, Version=15.0.0.0" />
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio 12.0\Visual Studio Tools for Office\PIA\Office15\Microsoft.Office.Interop.Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Tools.Excel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>C:\Program Files\Reference Assemblies\Microsoft\VSTO40\v4.0.Framework\Microsoft.Office.Tools.Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Online.SharePoint.Client.Tenant, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\OfficeDevPnPCore15.2.5.1606.2\lib\net45\Microsoft.Online.SharePoint.Client.Tenant.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SharePoint.Client, Version=15.0.0.0">
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Office.Client.TranslationServices, Version=16.1.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.SharePointOnline.CSOM.16.1.6008.1200\lib\net45\Microsoft.Office.Client.TranslationServices.dll</HintPath>
+    <Reference Include="Microsoft.SharePoint.Client.DocumentManagement, Version=15.0.0.0" />
+    <Reference Include="Microsoft.SharePoint.Client.Publishing, Version=15.0.0.0" />
+    <Reference Include="Microsoft.SharePoint.Client.Runtime, Version=15.0.0.0">
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Office.SharePoint.Tools, Version=16.1.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.SharePointOnline.CSOM.16.1.6008.1200\lib\net45\Microsoft.Office.SharePoint.Tools.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Online.SharePoint.Client.Tenant, Version=16.1.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.SharePointOnline.CSOM.16.1.6008.1200\lib\net45\Microsoft.Online.SharePoint.Client.Tenant.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.ProjectServer.Client, Version=16.1.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.SharePointOnline.CSOM.16.1.6008.1200\lib\net45\Microsoft.ProjectServer.Client.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.SharePoint.Client, Version=16.1.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.SharePointOnline.CSOM.16.1.6008.1200\lib\net45\Microsoft.SharePoint.Client.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.SharePoint.Client.DocumentManagement, Version=16.1.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.SharePointOnline.CSOM.16.1.6008.1200\lib\net45\Microsoft.SharePoint.Client.DocumentManagement.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.SharePoint.Client.Publishing, Version=16.1.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.SharePointOnline.CSOM.16.1.6008.1200\lib\net45\Microsoft.SharePoint.Client.Publishing.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.SharePoint.Client.Runtime, Version=16.1.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.SharePointOnline.CSOM.16.1.6008.1200\lib\net45\Microsoft.SharePoint.Client.Runtime.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.SharePoint.Client.Runtime.Windows, Version=16.1.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.SharePointOnline.CSOM.16.1.6008.1200\lib\net45\Microsoft.SharePoint.Client.Runtime.Windows.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.SharePoint.Client.Search, Version=16.1.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.SharePointOnline.CSOM.16.1.6008.1200\lib\net45\Microsoft.SharePoint.Client.Search.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.SharePoint.Client.Search.Applications, Version=16.1.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.SharePointOnline.CSOM.16.1.6008.1200\lib\net45\Microsoft.SharePoint.Client.Search.Applications.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.SharePoint.Client.Taxonomy, Version=16.1.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.SharePointOnline.CSOM.16.1.6008.1200\lib\net45\Microsoft.SharePoint.Client.Taxonomy.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.SharePoint.Client.UserProfiles, Version=16.1.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.SharePointOnline.CSOM.16.1.6008.1200\lib\net45\Microsoft.SharePoint.Client.UserProfiles.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.SharePoint.Client.WorkflowServices, Version=16.1.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.SharePointOnline.CSOM.16.1.6008.1200\lib\net45\Microsoft.SharePoint.Client.WorkflowServices.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
+    <Reference Include="Microsoft.SharePoint.Client.Search, Version=15.0.0.0" />
+    <Reference Include="Microsoft.SharePoint.Client.Search.Applications, Version=15.0.0.0" />
+    <Reference Include="Microsoft.SharePoint.Client.Taxonomy, Version=15.0.0.0" />
+    <Reference Include="Microsoft.SharePoint.Client.UserProfiles, Version=15.0.0.0" />
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Mono.Cecil, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Dlls\Mono.Cecil.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OfficeDevPnP.Core, Version=2.11.1701.1, Culture=neutral, PublicKeyToken=3751622786b357c2, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharePointPnPCore2013.2.11.1701.1\lib\net45\OfficeDevPnP.Core.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="OfficeDevPnP.Core, Version=1.9.1215.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\OfficeDevPnPCore15.2.5.1606.2\lib\net45\OfficeDevPnP.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -225,6 +199,7 @@
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.IdentityModel" />
     <Reference Include="System.IdentityModel.Selectors" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Net" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -248,6 +223,9 @@
     <Content Include="Dlls\Microsoft.Deployment.Compression.dll" />
     <Content Include="Dlls\Mono.Cecil.dll" />
     <Content Include="Scripts\embedMaintenanceBanner.js" />
+    <Content Include="TokenHelper.vb" />
+    <Content Include="XMLs\Discovery-Pivot.xml" />
+    <Content Include="XMLs\PreMT-Pivot.xml" />
     <None Include="Web References\WebPartPagesService\webpartpages.disco" />
   </ItemGroup>
   <ItemGroup>
