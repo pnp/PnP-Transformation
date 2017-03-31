@@ -72,7 +72,7 @@ This sample demonstrates the JDP Remediation Console, which is a CSOM-based Wind
 
 The same are shown in the screen-shot below:
 
-![](\images/ChoiceOfOperations.PNG)
+![](images/ChoiceOfOperations.PNG)
 
 -  **Transformation**
 	- Transform site collections to remove and/or replace various Farm Solution-based customizations and components within the target SharePoint farm prior to Farm Solution retraction
@@ -95,7 +95,7 @@ You would need to provide some inputs to execute this console application to get
 
 On selecting **1st Choice of Operation**, we get the following operations as shown in the below screen-shot:
 
-![](\images/\ChoiceOfOperation1.PNG) 
+![](images/ChoiceOfOperation1.PNG) 
 
 These operations are listed and explained as below:
 
@@ -108,7 +108,7 @@ This operation adds a specified WebPart (OOTB or AppPart) to a specified page pr
 
 This operation does not use an input file; instead, it prompts the user for the following parameters: 
 
-![](\images/\AddOOTBtoPage.PNG) 
+![](images/AddOOTBtoPage.PNG) 
 
 - **Web Url**
 	* Here we need to provide the `Web Url` where we need to add the WebPart  
@@ -176,7 +176,7 @@ This operation will read the input file from PreMT-Scan or Discovery output file
 
 The operation also prompts the user for the following parameters (shown in the below screenshot):
 
-![](\images/\ReplaceFTCWebpart.PNG) 
+![](images/ReplaceFTCWebpart.PNG) 
 
 > Before running this function, please run Generate WebPart Properties Report function (3: Self Service Report > 7: Generate WebPart Properties Report), so that the XMLs for both source and target WebParts is available, to run delete and add function.  
 
@@ -264,7 +264,7 @@ This operation reads an input file (or user input) to obtain a list of one or mo
 
 On choosing this option, we would be asked how to proceed for this operation as shown below 
 
-![](\images/\ReplaceMasterPage.PNG)
+![](images/ReplaceMasterPage.PNG)
 
 Upon choosing this option, the user is prompted for how to proceed as shown below:
   
@@ -359,7 +359,7 @@ This is a CSV that follows the format and content of the PreMT\_MasterPage\_Usag
 
 This operation reads a list of "locked" custom master pages from an input file. It then updates the Device Channel Mappings file of the web that contains the master page file to ensure all references to the custom master page have been removed.  Each reference in the mapping file is reset to use the name of the Site Master Page currently in use on the web.
 
-![](\images/\ResetDeviceChannelMapping.PNG)
+![](images/ResetDeviceChannelMapping.PNG)
 
 - **Note:** this operation also saves a backup of the original Mappings file.
 
@@ -390,7 +390,7 @@ This operation generates the following output files:
 
 This operation reads a list of site collection Urls from an input file and performs the specified Maintenance Banner Operation [Add or Remove] on each site collection.
 
-![](\images/\ManageMaintenanceBanners.PNG)
+![](images/ManageMaintenanceBanners.PNG)
 
 Upon choosing this option, the user is prompted for how to proceed as shown below:
 
@@ -403,7 +403,7 @@ This operation is helpful in alerting site collection users to the fact that imp
 The operation leverages a centrally-managed maintenance banner message that is contained in the `embedMaintenanceBanner.js` file.  Before executing this operation, you should edit this file to specify the desired message.  Do not change the name of this file.
 
 See [embedMaintenanceBanner.js](/JDP%20Remediation%20-%20CSOM/JDP.Remediation.Console/JDP.Remediation.Console/Scripts/embedMaintenanceBanner.js) for an example of this file. Use of this file results in a sample banner as shown below:
-![](\images/MaintenanceBanner.PNG) 
+![](images/MaintenanceBanner.PNG) 
 
 Be sure to upload the file to a centrally-managed library, typically a folder (e.g., `scripts` or `js`) that resides beneath the `Style Library` of your root portal site.  You will be prompted for the Url of this folder if you select the **Add** operation.
 
@@ -415,7 +415,7 @@ If Option 1 `Add Maintenance Banner to Sites` is selected, this operation prompt
 	- The absolute Url of the CDN Library Folder that contains the following JS file: embedMaintenanceBanner.js 
 	- Example: [https://portal.contoso.com/style library/cdn/scripts](https://portal.contoso.com/style%20library/cdn/scripts)
 
-![](\images/MaintenanceBannerOption1.PNG) 
+![](images/MaintenanceBannerOption1.PNG) 
 
 Regardless of the option selected, the operation also reads the following input files:
 
@@ -432,7 +432,7 @@ This operation generates the following output files:
 
 When you select the **Clean-up** category, you are presented with a list of operations as shown below:
 
-![](\images/\ChoiceOfOperations2.PNG) 
+![](images/ChoiceOfOperations2.PNG) 
 
 These operations are listed below and explained in the following sections:
 
@@ -450,7 +450,7 @@ This operation reads a list of setup file definitions from an input file and del
 
 On selecting this Operation, we get the following options as shown in the below screenshot:
 
-![](\images/\SetupFileCleanUp.PNG) 
+![](images/SetupFileCleanUp.PNG) 
 
 This operation is helpful in trying to remediate the Missing Setup Files report.  It attempts to remove all specified setup files from the target SharePoint environment.
 
@@ -516,7 +516,7 @@ This operation reads a list of feature definitions from an input file and delete
 
 On selecting this Operation, we get the following options as shown in the below screenshot:
 
-![](\images/\FeatureCleanUp.PNG) 
+![](images/FeatureCleanUp.PNG) 
 
 This operation is helpful in trying to remediate the Missing Feature report.  It attempts to remove all specified features from the target SharePoint environment.
 
@@ -573,7 +573,7 @@ This operation reads a list of event receiver definitions from an input file and
 
 On selecting this Operation, we get the following options as shown in the below screenshot:
 
-![](\images/\ERCleanUp.PNG) 
+![](images/ERCleanUp.PNG) 
 
 This operation is helpful in trying to remediate the Missing Event Receiver reports.  It attempts to remove all specified event receivers from the target SharePoint environment.
 
@@ -629,7 +629,7 @@ This operation reads a list of workflow association files from an input file and
 
 On selecting this Operation, we get the following options as shown in the below screenshot:
 
-![](\images/\WFAssociationCleanUp.PNG) 
+![](images/WFAssociationCleanUp.PNG) 
 
 This operation is helpful in trying to remediate the Workflow Associations report of the Pre-Migration Scan.  It attempts to remove all specified files from the target SharePoint environment.
 
@@ -681,7 +681,7 @@ This operation reads a list of list templates having customized elements, from a
 
 On selecting this Operation, we get the following options as shown in the below screenshot:
 
-![](\images/\ListTemplateCleanUp.PNG) 
+![](images/ListTemplateCleanUp.PNG) 
 
 This operation is helpful in trying to remediate the All List Templates in Gallery report of the Pre-Migration or Discovery Scan.  It attempts to remove all specified list templates from the target SharePoint environment.
  
@@ -743,7 +743,7 @@ This operation is helpful in trying to remediate the Missing Web Parts reports. 
 
 On choosing this option, we would be asked how to proceed for this operation as shown in the below image:
 
-![](\images/\WebPartCleanUp.PNG)
+![](images/WebPartCleanUp.PNG)
 
 The operation also prompts the user for the following parameters:
 
@@ -802,7 +802,7 @@ This operation reads **either** of the following input files:
 ## 3 - Self Service Report ##
 When you select the **Self-Service Reports** category, you are presented with a list of operations as shown below:
 
-![](\images/\ChoiceOfOperation3.PNG) 
+![](images/ChoiceOfOperation3.PNG) 
 
 These operations are listed below and explained in the following sections:
 
@@ -823,7 +823,7 @@ This operation downloads List Templates (as directed), extracts the files from e
 
 Upon choosing this option, the user is prompted for how to proceed as shown below: 
 
-![](\images/\GenerateListTemplateReport.PNG)
+![](images/GenerateListTemplateReport.PNG)
 
 	1)	Process with Auto-generated Site Collection Report  
 	2)	Process with PreMT/Discovery ListTemplate Report  
@@ -938,7 +938,7 @@ This operation downloads Site Templates (as directed), extracts the files from e
 
 Upon choosing this option, the user is prompted for how to proceed as shown below:
 
-![](\images/\GenerateSiteTemplateReport.PNG)
+![](images/GenerateSiteTemplateReport.PNG)
 
 	1)	Process with Auto-generated Site Collection Report  
 	2)	Process with PreMT/Discovery SiteTemplate Report  
@@ -1056,7 +1056,7 @@ This report is helpful in trying to remediate the Missing Content Type and Missi
 - Simply activate, then de-activate, the temporary sandbox feature to remove the definitions. 
 - If the definitions remain, you still have some instances to delete.
 
-![](\images/\GenerateColumnORFieldAndTypeUsageReport.PNG)
+![](images/GenerateColumnORFieldAndTypeUsageReport.PNG)
 
 #### Input ####
 **1) Sites.txt**
@@ -1122,7 +1122,7 @@ This report is helpful in trying to remediate the Missing Content Type and Missi
 ### 4. Generate Non-Default Master Page Usage Report ###
 This operation reads a list of site collection Urls from an input file and scans each site collection. It reports those webs that are using a non-default SP2013 Master Page (i.e., something other than `“seattle.master”`) as either its System (MasterUrl) or Site (CustomMasterUrl) Master Page.  
 
-![](\images/\GenerateNonDefaultMasterPageUsageReport.PNG)
+![](images/GenerateNonDefaultMasterPageUsageReport.PNG)
 
 > **Note:**
 > 
@@ -1161,7 +1161,7 @@ This operation reports all site collections found across all web applications in
 
 On choosing this option, we would be asked how to proceed for this operation as shown below 
 
-![](\images/\GenerateSiteCollectionReport.PNG)
+![](images/GenerateSiteCollectionReport.PNG)
 
 #### Input ####
 This operation does not use an input files; instead, it prompts the user for the following parameters:
@@ -1192,7 +1192,7 @@ This operation iterates through all Pages present in the *“root folder”*, th
 #### Input ####
 This operation does not use an input file; instead, it prompts the user for the following parameters: 
 
-![](\images/\GenerateWebPartUsage.PNG)
+![](images/GenerateWebPartUsage.PNG)
 
 - **Web Url:**
 	* Here we need to provide the Web Url  
@@ -1238,7 +1238,7 @@ This operation does not use an input file; instead, it prompts the user for the 
 
 This operation will Returns the properties of the given Web Part in Xml format.
 
-![](\images/\GenerateWebPartProperties.PNG)
+![](images/GenerateWebPartProperties.PNG)
 
 #### Input ####
 This operation does not use an input file; instead, it prompts the user for the following parameters: 
@@ -1302,7 +1302,7 @@ This operation generates the following output files:
 ### 9. Generate Pivot Reports ###
 This operation generates an excel report which contains all the details about the input CSV data (Pre-Migration Report and Discovery Usage Reports), with graphical representation using pivot table and slicers in excel sheet. 
 
-![](\images/\GeneratePivotReport.PNG)
+![](images/GeneratePivotReport.PNG)
 
 This operation reads any input file (.csv format) and shows the data present in it in a user-friendly manner using the features of Excel such as pivot, graph (pie chart or bar chart or etc..), filter, slicer, summary, and count of any specific data by using any specific condition. 
 
@@ -1402,13 +1402,13 @@ This operation shows the data in a user-friendly manner using the features of Ex
 
 > **Example 1:** 
 
-![](\images/\Pivot_PieChart.PNG)
+![](images/Pivot_PieChart.PNG)
 
 
 
 > **Example 2:**
  
-![](\images/\Pivot_Slice.PNG)
+![](images/Pivot_Slice.PNG)
 
 <img src="https://telemetry.sharepointpnp.com/pnp-transformation/JDP Remediation - CSOM/JDP.Remediation.Console" /> 
 
