@@ -886,13 +886,20 @@ Regardless of the option selected, the operation also reads the following input 
 		* **WebApplication:** Specifies the Web Application of the Site Collection where in the List Template is present.
 		* **SiteCollection:** Specifies the Site Collection where in the List Template is present.
 		* **WebUrl:** Specifies the Web Url for the Site Collection where in the List Template is present.
+		* **CustomContentType:** Lists out the Names of the Content Types with ‘|’ separated values when more than one custom content types are present. If no custom content type is present, then ‘N/A’ would be displayed.
+		* **CustomEventReceiver:** Lists out the Event Receiver Assemblies with ‘|’ separated values when more than one Event Receivers are present. If no custom Event Receivers is present, then ‘N/A’ would be displayed.
+		* **CustomSiteColumn:** Lists out the Id of Site Columns with ‘|’ separated values when more than one Site Columns are present. If no custom Site Columns is present, then ‘N/A’ would be displayed.
 		* **IsCustomizationPresent:** Specifies whether there are any customized elements present in the list template.
-			* **YES:** If value of this column is “YES” it implies that customization is available in this particular record, and if the value of any component (IsCustomizedContentType, IsCustomizedEventReceiver and IsCustomizedSiteColumn) of this record is “YES”, then this record's value will also be “YES”
+			* **YES:** If value of this column is “YES” it implies that customization is available in this particular record, and if the value of any component (IsCustomizedContentType, IsCustomizedEventReceiver, IsCustomizedContentTypeEventReceiver and IsCustomizedSiteColumn) of this record is “YES”, then this record's value will also be “YES”
 			* **NO:** In this report, we do not show those records where customization is not there, hence the "NO" record will never appear in this column.
 		* **IsCustomizedContentType:** Specifies whether there are any customized Content Types present in the List Template
 			* **YES:** If value of this column is “YES” it implies that customization is available in this particular record related to Content Types
 			* **NO:** If value of this column is “NO” it implies that customization is not available in this particular record related to Content Types
 			* **NO INPUT FILE:** This implies that “ContentTypes.csv” file was not available in input folder or that file was not valid
+		* **IsCustomizedContentTypeEventReceiver:** Specifies whether there are any customized Content Type Event Receivers present in the List Template
+			* **YES:** If value of this column is “YES” it implies that customization is available in this particular record related to Content Type Event Receivers
+			* **NO:** If value of this column is “NO” it implies that customization is not available in this particular record related to Content Type Event Receiverses
+			* **NO INPUT FILE:** This implies that “EventReceivers.csv” file was not available in input folder or that file was not valid
 		* **IsCustomizedSiteColumn:** Specifies whether there are any customized Site Columns present in the List Template
 			* **YES:** If value of this column is “YES” it implies that customization is available in this particular record related to Custom Fields
 			* **NO:** If value of this column is “NO” it implies that customization is not available in this particular record related to Custom Fields
@@ -901,7 +908,7 @@ Regardless of the option selected, the operation also reads the following input 
 			* **YES:** If value of this column is “YES” it implies that customization is available in this particular record related to Event Receivers
 			* **NO:** If value of this column is “NO” it implies that customization is not available in this particular record related to Event Receivers
 			* **NO INPUT FILE:** This implies that “EventReceivers.csv” file was not available in input folder or that file was not valid
-		* **CTHavingCustomEventReceiver:** Lists out the Names of Content Types with ‘;’ separated values, which are having the custom Event Receivers present in them. If no Custom Event Receivers is present, then ‘N/A’ would be displayed.
+		* **CTHavingCustomEventReceiver:** Lists out the Names of Content Types and Event Receiver assembly separated by ‘~’ and more than one content type event receivers separated by ‘|’. If no Custom Event Receivers is present, then ‘N/A’ would be displayed.
 
 - **SiteCollections.txt** `(generated only for Option 1 Process with Auto-generated Site Collection Report)`
 	- This is file will list all the Site Collections that will be processed for the Web Application Url.
@@ -991,13 +998,21 @@ AllSiteTemplatesInGallery\_Usage.csv `(Mandatory for Option 2, not for other Opt
 		* **WebApplication:** Specifies the Web Application of the Site Collection where in the Site Template is present.
 		* **SiteCollection:** Specifies the Site Collection where in the Site Template is present.
 		* **WebUrl:** Specifies the Web Url for the Site Collection where in the Site Template is present.
+		* **CustomContentType:** Lists out the Names of the Content Types with ‘|’ separated values when more than one custom content types are present. If no custom content type is present, then ‘N/A’ would be displayed.
+		* **CustomEventReceiver:** Lists out the Event Receiver Assemblies with ‘|’ separated values when more than one Event Receivers are present. If no custom Event Receivers is present, then ‘N/A’ would be displayed.
+		* **CustomFeature:** Lists out the Id of Features with ‘|’ separated values when more than one Features are present. If no custom Features is present, then ‘N/A’ would be displayed.
+		* **CustomSiteColumn:** Lists out the Id of Site Columns with ‘|’ separated values when more than one Site Columns are present. If no custom Site Columns is present, then ‘N/A’ would be displayed.
 		* **IsCustomizationPresent:** Specifies whether there are any customized elements present in the site template.
-			* **YES:** If value of this column is “YES” it implies that customization is available in this particular record, and if the value of any component (IsCustomizedFeature, IsCustomizedContentType, IsCustomizedEventReceiver and IsCustomizedSiteColumn) of this record is “YES”, then this record's value will also be “YES”
+			* **YES:** If value of this column is “YES” it implies that customization is available in this particular record, and if the value of any component (IsCustomizedFeature, IsCustomizedContentType, IsCustomizedEventReceiver, IsCustomizedContentTypeEventReceiver and IsCustomizedSiteColumn) of this record is “YES”, then this record's value will also be “YES”
 			* **NO:** In this report, we do not show those records where customization is not there, hence the "NO" record will never appear in this column.
 		* **IsCustomizedContentType:** Specifies whether there are any customized Content Types present in the Site Template
 			* **YES:** If value of this column is “YES” it implies that customization is available in this particular record related to Content Types
 			* **NO:** If value of this column is “NO” it implies that customization is not available in this particular record related to Content Types
 			* **NO INPUT FILE:** This implies that “ContentTypes.csv” file was not available in input folder or that file was not valid
+		* **IsCustomizedContentTypeEventReceiver:** Specifies whether there are any customized Content Type Event Receivers present in the Site Template
+			* **YES:** If value of this column is “YES” it implies that customization is available in this particular record related to Content Type Event Receivers
+			* **NO:** If value of this column is “NO” it implies that customization is not available in this particular record related to Content Type Event Receiverses
+			* **NO INPUT FILE:** This implies that “EventReceivers.csv” file was not available in input folder or that file was not valid
 		* **IsCustomizedSiteColumn:** Specifies whether there are any customized Site Columns present in the Site Template
 			* **YES:** If value of this column is “YES” it implies that customization is available in this particular record related to Custom Fields
 			* **NO:** If value of this column is “NO” it implies that customization is not available in this particular record related to Custom Fields
@@ -1010,7 +1025,7 @@ AllSiteTemplatesInGallery\_Usage.csv `(Mandatory for Option 2, not for other Opt
 			* **YES:** If value of this column is “YES” it implies that customization is available in this particular record related to Feature
 			* **NO:** If value of this column is “NO” it implies that customization is not available in this particular record related to Feature
 			* **NO INPUT FILE:** This implies that “Features.csv” file was not available in input folder or that file was not valid
-		* **CTHavingCustomEventReceiver:** Lists out the Names of Content Types with ‘;’ separated values, which are having the custom Event Receivers present in them. If no Custom Event Receivers is present, then ‘N/A’ would be displayed.
+		* **CTHavingCustomEventReceiver:** Lists out the Names of Content Types and Event Receiver assembly separated by ‘~’ and more than one content type event receivers separated by ‘|’. If no Custom Event Receivers is present, then ‘N/A’ would be displayed.
 
 - **SiteCollections.txt** `(Output for only Option 1)`
 	- This is file will list all the Site Collections that will be processed for the Web Application Url.

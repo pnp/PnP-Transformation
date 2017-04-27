@@ -218,6 +218,9 @@ namespace JDP.Remediation.Console.Common.Base
         public string CreatedBy { get; set; }
         public string ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
+        public string CustomEventReceiver { get; set; }
+        public string CustomContentType { get; set; }
+        public string CustomSiteColumn { get; set; }
     }
     public class ListTemplateDeleteOutput
     {
@@ -240,10 +243,15 @@ namespace JDP.Remediation.Console.Common.Base
         public string CreatedBy { get; set; }
         public string ModifiedDate { get; set; }
         public string ModifiedBy { get; set; }
+        public string CustomFeature { get; set; }
+        public string CustomEventReceiver { get; set; }
+        public string CustomSiteColumn { get; set; }
+        public string CustomContentType { get; set; }
     }
 
     public class ListCustomizationHeader
     {
+        public string IsCustomizedContentTypeEventReceiver { get; set; }
         public string IsCustomizationPresent { get; set; }
         public string IsCustomizedContentType { get; set; }
         public string IsCustomizedEventReceiver { get; set; }
