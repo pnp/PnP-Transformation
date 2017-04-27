@@ -44,7 +44,7 @@ You are then presented with a list of Operation Categories as shown below:
 	3. Self-Service Reports 
 	4. Exit  
 
-![](\images/ChoiceOfOperations.PNG) 
+![](images/ChoiceOfOperations.PNG) 
 
 Simply select the category of the operation you want to perform.
 
@@ -57,14 +57,14 @@ This application logs all exceptions that occur during its execution. This appli
 
 The following is a summary of each category of operations supported by this application.
 
-![](\images/JDP.PNG) 
+![](images/JDP.PNG) 
 
 The following sections provide details on each category and operation supported by this application.
 
 ## 1 - Transformation ##
 When you select the **Transformation** category, you are presented with a list of operations as shown below:
 
-![](\images/ChoiceOfOperation1.PNG) 
+![](images/ChoiceOfOperation1.PNG) 
 
 These operations are listed below and explained in the following sections:
 
@@ -212,7 +212,7 @@ This operation is helpful in alerting site collection users to the fact that imp
 The operation leverages a centrally-managed maintenance banner message that is contained in the `embedMaintenanceBanner.js` file.  Before executing this operation, you should edit this file to specify the desired message.  Do not change the name of this file.
 
 See [embedMaintenanceBanner.js](/JDP%20Remediation%20-%20CSOM/JDP.Remediation.Console/JDP.Remediation.Console/Scripts/embedMaintenanceBanner.js) for an example of this file. Use of this file results in a sample banner as shown below:
-![](\images/MaintenanceBanner.PNG) 
+![](images/MaintenanceBanner.PNG) 
 
 Be sure to upload the file to a centrally-managed library, typically a folder (e.g., `scripts` or `js`) that resides beneath the `Style Library` of your root portal site.  You will be prompted for the Url of this folder if you select the **Add** operation.
 
@@ -238,7 +238,7 @@ This operation generates the following output files:
 ## 2 - Clean-Up ##
 When you select the **Clean-up** category, you are presented with a list of operations as shown below:
 
-![](\images/ChoiceOfOperations2.PNG) 
+![](images/ChoiceOfOperations2.PNG) 
 
 These operations are listed below and explained in the following sections:
 
@@ -400,7 +400,7 @@ This operation generates the following output files:
 ## 3 - Self-Service Reports ##
 When you select the **Self-Service Reports** category, you are presented with a list of operations as shown below:
 
-![](\images/ChoiceOfOperation3.PNG) 
+![](images/ChoiceOfOperation3.PNG) 
 
 These operations are listed below and explained in the following sections:
 
@@ -634,7 +634,7 @@ This operation is helpful in showing the customized elements present in each Rep
 
 If **Option 1** `Discovery Usage Files` is selected, this operation prompts the user for following:
 
-![](\images/\PivotOption1.PNG) 
+![](images/PivotOption1.PNG) 
 
 - Complete Path of Discovery Usage Report/Files
 
@@ -671,7 +671,7 @@ The following Discovery Usage Files needs to be present in the provided path or 
 
 If **Option 2** `Pre Migration Scan Files` is selected, this operation prompts the user for following:
 
-![](\images/PivotOption2.PNG) 
+![](images/PivotOption2.PNG) 
 
 - Complete Path of Discovery Usage Report/Files
 
