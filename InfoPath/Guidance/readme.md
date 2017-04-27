@@ -26,6 +26,6 @@ Common pattern | SPA using Knockout | ASP.Net MVC | ASP.Net Forms
 
 
 # InfoPath transformation and remediation steps #
-The **decks** folder contains PowerPoint presentations that describe the approach you can follow to help your customer with InfoPath form remediation/transformation. 
+The **decks** folder contains PowerPoint presentations that describe the approach you can follow to help your customer with InfoPath form remediation/transformation. Important reference is the KB that describes the differences between InfoPath Form Services for SharePoint on-premises and InfoPath Form Services in SharePoint Online: https://support.microsoft.com/en-us/help/4017854. 
 
 <img src="https://telemetry.sharepointpnp.com/pnp-transformation/infopath/guidance" /> 
