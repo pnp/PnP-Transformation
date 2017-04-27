@@ -275,6 +275,8 @@ namespace JDP.Remediation.Console
             bool isCustomEventReceiver = false;
             bool isCustomSiteColumn = false;
             bool isCustomFeature = false;
+            bool isCustomContentTypeEventReceiver = false;
+
             StringBuilder cTHavingCustomER = new StringBuilder();
 
             string fileName = objSiteCustOutput.SiteTemplateName;
@@ -294,17 +296,10 @@ namespace JDP.Remediation.Console
 
                 FileInfo solFileObj = new FileInfo(newFileName);
                 Logger.LogInfoMessage("[DownloadAndModifySiteTemplate: ProcessWspFile] Extracting the Site Template: " + objSiteCustOutput.SiteTemplateName, true);
-                //string cmd = "/e /a /y /L \"" + newFileName.Replace(".", "_") + "\" \"" + newFileName + "\"";
-                //ProcessStartInfo pI = new ProcessStartInfo("extrac32.exe", cmd);
-                //pI.WindowStyle = ProcessWindowStyle.Hidden;
-                //Process p = Process.Start(pI);
-                //p.WaitForExit();
-                //string cabDir = newFilePath.Replace(".", "_");
-                //Directory.SetCurrentDirectory(newFileName.Replace(".", "_"));
+
                 FileUtility.UnCab(solFileName.ToLower().Replace(".wsp", ".cab"), destDir);
-                //string cabDir = newFilePath.Replace(".", "_");
                 Directory.SetCurrentDirectory(destDir);
-                //string extractedPath = solFileName.Replace(".wsp", "_cab");
+
                 string extractedPath = destDir;
                 Logger.LogInfoMessage("[DownloadAndModifySiteTemplate: ProcessWspFile] Extracted the Site Template: " + objSiteCustOutput.SiteTemplateName + "to path: " + extractedPath, true);
 
@@ -318,9 +313,19 @@ namespace JDP.Remediation.Console
 
                     string[] featureFiles = Directory.GetFiles(Directory.GetCurrentDirectory(), "Feature.xml", SearchOption.AllDirectories);
 
+                    string siteFeatures = string.Empty;
+                    string webFeatures = string.Empty;
+                    string features = string.Empty;
+
+                    string webERs = string.Empty;
+                    string listERs = string.Empty;
+
+
                     #region Custom Features
 
                     Logger.LogInfoMessage("[DownloadAndModifySiteTemplate: ProcessWspFile] Searching for Onet.xml file for finding customized features in path: " + webTempFiles.ElementAt(0), true);
+
+                    string CustomFeature = string.Empty;
 
                     if (lstCustomFeatureIDs != null && lstCustomFeatureIDs.Count > 0)
                     {
@@ -329,13 +334,19 @@ namespace JDP.Remediation.Console
                             #region Custom SiteFeatures
                             try
                             {
-                                CheckCustomFeature(webTempFiles.ElementAt(0), "/Project/Configurations/Configuration/SiteFeatures/Feature", ref isCustomFeature, solFileName);
+                                siteFeatures = CheckCustomFeature(webTempFiles.ElementAt(0), "/Project/Configurations/Configuration/SiteFeatures/Feature", ref isCustomFeature, solFileName);
+                                CustomFeature = CustomFeature + siteFeatures;
                             }
                             catch (Exception ex)
                             {
                                 Logger.LogErrorMessage("[DownloadAndModifySiteTemplate: ProcessWspFile]. Exception Message: " + ex.Message + ", Exception Comments: Exception while reading Custom Site Features tag", true);
                                 ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
                                     "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Custom Site Features tag. SolutionName: " + solFileName + ", FileName: " + webTempFiles.ElementAt(0));
+                            }
+
+                            if (siteFeatures != null && siteFeatures.Length > 0 && siteFeatures.EndsWith(","))
+                            {
+                                siteFeatures = siteFeatures.TrimEnd(',');
                             }
                             #endregion
 
@@ -344,7 +355,8 @@ namespace JDP.Remediation.Console
                             {
                                 try
                                 {
-                                    CheckCustomFeature(webTempFiles.ElementAt(0), "/Project/Configurations/Configuration/WebFeatures/Feature", ref isCustomFeature, solFileName);
+                                    webFeatures = CheckCustomFeature(webTempFiles.ElementAt(0), "/Project/Configurations/Configuration/WebFeatures/Feature", ref isCustomFeature, solFileName);
+                                    CustomFeature = CustomFeature + webFeatures;
                                 }
                                 catch (Exception ex)
                                 {
@@ -352,6 +364,11 @@ namespace JDP.Remediation.Console
                                     ExceptionCsv.WriteException(objSiteCustOutput.WebApplication, objSiteCustOutput.SiteCollection, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(),
                                         "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Custom Web Features tag. SolutionName: " + solFileName + ", FileName: " + webTempFiles.ElementAt(0));
                                 }
+                            }
+
+                            if (webFeatures != null && webFeatures.Length > 0 && webFeatures.EndsWith(","))
+                            {
+                                webFeatures = webFeatures.TrimEnd(',');
                             }
                             #endregion
                         }
@@ -364,7 +381,8 @@ namespace JDP.Remediation.Console
                                 {
                                     Logger.LogInfoMessage("[DownloadAndModifySiteTemplate: ProcessWspFile] Searching for Feature.xml file for finding customized features in path: " + featureFiles.ElementAt(i), true);
 
-                                    CheckCustomFeature(featureFiles.ElementAt(i), "/Feature", ref isCustomFeature, solFileName);
+                                    features = CheckCustomFeature(featureFiles.ElementAt(i), "/Feature", ref isCustomFeature, solFileName);
+                                    CustomFeature = CustomFeature + features;
                                 }
                                 catch (Exception ex)
                                 {
@@ -373,9 +391,27 @@ namespace JDP.Remediation.Console
                                         "ProcessWspFile", ex.GetType().ToString(), "Exception while reading Features tag. SolutionName: " + solFileName + ", FileName: " + featureFiles.ElementAt(i));
                                 }
                             }
+                            if (features != null && features.Length > 0 && features.EndsWith("|"))
+                            {
+                                features = features.TrimEnd('|');
+                            }
+
                         }
                     }
+                    if (CustomFeature != null && CustomFeature.Length > 0 && CustomFeature.EndsWith("|"))
+                    {
+                        CustomFeature = CustomFeature.TrimEnd('|');
+                    }
+                    if (!string.IsNullOrEmpty(CustomFeature))
+                        objSiteCustOutput.CustomFeature = CustomFeature;
+                    else
+                        objSiteCustOutput.CustomFeature = Constants.NotApplicable;
+
                     #endregion
+
+                    string CustomEventReceiver = string.Empty;
+                    string CustomSiteColumn = string.Empty;
+                    string CustomContentType = string.Empty;
 
                     #region Web EventReceivers
                     Logger.LogInfoMessage("[DownloadAndModifySiteTemplate: ProcessWspFile] Searching for WebEventReceivers Folder for finding customized Event Receivers in path: " + extractedPath, true);
@@ -390,11 +426,15 @@ namespace JDP.Remediation.Console
                             else
                                 receiversXml = ERlist.ElementAt(0) + @"\" + "Elements.xml";
 
-                            CheckCustomEventReceiver(receiversXml, "/Elements/Receivers", ref isCustomEventReceiver, solFileName);
+                            webERs = CheckCustomEventReceiver(receiversXml, "/Elements/Receivers", ref isCustomEventReceiver, solFileName);
                         }
                     }
+                    if (webERs != null && webERs.Length > 0 && webERs.EndsWith(","))
+                    {
+                        webERs = webERs.TrimEnd(',');
+                    }
+                    CustomEventReceiver = CustomEventReceiver + webERs;
                     #endregion
-
 
                     Logger.LogInfoMessage("[DownloadAndModifySiteTemplate: ProcessWspFile] Searching for ListInstances Folder for finding customized elements in path: " + extractedPath, true);
                     IEnumerable<string> list = Directory.GetDirectories(extractedPath).Where(s => s.EndsWith("ListInstances"));
@@ -408,10 +448,16 @@ namespace JDP.Remediation.Console
                         else
                             receiversXml = list.ElementAt(0) + @"\" + "Elements.xml";
 
+                        listERs = CheckCustomEventReceiver(receiversXml, "/Elements/Receivers", ref isCustomEventReceiver, solFileName);
 
-                        CheckCustomEventReceiver(receiversXml, "/Elements/Receivers", ref isCustomEventReceiver, solFileName);
+                        if (listERs != null && listERs.Length > 0 && listERs.EndsWith(","))
+                        {
+                            listERs = listERs.TrimEnd(',');
+                        }
 
                         #endregion
+
+                        CustomEventReceiver = CustomEventReceiver + listERs;
 
                         //Reading ElementContentTypes.xml for Searching Content Types
                         if (list.ElementAt(0).EndsWith(@"\"))
@@ -471,8 +517,8 @@ namespace JDP.Remediation.Console
                                                                                     string ctAssemblyValue = receiverChilds[y]["Assembly"].InnerText;
                                                                                     if (lstCustomErs.Where(c => ctAssemblyValue.Equals(c, StringComparison.CurrentCultureIgnoreCase)).Any())
                                                                                     {
-                                                                                        //isCustomEventReceiver = true;
-                                                                                        cTHavingCustomER.Append(xmlDocReceivers[i].Attributes["Name"].Value + ";");
+                                                                                        isCustomContentTypeEventReceiver = true;
+                                                                                        cTHavingCustomER.Append(xmlDocReceivers[i].Attributes["Name"].Value + "~" + ctAssemblyValue + "|");
                                                                                         Logger.LogInfoMessage("[DownloadAndModifySiteTemplate: ProcessWspFile] Customized Event Receiver in Content Type Found for: " + objSiteCustOutput.SiteTemplateName, true);
                                                                                         break;
                                                                                     }
@@ -510,6 +556,7 @@ namespace JDP.Remediation.Console
                             }
                             #endregion
 
+
                             #region Custom ContentTypes
                             if (lstContentTypeIDs != null && lstContentTypeIDs.Count > 0)
                             {
@@ -525,6 +572,11 @@ namespace JDP.Remediation.Console
                                         if (lstContentTypeIDs.Where(c => docList.StartsWith(c)).Any())
                                         {
                                             isCustomContentType = true;
+                                            string contentTypeName = xmlDocReceivers[i].Attributes["Name"].Value;
+                                            if (!string.IsNullOrEmpty(contentTypeName))
+                                                CustomContentType = CustomContentType + contentTypeName;
+                                            else
+                                                CustomContentType = CustomContentType + docList;
                                             Logger.LogInfoMessage("[DownloadAndModifySiteTemplate: ProcessWspFile] Customized Content Type Found for: " + objSiteCustOutput.SiteTemplateName, true);
                                             break;
                                         }
@@ -538,6 +590,9 @@ namespace JDP.Remediation.Console
                                 }
                             }
                             #endregion
+
+
+                            string Id = string.Empty;
 
                             #region CustomFields in ContentTypes
                             if (lstCustomFieldIDs != null && lstCustomFieldIDs.Count > 0)
@@ -560,6 +615,12 @@ namespace JDP.Remediation.Console
                                                     if (lstCustomFieldIDs.Where(c => fieldRefId.Equals(c)).Any())
                                                     {
                                                         isCustomSiteColumn = true;
+                                                        Id = Id + fieldRefId + ",";
+                                                        string fieldName = xmlFieldRefList[j].Attributes["Name"].Value;
+                                                        if (!string.IsNullOrEmpty(fieldName))
+                                                            CustomSiteColumn = CustomSiteColumn + fieldName + "|";
+                                                        else
+                                                            CustomSiteColumn = CustomSiteColumn + fieldRefId + "|";
                                                         Logger.LogInfoMessage("[DownloadAndModifySiteTemplate: ProcessWspFile] Customized Site Column associated with Content Type Found for: " + objSiteCustOutput.SiteTemplateName, true);
                                                         break;
                                                     }
@@ -582,7 +643,10 @@ namespace JDP.Remediation.Console
                                 }
                             }
                             #endregion
-
+                            if (Id != null && Id.Length > 0)
+                            {
+                                Id = Id.Substring(0, Id.Length - 1);
+                            }
                             reader.Dispose();
                         }
                         //Reading ElementContentTypes.xml for Searching Custom Fields
@@ -615,6 +679,12 @@ namespace JDP.Remediation.Console
                                         if (lstCustomFieldIDs.Where(c => fieldList.Equals(c)).Any())
                                         {
                                             isCustomSiteColumn = true;
+                                            string fieldName = xmlFields[i].Attributes["Name"].Value;
+                                            if (!string.IsNullOrEmpty(fieldName))
+                                                CustomSiteColumn = CustomSiteColumn + fieldName + "|";
+                                            else
+                                                CustomSiteColumn = CustomSiteColumn + fieldList + "|";
+
                                             Logger.LogInfoMessage("[DownloadAndModifySiteTemplate: ProcessWspFile] Customized Site Column Found for: " + objSiteCustOutput.SiteTemplateName, true);
                                             break;
                                         }
@@ -631,7 +701,32 @@ namespace JDP.Remediation.Console
                             reader.Dispose();
                         }
                     }
-                    if (isCustomContentType || isCustomEventReceiver || isCustomSiteColumn || isCustomFeature)
+
+                    if (CustomEventReceiver != null && CustomEventReceiver.Length > 0 && CustomEventReceiver.EndsWith("|"))
+                    {
+                        CustomEventReceiver = CustomEventReceiver.TrimEnd('|');
+                    }
+                    if (!string.IsNullOrEmpty(CustomEventReceiver))
+                        objSiteCustOutput.CustomEventReceiver = CustomEventReceiver;
+                    else
+                        objSiteCustOutput.CustomEventReceiver = Constants.NotApplicable;
+
+                    if (!string.IsNullOrEmpty(CustomContentType))
+                        objSiteCustOutput.CustomContentType = CustomContentType;
+                    else
+                        objSiteCustOutput.CustomContentType = Constants.NotApplicable;
+
+                    if (CustomSiteColumn != null && CustomSiteColumn.Length > 0 && CustomSiteColumn.EndsWith("|"))
+                    {
+                        CustomSiteColumn = CustomSiteColumn.TrimEnd('|');
+                    }
+                    if (!string.IsNullOrEmpty(CustomSiteColumn))
+                        objSiteCustOutput.CustomSiteColumn = CustomSiteColumn;
+                    else
+                        objSiteCustOutput.CustomSiteColumn = Constants.NotApplicable;
+
+
+                    if (isCustomContentType || isCustomEventReceiver || isCustomSiteColumn || isCustomFeature || isCustomContentTypeEventReceiver)
                     {
                         if (cTHavingCustomER != null && cTHavingCustomER.Length > 0)
                         {
@@ -666,6 +761,10 @@ namespace JDP.Remediation.Console
                         else
                             objSiteCustOutput.IsCustomizedFeature = Constants.NoInputFile;
 
+                        if (lstCustomErs != null && lstCustomErs.Count > 0)
+                            objSiteCustOutput.IsCustomizedContentTypeEventReceiver = isCustomContentTypeEventReceiver ? "YES" : "NO";
+                        else
+                            objSiteCustOutput.IsCustomizedContentTypeEventReceiver = Constants.NoInputFile;
 
                         cTHavingCustomER.Clear();
                     }
@@ -681,6 +780,7 @@ namespace JDP.Remediation.Console
                             objSiteCustOutput.IsCustomizedContentType = "NO";
                             objSiteCustOutput.IsCustomizedFeature = "NO";
                             objSiteCustOutput.IsCustomizedSiteColumn = "NO";
+                            objSiteCustOutput.IsCustomizedContentTypeEventReceiver = "YES";
                         }
                         else
                         {
@@ -798,8 +898,6 @@ namespace JDP.Remediation.Console
             {
                 using (ClientContext userContext = Helper.CreateAuthenticatedUserContext(Program.AdminDomain, Program.AdminUsername, Program.AdminPassword, siteCollectionUrl))
                 {
-                    //userContext.AuthenticationMode = ClientAuthenticationMode.Default;
-                    //userContext.ExecuteQuery();
                     Web web = userContext.Web;
                     Folder folder = userContext.Web.GetFolderByServerRelativeUrl("_catalogs/solutions");
                     userContext.Load(web.Folders);
@@ -932,10 +1030,11 @@ namespace JDP.Remediation.Console
             }
         }
 
-        public static void CheckCustomFeature(string xmlFilePath, string featureNodePath, ref bool isCustomFeature, string siteTemplateName)
+        public static string CheckCustomFeature(string xmlFilePath, string featureNodePath, ref bool isCustomFeature, string siteTemplateName)
         {
             string featureID = string.Empty;
             string xml;
+            string Id = string.Empty;
 
             if (System.IO.File.Exists(xmlFilePath))
             {
@@ -964,10 +1063,6 @@ namespace JDP.Remediation.Console
                         ExceptionCsv.WriteException(Constants.NotApplicable, Constants.NotApplicable, Constants.NotApplicable, "SiteTemplate", ex.Message, ex.ToString(), "CheckCustomFeature",
                             ex.GetType().ToString(), "Exception while loading the XML File. XML File Path: " + xmlFilePath + ". SiteTemplateName: " + siteTemplateName);
                     }
-                    //reader.Namespaces = false;
-                    //reader.Read();
-                    //XmlDocument doc = new XmlDocument();
-                    ////doc.Load(reader);
 
                     //Initiallizing all the nodes required to check
                     XmlNodeList siteFeatureNodes = doc.SelectNodes(featureNodePath);
@@ -995,6 +1090,7 @@ namespace JDP.Remediation.Console
                             if (lstCustomFeatureIDs.Where(c => c.Contains(featureID.ToLower())).Any())
                             {
                                 isCustomFeature = true;
+                                Id = Id + featureID + "|";
                                 Logger.LogInfoMessage("[DownloadAndModifySiteTemplate: CheckCustomFeature] Customized Feature Found for: " + siteTemplateName, true);
                                 break;
                             }
@@ -1018,11 +1114,13 @@ namespace JDP.Remediation.Console
                     reader.Dispose();
                 }
             }
+            return Id;
         }
 
-        public static void CheckCustomEventReceiver(string xmlFilePath, string erNodePath, ref bool isCustomEventReceiver, string siteTemplateName)
+        public static string CheckCustomEventReceiver(string xmlFilePath, string erNodePath, ref bool isCustomEventReceiver, string siteTemplateName)
         {
             string xml;
+            string ERs = string.Empty;
 
             if (System.IO.File.Exists(xmlFilePath))
             {
@@ -1053,15 +1151,10 @@ namespace JDP.Remediation.Console
                             ex.GetType().ToString(), "Exception while loading the XML File. XML File Path: " + xmlFilePath + ". SiteTemplateName: " + siteTemplateName);
                     }
 
-                    //reader.Namespaces = false;
-                    //reader.Read();
-                    //XmlDocument doc = new XmlDocument();
-                    //doc.Load(reader);
-
                     //Initiallizing all the nodes required to check
                     XmlNodeList receiverNodes = doc.SelectNodes(erNodePath);
 
-                    //Chcecking for Custom Event Receivers
+                    //Checking for Custom Event Receivers
                     if (receiverNodes != null && receiverNodes.Count > 0)
                     {
                         for (int i = 0; i < receiverNodes.Count; i++)
@@ -1074,11 +1167,15 @@ namespace JDP.Remediation.Console
                                     if (receiverChilds[j].HasChildNodes)
                                     {
                                         string assemblyValue = receiverChilds[j]["Assembly"].InnerText;
-                                        if (lstCustomErs.Where(c => assemblyValue.Equals(c, StringComparison.CurrentCultureIgnoreCase)).Any())
+                                        if (lstCustomErs != null && lstCustomErs.Count > 0)
                                         {
-                                            isCustomEventReceiver = true;
-                                            Logger.LogInfoMessage("[DownloadAndModifySiteTemplate: CheckCustomEventReceiver] Customized Web/Site/List Event Receiver Found for: " + siteTemplateName, true);
-                                            break;
+                                            if (lstCustomErs.Where(c => assemblyValue.Equals(c, StringComparison.CurrentCultureIgnoreCase)).Any())
+                                            {
+                                                isCustomEventReceiver = true;
+                                                ERs = ERs + assemblyValue + "|";
+                                                Logger.LogInfoMessage("[DownloadAndModifySiteTemplate: CheckCustomEventReceiver] Customized Web/Site/List Event Receiver Found for: " + siteTemplateName, true);
+                                                break;
+                                            }
                                         }
                                     }
                                 }
@@ -1103,6 +1200,7 @@ namespace JDP.Remediation.Console
                     reader.Dispose();
                 }
             }
+            return ERs;
         }
 
         public static void ReadInputFiles()
