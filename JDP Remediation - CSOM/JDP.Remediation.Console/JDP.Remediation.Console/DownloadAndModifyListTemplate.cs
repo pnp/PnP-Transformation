@@ -214,8 +214,6 @@ namespace JDP.Remediation.Console
             {
                 using (ClientContext userContext = Helper.CreateAuthenticatedUserContext(Program.AdminDomain, Program.AdminUsername, Program.AdminPassword, SiteCollection))
                 {
-                    //userContext.ExecuteQuery();
-
                     Site site = userContext.Site;
                     Web web = userContext.Web;
                     userContext.Load(site);
@@ -281,6 +279,8 @@ namespace JDP.Remediation.Console
             bool isCustomContentType = false;
             bool isCustomEventReceiver = false;
             bool isCustomSiteColumn = false;
+            bool isCustomContentTypeEventReceiver = false;
+
             StringBuilder cTHavingCustomER = new StringBuilder();
 
             string fileName = objListCustOutput.ListTemplateName;
@@ -302,22 +302,6 @@ namespace JDP.Remediation.Console
 
                 FileInfo solFileObj = new FileInfo(newFileName);
                 Logger.LogInfoMessage("[DownloadAndModifyListTemplate: ProcessStpFile] Extracting the List Template: " + objListCustOutput.ListTemplateName, true);
-                //string cmd = "/e /a /y /L \"" + newFileName.Replace(".", "_") + "\" \"" + newFileName + "\"";
-                //ProcessStartInfo pI = new ProcessStartInfo("extrac32.exe", cmd);
-                //pI.WindowStyle = ProcessWindowStyle.Hidden;
-                //Process p = Process.Start(pI);
-                //p.WaitForExit();
-
-                //if (!destDir.EndsWith(@"\"))
-                //    cabDir = destDir + @"\" + newFileName.Replace(".", "_");
-                //else
-                //    cabDir = destDir + newFileName.Replace(".", "_");
-                //Directory.SetCurrentDirectory(newFileName.Replace(".", "_"));
-
-                //if (!destDir.EndsWith(@"\"))
-                //    cabDir = destDir + @"\" + newFileName.Replace(".", "_");
-                //else
-                //    cabDir = destDir + newFileName.Replace(".", "_");
 
                 FileUtility.UnCab(solFileName.ToLower().Replace(".stp", ".cab"), destDir);
                 Directory.SetCurrentDirectory(destDir);
@@ -349,8 +333,6 @@ namespace JDP.Remediation.Console
 
                 reader.Read();
                 XmlDocument doc = new XmlDocument();
-                //doc.Load(reader);
-                //doc.LoadXml(xml);
 
                 try
                 {
@@ -370,6 +352,8 @@ namespace JDP.Remediation.Console
                 XmlNodeList xmlCTReceivers = doc.SelectNodes("/ListTemplate/UserLists/List/MetaData/ContentTypes/ContentType");
                 XmlNodeList xmlFields = doc.SelectNodes("/ListTemplate/UserLists/List/MetaData/Fields/Field");
 
+                string CustomEventReceiver = string.Empty;
+
                 #region Custom_EventReceivers
                 //Checking for Customization
                 Logger.LogInfoMessage("[DownloadAndModifyListTemplate: ProcessStpFile] Searching for customized List Event Receivers", true);
@@ -386,6 +370,7 @@ namespace JDP.Remediation.Console
                                 if (lstCustomErs.Where(c => assemblyValue.Equals(c, StringComparison.CurrentCultureIgnoreCase)).Any())
                                 {
                                     isCustomEventReceiver = true;
+                                    CustomEventReceiver = assemblyValue;
                                     Logger.LogInfoMessage("[DownloadAndModifyListTemplate: ProcessStpFile] Customized List Event Receiver Found for " + objListCustOutput.ListTemplateName, true);
                                     break;
                                 }
@@ -401,9 +386,14 @@ namespace JDP.Remediation.Console
                     }
                 }
                 #endregion
+                if (!string.IsNullOrEmpty(CustomEventReceiver))
+                    objListCustOutput.CustomEventReceiver = CustomEventReceiver;
+                else
+                    objListCustOutput.CustomEventReceiver = Constants.NotApplicable;
 
                 Logger.LogInfoMessage("[DownloadAndModifyListTemplate: ProcessStpFile] Searching for customized Event Receivers associated with Content Types", true);
 
+                string CustomSiteColumn = string.Empty;
                 if (xmlCTReceivers != null && xmlCTReceivers.Count > 0)
                 {
                     #region Custom ContentTypeEventReceivers
@@ -414,7 +404,6 @@ namespace JDP.Remediation.Console
                         {
                             try
                             {
-                                //cTHavingCustomER.Append(xmlCTReceivers[i].Attributes["Name"].Value + ";");
                                 var docList = xmlCTReceivers[i]["XmlDocuments"];
                                 if (docList != null)
                                 {
@@ -446,8 +435,8 @@ namespace JDP.Remediation.Console
                                                             string ctAssemblyValue = receiverChilds[y]["Assembly"].InnerText;
                                                             if (lstCustomErs.Where(c => ctAssemblyValue.Equals(c, StringComparison.CurrentCultureIgnoreCase)).Any())
                                                             {
-                                                                //isCustomEventReceiver = true;
-                                                                cTHavingCustomER.Append(xmlCTReceivers[i].Attributes["Name"].Value + ";");
+                                                                isCustomContentTypeEventReceiver = true;
+                                                                cTHavingCustomER.Append(xmlCTReceivers[i].Attributes["Name"].Value + "~" + ctAssemblyValue + "|");
                                                                 Logger.LogInfoMessage("[DownloadAndModifyListTemplate: ProcessStpFile] Customized Event Receiver associated with Content Type Found for : " + objListCustOutput.ListTemplateName, true);
                                                                 break;
                                                             }
@@ -484,6 +473,7 @@ namespace JDP.Remediation.Console
                     }
                     #endregion
 
+                    string CustomContentType = string.Empty;
                     #region custom contenttypes
                     if (lstContentTypeIDs != null && lstContentTypeIDs.Count > 0)
                     {
@@ -499,6 +489,11 @@ namespace JDP.Remediation.Console
                                 if (lstContentTypeIDs.Where(c => docList.StartsWith(c)).Any())
                                 {
                                     isCustomContentType = true;
+                                    string contentTypeName = xmlCTReceivers[i].Attributes["Name"].Value;
+                                    if (!string.IsNullOrEmpty(contentTypeName))
+                                        CustomContentType = contentTypeName;
+                                    else
+                                        CustomContentType = docList;
                                     Logger.LogInfoMessage("[DownloadAndModifyListTemplate: ProcessStpFile] Customized Content Type Found for: " + objListCustOutput.ListTemplateName, true);
                                     break;
                                 }
@@ -513,6 +508,13 @@ namespace JDP.Remediation.Console
                         }
                     }
                     #endregion
+
+                    if (!string.IsNullOrEmpty(CustomContentType))
+                        objListCustOutput.CustomContentType = CustomContentType;
+                    else
+                        objListCustOutput.CustomContentType = Constants.NotApplicable;
+
+                    string Id = string.Empty;
 
                     #region CustomFields_In_Contenttyeps
                     if (lstCustomFieldIDs != null && lstCustomFieldIDs.Count > 0)
@@ -536,6 +538,12 @@ namespace JDP.Remediation.Console
                                             if (lstCustomFieldIDs.Where(c => fieldRefId.Equals(c)).Any())
                                             {
                                                 isCustomSiteColumn = true;
+                                                Id = Id + fieldRefId + ",";
+                                                string fieldName = xmlFieldRefList[j].Attributes["Name"].Value;
+                                                if (!string.IsNullOrEmpty(fieldName))
+                                                    CustomSiteColumn = CustomSiteColumn + fieldName + "|";
+                                                else
+                                                    CustomSiteColumn = CustomSiteColumn + fieldRefId + "|";
                                                 Logger.LogInfoMessage("[DownloadAndModifyListTemplate: ProcessStpFile] Customized Site Column associated with Content Type Found for: " + objListCustOutput.ListTemplateName, true);
                                                 break;
                                             }
@@ -560,6 +568,11 @@ namespace JDP.Remediation.Console
                         }
                     }
                     #endregion
+
+                    if (Id != null && Id.Length > 0 && Id.EndsWith(","))
+                    {
+                        Id = Id.TrimEnd(',');
+                    }
                 }
 
                 #region CustomFields
@@ -579,6 +592,11 @@ namespace JDP.Remediation.Console
                                 if (lstCustomFieldIDs.Where(c => fieldList.Equals(c)).Any())
                                 {
                                     isCustomSiteColumn = true;
+                                    string fieldName = xmlFields[i].Attributes["Name"].Value;
+                                    if (!string.IsNullOrEmpty(fieldName))
+                                        CustomSiteColumn = CustomSiteColumn + fieldName + "|";
+                                    else
+                                        CustomSiteColumn = CustomSiteColumn + fieldList + "|";
                                     Logger.LogInfoMessage("[DownloadAndModifyListTemplate: ProcessStpFile] Customized Site ColumnFound for : " + objListCustOutput.ListTemplateName, true);
                                     break;
                                 }
@@ -595,7 +613,17 @@ namespace JDP.Remediation.Console
                 }
                 #endregion
 
-                if (isCustomContentType || isCustomEventReceiver || isCustomSiteColumn)
+                if (CustomSiteColumn != null && CustomSiteColumn.Length > 0 && CustomSiteColumn.EndsWith("|"))
+                {
+                    CustomSiteColumn = CustomSiteColumn.TrimEnd('|');
+
+                }
+                if (!string.IsNullOrEmpty(CustomSiteColumn))
+                    objListCustOutput.CustomSiteColumn = CustomSiteColumn;
+                else
+                    objListCustOutput.CustomSiteColumn = Constants.NotApplicable;
+
+                if (isCustomContentType || isCustomEventReceiver || isCustomSiteColumn || isCustomContentTypeEventReceiver)
                 {
                     if (cTHavingCustomER != null && cTHavingCustomER.Length > 0)
                     {
@@ -609,7 +637,6 @@ namespace JDP.Remediation.Console
 
                     objListCustOutput.IsCustomizationPresent = "YES";
                     isCustomizationPresent = true;
-                    //cTHavingCustomER.Remove(cTHavingCustomER.Length-1, 1);
 
                     if (lstCustomErs != null && lstCustomErs.Count > 0)
                         objListCustOutput.IsCustomizedEventReceiver = isCustomEventReceiver ? "YES" : "NO";
@@ -626,6 +653,11 @@ namespace JDP.Remediation.Console
                     else
                         objListCustOutput.IsCustomizedSiteColumn = Constants.NoInputFile;
 
+                    if (lstCustomErs != null && lstCustomErs.Count > 0)
+                        objListCustOutput.IsCustomizedContentTypeEventReceiver = isCustomContentTypeEventReceiver ? "YES" : "NO";
+                    else
+                        objListCustOutput.IsCustomizedContentTypeEventReceiver = Constants.NoInputFile;
+
                 }
                 else
                 {
@@ -638,12 +670,14 @@ namespace JDP.Remediation.Console
                         objListCustOutput.IsCustomizedContentType = "NO";
                         objListCustOutput.IsCustomizedEventReceiver = "NO";
                         objListCustOutput.IsCustomizedSiteColumn = "NO";
+                        objListCustOutput.IsCustomizedContentTypeEventReceiver = "YES";
                     }
                     else
                     {
                         objListCustOutput.CTHavingCustomEventReceiver = Constants.NotApplicable;
                         isCustomizationPresent = false;
                     }
+
                 }
                 reader.Dispose();
                 cTHavingCustomER.Clear();
