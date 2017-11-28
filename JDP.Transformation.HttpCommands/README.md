@@ -12,7 +12,7 @@ This sample demonstrates how to perform remote operations towards configurations
 ### Solution ###
 Solution | Author(s)
 ---------|----------
-JDP.Transformation.HttpCommands | Vesa Juvonen, Bert Jansen, Antons Mislevics (**Microsoft**)
+JDP.Transformation.HttpCommands | Vesa Juvonen, Bert Jansen, Antons Mislevics, Joel Tipke (**Microsoft**)
 
 ### Version history ###
 Version  | Date | Comments
@@ -37,6 +37,7 @@ This solution implements HTTP remote operations pattern for the following scenar
 - Trust an app;
 - Get a list of available apps;
 - Activate sandbox solution;
-- Deactivate sandbox solution.
+- Deactivate sandbox solution;
+- Open a closed site;
 
 <img src="https://telemetry.sharepointpnp.com/pnp-transformation/JDP.Transformation.HttpCommands" />
